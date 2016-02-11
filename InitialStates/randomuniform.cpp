@@ -42,10 +42,13 @@ void RandomUniform::setupInitialState() {
              * according to their index in the particles list (this is
              * obviously NOT a good idea).
              */
-            position.push_back(i);
+            position.push_back(Random::nextDouble());
+
+
         }
-        m_particles.push_back(new Particle());
-        m_particles.at(i)->setNumberOfDimensions(m_numberOfDimensions);
-        m_particles.at(i)->setPosition(position);
+        m_particles.push_back(new Particle());                              // make new element in m_particles vector containing new Particle instance
+        m_particles.at(i)->setNumberOfDimensions(m_numberOfDimensions);     // sets number of dimensions for particle i in Particle class
+        m_particles.at(i)->setPosition(position);                           // sets position for particle i in Particle class
+        //cout << "position " << m_particles[0]->getPosition()[0] << endl;
     }
 }
