@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <fstream>
 #include "sampler.h"
 #include "system.h"
 #include "particle.h"
@@ -24,6 +25,7 @@ void Sampler::sample(bool acceptedStep) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
         m_cumulativeEnergy = 0;
+        m_cumulativeEnergySquared = 0;
     }
 
     /* Here you should sample all the interesting things you want to measure.
@@ -32,6 +34,11 @@ void Sampler::sample(bool acceptedStep) {
     double localEnergy = m_system->getHamiltonian()->                       // this gets the Hamiltonian, which itself is an instance of Hamiltonian
                          computeLocalEnergy(m_system->getParticles());
     m_cumulativeEnergy  += localEnergy;
+    m_cumulativeEnergySquared += localEnergy*localEnergy;
+
+    // store energies to do blocking
+    writeToFile(localEnergy);
+
     m_stepNumber++;
 }
 
@@ -41,6 +48,7 @@ void Sampler::printOutputToTerminal() {
     int     ms = m_system->getNumberOfMetropolisSteps();
     int     p  = m_system->getWaveFunction()->getNumberOfParameters();
     double  ef = m_system->getEquilibrationFraction();
+    int     as = m_system->getNumberOfAcceptedSteps();
     std::vector<double> pa = m_system->getWaveFunction()->getParameters();
 
     cout << endl;
@@ -58,12 +66,29 @@ void Sampler::printOutputToTerminal() {
     cout << endl;
     cout << "  -- Reults -- " << endl;
     cout << " Energy : " << m_energy << endl;
+    cout << " Standard deviation : " << m_standardDeviation << endl;
+    cout << " Acceptance rate : " << as / (double) ms*(1 - ef) << endl;
     cout << endl;
+}
+
+void Sampler::writeToFile(double localEnergy) {
+    if (m_stepNumber == 0) { m_outFile.open("energy.dat", std::ios::out); }
+
+    // write local energy to file to do blocking in python
+    m_outFile << localEnergy << endl;
+
+
+}
+
+void Sampler::closeFile() {
+    m_outFile.close();
 }
 
 void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities
 
-    int numberOfSampledSteps = m_system->getNumberOfMetropolisSteps()*(1 - m_system->getEquilibrationFraction());
-    m_energy = m_cumulativeEnergy / (double) numberOfSampledSteps;
+    //int numberOfSampledSteps = m_numberOfMetropolisSteps*(1 - m_system->getEquilibrationFraction())-1;
+    //m_energy = m_cumulativeEnergy / (double) numberOfSampledSteps;
+    m_energy = m_cumulativeEnergy / (double) m_stepNumber;
+    m_standardDeviation = sqrt(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy);
 }
