@@ -21,6 +21,7 @@ public:
     class Hamiltonian*              getHamiltonian()    { return m_hamiltonian; }
     class Sampler*                  getSampler()        { return m_sampler; }
     std::vector<class Particle*>    getParticles()      { return m_particles; }
+    class InitialState*             getInitialState()   { return m_initialState; }
     int getNumberOfParticles()          { return m_numberOfParticles; }
     int getNumberOfDimensions()         { return m_numberOfDimensions; }
     int getNumberOfMetropolisSteps()    { return m_numberOfMetropolisSteps; }

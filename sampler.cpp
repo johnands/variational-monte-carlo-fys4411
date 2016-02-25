@@ -26,15 +26,21 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile) {
     if (m_stepNumber == 0) {
         m_cumulativeEnergy = 0;
         m_cumulativeEnergySquared = 0;
+        m_cumulativeWaveFunctionDerivative = 0;
+        m_cumulativeWaveFunctionEnergy = 0;
     }
 
-    /* Here you should sample all the interesting things you want to measure.
-     * Note that there are (way) more than the single one here currently.
-     */
-    double localEnergy = m_system->getHamiltonian()->                       // this gets the Hamiltonian, which itself is an instance of Hamiltonian
+
+    double localEnergy = m_system->getHamiltonian()->
                          computeLocalEnergy(m_system->getParticles());
+
+    double waveFunction = m_system->getWaveFunction()->evaluate(m_system->getParticles());
+    double waveFunctionDerivative = m_system->getWaveFunction()->computeAlphaDerivative(m_system->getParticles());
+
     m_cumulativeEnergy  += localEnergy;
     m_cumulativeEnergySquared += localEnergy*localEnergy;
+    m_cumulativeWaveFunctionDerivative += waveFunctionDerivative / waveFunction;
+    m_cumulativeWaveFunctionEnergy += (waveFunctionDerivative / waveFunction) * localEnergy;
 
     // store energies to do blocking
     if (writeEnergiesToFile) { writeToFile(localEnergy); }
@@ -89,6 +95,8 @@ void Sampler::computeAverages() {
 
     //int numberOfSampledSteps = m_numberOfMetropolisSteps*(1 - m_system->getEquilibrationFraction())-1;
     //m_energy = m_cumulativeEnergy / (double) numberOfSampledSteps;
-    m_energy = m_cumulativeEnergy / (double) m_stepNumber;
-    m_standardDeviation = sqrt(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy);
+    m_energy                    = m_cumulativeEnergy / (double) m_stepNumber;
+    m_standardDeviation         = sqrt(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy);
+    m_waveFunctionDerivative    = m_cumulativeWaveFunctionDerivative / (double) m_stepNumber;
+    m_waveFunctionEnergy        = m_cumulativeWaveFunctionEnergy / (double) m_stepNumber;
 }
