@@ -36,16 +36,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
      return gaussian;
 }
 
-double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> particles) {
-    /* All wave functions need to implement this function, so you need to
-     * find the double derivative analytically. Note that by double derivative,
-     * we actually mean the sum of the Laplacians with respect to the
-     * coordinates of each particle.
-     *
-     * This quantity is needed to compute the (local) energy (consider the
-     * Schrödinger equation to see how the two are related).
-     */
-
+double SimpleGaussian::computeLaplacian(std::vector<class Particle*> particles) {
     // Calculate double derivative of trial wavefunction divided by trial wavefunction
 
     double doubleDerivative = 0;
@@ -64,4 +55,23 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
     double x = particles[0]->getPosition()[0];
     double alpha = m_parameters[0];
     return 2*alpha*exp(-alpha*x*x)*(2*alpha*x*x - 1);*/
+}
+
+std::vector<double> SimpleGaussian::computeGradient(std::vector<class Particle*> particles) {
+    // calculate gradient of trial wavefunction divided by trial wavefunction
+    // used to calculate drift velocity / quantum force
+
+    std::vector<double> firstDerivative;
+    int numberOfParticles = m_system->getNumberOfParticles();
+    int numberOfDimensions = m_system->getNumberOfDimensions();
+    firstDerivative.resize(numberOfParticles*numberOfDimensions);
+
+    double alpha = m_parameters[0];
+
+    for (int i=0; i < numberOfParticles; i++) {
+        for (int j=0; j < numberOfDimensions; j++) {
+        firstDerivative[i+j] += -2*alpha*particles[i]->getPosition()[j];
+        }
+    }
+    return firstDerivative;
 }

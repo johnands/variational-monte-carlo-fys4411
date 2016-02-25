@@ -24,7 +24,7 @@ double Hamiltonian::computeKineticEnergy(std::vector<Particle*> particles) {
     // it is therefore moved to the super-class
 
     double laplacian = 0;
-    double step = 1e-5;
+    double step = 1e-3;
     for (int i=0; i < m_system->getNumberOfParticles(); i++) {
         for (int j=0; j < m_system->getNumberOfDimensions(); j++) {
 

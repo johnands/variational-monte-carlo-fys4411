@@ -30,7 +30,7 @@ double HarmonicOscillator::computePotentialEnergy(std::vector<Particle*> particl
 }
 
 double HarmonicOscillator::computeAnalyticalKineticEnergy(std::vector<Particle*> particles) {
-    double kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
+    double kineticEnergy = -0.5*m_system->getWaveFunction()->computeLaplacian(particles);
     return kineticEnergy;
 }
 

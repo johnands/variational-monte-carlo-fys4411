@@ -4,11 +4,16 @@
 class System {
 public:
     bool metropolisStep             ();
-    void runMetropolisSteps         (int numberOfMetropolisSteps);
+    bool metropolisStepImportance   ();
+    std::vector<double> driftForce  (int particle);
+    double evaluateGreensFunction   (int particle, std::vector<double> oldPosition, std::vector<double> newPosition);
+    void runMetropolisSteps         (int numberOfMetropolisSteps, bool useImportanceSampling);
     void setNumberOfParticles       (int numberOfParticles);
     void setNumberOfDimensions      (int numberOfDimensions);
     void setStepLength              (double stepLength);
     void setEquilibrationFraction   (double equilibrationFraction);
+    void setTimeStep                (double timeStep);
+
     void setHamiltonian             (class Hamiltonian* hamiltonian);
     void setWaveFunction            (class WaveFunction* waveFunction);
     void setInitialState            (class InitialState* initialState);
@@ -20,6 +25,8 @@ public:
     int getNumberOfDimensions()         { return m_numberOfDimensions; }
     int getNumberOfMetropolisSteps()    { return m_numberOfMetropolisSteps; }
     double getEquilibrationFraction()   { return m_equilibrationFraction; }
+    int getNumberOfAcceptedSteps()      { return m_numberOfAcceptedSteps; }
+    double getTimeStep()                { return m_timeStep; }
 
 private:
     int                             m_numberOfParticles = 0;
@@ -27,6 +34,10 @@ private:
     int                             m_numberOfMetropolisSteps = 0;
     double                          m_equilibrationFraction = 0.0;
     double                          m_stepLength = 0.1;
+    double                          m_timeStep = 0.01;
+    int                             m_numberOfAcceptedSteps = 0;
+
+
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;
     class InitialState*             m_initialState = nullptr;
