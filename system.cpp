@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 #include "sampler.h"
 #include "particle.h"
 #include "WaveFunctions/wavefunction.h"
@@ -12,13 +13,15 @@
 
 using std::cout;
 using std::endl;
+using std::setprecision;
 using std::vector;
 
 bool System::metropolisStepImportance() {
-    /* With importance sampling.
+    /* With importance sampling
      * The proposed change is now altered to make the particles drift
      * towards areas where the wavefunction is larger.
      */
+
     int particle = Random::nextInt(m_numberOfParticles);    // choose random particle
     //int dimension = Random::nextInt(m_numberOfDimensions);  // choose random dimension
 
@@ -130,7 +133,7 @@ bool System::metropolisStep() {
     }
 }
 
-void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceSampling) {
+void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceSampling, bool writeEnergiesToFile) {
     m_particles                 = m_initialState->getParticles();
     m_sampler                   = new Sampler(this);
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
@@ -139,10 +142,11 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceS
     // measure cpu time
     clock_t start, finish;
     start = clock();
+
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep;
         if (useImportanceSampling) { acceptedStep = metropolisStepImportance(); }
-        else { acceptedStep = metropolisStep(); }
+        else                       { acceptedStep = metropolisStep(); }
 
         // compute acceptance rate
         if (acceptedStep) {
@@ -151,13 +155,20 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceS
 
         // euqilibrate
         if (i > numberOfMetropolisSteps*m_equilibrationFraction) {
-            m_sampler->sample(acceptedStep);
+            m_sampler->sample(acceptedStep, writeEnergiesToFile);
         }
+
+        // print progression to terminal
+        if ( !(i % 100) ) {
+            cout << setprecision(2) << 100*(i / (double) numberOfMetropolisSteps) << " % complete" << "\r";
+            fflush(stdout);
+        }
+
     }
     finish = clock();
     cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
 
-    m_sampler->closeFile();
+    if (writeEnergiesToFile) { m_sampler->closeFile(); }
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
 }

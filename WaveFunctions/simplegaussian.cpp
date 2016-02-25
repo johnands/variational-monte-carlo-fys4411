@@ -14,7 +14,7 @@ SimpleGaussian::SimpleGaussian(System* system, double alpha) :
     m_parameters.push_back(alpha);
 }
 
-double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
+double SimpleGaussian::evaluate(std::vector<Particle*> particles) {
      // return value of product of gaussian one-particle wavefunctions
 
      double alpha = m_parameters[0];
@@ -36,7 +36,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
      return gaussian;
 }
 
-double SimpleGaussian::computeLaplacian(std::vector<class Particle*> particles) {
+double SimpleGaussian::computeLaplacian(std::vector<Particle*> particles) {
     // Calculate double derivative of trial wavefunction divided by trial wavefunction
 
     double doubleDerivative = 0;
@@ -57,7 +57,7 @@ double SimpleGaussian::computeLaplacian(std::vector<class Particle*> particles) 
     return 2*alpha*exp(-alpha*x*x)*(2*alpha*x*x - 1);*/
 }
 
-std::vector<double> SimpleGaussian::computeGradient(std::vector<class Particle*> particles) {
+std::vector<double> SimpleGaussian::computeGradient(std::vector<Particle*> particles) {
     // calculate gradient of trial wavefunction divided by trial wavefunction
     // used to calculate drift velocity / quantum force
 

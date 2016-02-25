@@ -5,7 +5,7 @@ class Sampler {
 public:
     Sampler(class System* system);
     void setNumberOfMetropolisSteps(int steps);
-    void sample(bool acceptedStep);
+    void sample(bool acceptedStep, bool writeEnergiesTofile);
     void printOutputToTerminal();
     void writeToFile(double localEnergy);
     void closeFile();

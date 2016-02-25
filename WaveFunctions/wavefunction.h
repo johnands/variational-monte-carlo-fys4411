@@ -5,6 +5,7 @@
 class WaveFunction {
 public:
     WaveFunction(class System* system);
+    //std::vector<double> computeGradient(std::vector<class Particle*> particles);
     int     getNumberOfParameters() { return m_numberOfParameters; }
     std::vector<double> getParameters() { return m_parameters; }
     virtual double evaluate(std::vector<class Particle*> particles) = 0;

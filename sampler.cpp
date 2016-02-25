@@ -21,7 +21,7 @@ void Sampler::setNumberOfMetropolisSteps(int steps) {
     m_numberOfMetropolisSteps = steps;
 }
 
-void Sampler::sample(bool acceptedStep) {
+void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
         m_cumulativeEnergy = 0;
@@ -37,7 +37,7 @@ void Sampler::sample(bool acceptedStep) {
     m_cumulativeEnergySquared += localEnergy*localEnergy;
 
     // store energies to do blocking
-    writeToFile(localEnergy);
+    if (writeEnergiesToFile) { writeToFile(localEnergy); }
 
     m_stepNumber++;
 }

@@ -7,7 +7,7 @@ public:
     bool metropolisStepImportance   ();
     std::vector<double> driftForce  (int particle);
     double evaluateGreensFunction   (int particle, std::vector<double> oldPosition, std::vector<double> newPosition);
-    void runMetropolisSteps         (int numberOfMetropolisSteps, bool useImportanceSampling);
+    void runMetropolisSteps         (int numberOfMetropolisSteps, bool useImportanceSampling, bool writeEnergiesToFile);
     void setNumberOfParticles       (int numberOfParticles);
     void setNumberOfDimensions      (int numberOfDimensions);
     void setStepLength              (double stepLength);
