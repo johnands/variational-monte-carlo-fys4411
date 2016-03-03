@@ -10,6 +10,7 @@ public:
     void writeToFile(double localEnergy);
     void closeFile();
     void computeAverages();
+    void clean();
     double getEnergy()          { return m_energy; }
     double getWaveFunctionDerivative() { return m_waveFunctionDerivative; }
     double getWaveFunctionEnergy() { return m_waveFunctionEnergy; }

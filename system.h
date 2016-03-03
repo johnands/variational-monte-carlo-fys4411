@@ -37,6 +37,7 @@ private:
     double                          m_stepLength = 0.1;
     double                          m_timeStep = 0.01;
     int                             m_numberOfAcceptedSteps = 0;
+    bool                            m_samplerSetup = false;
 
 
     class WaveFunction*             m_waveFunction = nullptr;

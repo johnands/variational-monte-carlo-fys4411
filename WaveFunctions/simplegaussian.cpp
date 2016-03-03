@@ -18,16 +18,17 @@ double SimpleGaussian::evaluate(std::vector<Particle*> particles) {
      // return value of product of gaussian one-particle wavefunctions
 
      double alpha = m_parameters[0];
-     double gaussian = 1;
+     double gaussian = 0;
      for (int i=0; i < m_system->getNumberOfParticles(); i++) {
          double r2 = 0;
          for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
              r2 += pow(particles[i]->getPosition()[dim], 2);
          }
-         gaussian *= exp(-alpha*r2);
+         //gaussian *= exp(-alpha*r2);
+         gaussian += r2;
      }
-
-     return gaussian;
+    return exp(-alpha * gaussian);
+     //return gaussian;
 }
 
 double SimpleGaussian::computeLaplacian(std::vector<Particle*> particles) {
@@ -73,16 +74,17 @@ double SimpleGaussian::computeAlphaDerivative(std::vector<Particle *> particles)
     // return derivative of wavefunction w.r.t. alpha
 
     double alpha = m_parameters[0];
-    double derivativeAlpha = 1;
+    double r2sum = 0;
     for (int i=0; i < m_system->getNumberOfParticles(); i++) {
         double r2 = 0;
         for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
             r2 += pow(particles[i]->getPosition()[dim], 2);
         }
-        derivativeAlpha *= -r2*exp(-alpha*r2);
+        //derivativeAlpha *= r2*exp(-alpha*r2);
+        r2sum += r2;
     }
 
-    return derivativeAlpha;
+    return -r2sum*exp(-alpha*r2sum);
 }
 
 

@@ -21,7 +21,8 @@ double InteractingGaussian::evaluate(std::vector<Particle*> particles) {
 
     double alpha = m_parameters[0];
     double beta  = m_parameters[1];
-    double gaussian = 1;
+    double r2sum = 0;
+    double correlation = 1;
     for (int i=0; i < m_system->getNumberOfParticles(); i++) {
 
         // one-particle wavefunctions
@@ -30,7 +31,8 @@ double InteractingGaussian::evaluate(std::vector<Particle*> particles) {
             if (dim == 2) { r2 += beta*pow(particles[i]->getPosition()[dim], 2); }
             else { r2 += pow(particles[i]->getPosition()[dim], 2); }
         }
-        gaussian *= exp(-alpha*r2); // one-particle wavefunction
+        //gaussian *= exp(-alpha*r2); // one-particle wavefunction
+        r2sum += r2;
 
         // correlation function
         double rij2 = 0;
@@ -38,13 +40,12 @@ double InteractingGaussian::evaluate(std::vector<Particle*> particles) {
             for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
                 rij2 += pow(particles[i]->getPosition()[dim] - particles[j]->getPosition()[dim], 2);
             }
-            if (sqrt(rij2) > m_a) { gaussian *= 1 - m_a / (sqrt(rij2)); }
-            else { gaussian *= 0; }
+            if (sqrt(rij2) > m_a) { correlation *= 1 - m_a / (sqrt(rij2)); }
+            else { correlation *= 0; }
         }
-
     }
 
-    return gaussian;
+    return exp(-alpha*r2sum)*correlation; // one-particle wavefunction
 }
 
 
@@ -62,7 +63,8 @@ double InteractingGaussian::computeAlphaDerivative(std::vector<Particle *> parti
 
     double alpha = m_parameters[0];
     double beta  = m_parameters[1];
-    double gaussian = 1;
+    double r2sum = 0;
+    double correlation = 1;
     for (int i=0; i < m_system->getNumberOfParticles(); i++) {
 
         // one-particle wavefunctions
@@ -71,7 +73,7 @@ double InteractingGaussian::computeAlphaDerivative(std::vector<Particle *> parti
             if (dim == 2) { r2 += beta*pow(particles[i]->getPosition()[dim], 2); }
             else { r2 += pow(particles[i]->getPosition()[dim], 2); }
         }
-        gaussian *= -r2*exp(-alpha*r2); // one-particle wavefunction
+        r2sum += r2; // one-particle wavefunction
 
         // correlation function
         double rij2 = 0;
@@ -79,11 +81,11 @@ double InteractingGaussian::computeAlphaDerivative(std::vector<Particle *> parti
             for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
                 rij2 += pow(particles[i]->getPosition()[dim] - particles[j]->getPosition()[dim], 2);
             }
-            if (sqrt(rij2) > m_a) { gaussian *= 1 - m_a / (sqrt(rij2)); }
-            else { gaussian *= 0; }
+            if (sqrt(rij2) > m_a) { correlation *= 1 - m_a / (sqrt(rij2)); }
+            else { correlation *= 0; }
         }
 
     }
 
-    return gaussian;
+    return -r2sum*exp(-alpha*r2sum)*correlation;
 }

@@ -7,6 +7,7 @@
 #include "particle.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
+#include <iomanip>
 
 using std::cout;
 using std::endl;
@@ -24,6 +25,9 @@ void Sampler::setNumberOfMetropolisSteps(int steps) {
 void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
+        m_energy = 0;
+        m_waveFunctionDerivative = 0;
+        m_waveFunctionEnergy = 0;
         m_cumulativeEnergy = 0;
         m_cumulativeEnergySquared = 0;
         m_cumulativeWaveFunctionDerivative = 0;
@@ -35,7 +39,9 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile) {
                          computeLocalEnergy(m_system->getParticles());
 
     double waveFunction = m_system->getWaveFunction()->evaluate(m_system->getParticles());
+    //cout << "waveFunction = " << waveFunction << endl;
     double waveFunctionDerivative = m_system->getWaveFunction()->computeAlphaDerivative(m_system->getParticles());
+    //cout << "waveFunctionDerivative = " << waveFunctionDerivative << endl;
 
     m_cumulativeEnergy  += localEnergy;
     m_cumulativeEnergySquared += localEnergy*localEnergy;
@@ -71,7 +77,7 @@ void Sampler::printOutputToTerminal() {
     }
     cout << endl;
     cout << "  -- Reults -- " << endl;
-    cout << " Energy : " << m_energy << endl;
+    cout << " Energy : " << std::setprecision(10) << m_energy << endl;
     cout << " Standard deviation : " << m_standardDeviation << endl;
     cout << " Acceptance rate : " << as / (double) ms*(1 - ef) << endl;
     cout << endl;
@@ -93,10 +99,22 @@ void Sampler::closeFile() {
 void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities
 
-    //int numberOfSampledSteps = m_numberOfMetropolisSteps*(1 - m_system->getEquilibrationFraction())-1;
-    //m_energy = m_cumulativeEnergy / (double) numberOfSampledSteps;
     m_energy                    = m_cumulativeEnergy / (double) m_stepNumber;
     m_standardDeviation         = sqrt(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy);
     m_waveFunctionDerivative    = m_cumulativeWaveFunctionDerivative / (double) m_stepNumber;
     m_waveFunctionEnergy        = m_cumulativeWaveFunctionEnergy / (double) m_stepNumber;
+
+    cout << "waveFunctionDerivative = " << m_waveFunctionDerivative << endl;
+    cout << "waveFunctionEnergy = " << m_waveFunctionEnergy << endl;
+}
+
+void Sampler::clean() {
+    m_energy = 0;
+    m_waveFunctionDerivative = 0;
+    m_waveFunctionEnergy = 0;
+    m_cumulativeEnergy = 0;
+    m_cumulativeEnergySquared = 0;
+    m_cumulativeWaveFunctionDerivative = 0;
+    m_cumulativeWaveFunctionEnergy = 0;
+    m_stepNumber = 0;
 }

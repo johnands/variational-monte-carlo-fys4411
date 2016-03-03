@@ -108,7 +108,7 @@ bool System::metropolisStep() {
      */
     int particle = Random::nextInt(m_numberOfParticles);    // choose random particle
     int dimension = Random::nextInt(m_numberOfDimensions);  // choose random dimension
-    double change = Random::nextDouble()*m_stepLength*2-1;  // propose change of particle's position
+    double change = (Random::nextDouble()*2-1)*m_stepLength;  // propose change of particle's position
 
     // get old wavefunction
     double waveFuncOld = m_waveFunction->evaluate(m_particles);
@@ -135,7 +135,13 @@ bool System::metropolisStep() {
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceSampling, bool writeEnergiesToFile) {
     m_particles                 = m_initialState->getParticles();
-    m_sampler                   = new Sampler(this);
+    m_numberOfAcceptedSteps = 0;
+    if (m_samplerSetup == false) {
+        m_sampler                   = new Sampler(this);
+        m_samplerSetup = true;
+    } else {
+        m_sampler->clean();
+    }
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
 
