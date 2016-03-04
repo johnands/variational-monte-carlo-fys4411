@@ -133,7 +133,9 @@ bool System::metropolisStep() {
     }
 }
 
-void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceSampling, bool writeEnergiesToFile) {
+void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceSampling,
+                                bool writeEnergiesToFile, bool writePositionsToFile)
+{
     m_particles                 = m_initialState->getParticles();
     m_numberOfAcceptedSteps = 0;
     if (m_samplerSetup == false) {
@@ -161,7 +163,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceS
 
         // euqilibrate
         if (i > numberOfMetropolisSteps*m_equilibrationFraction) {
-            m_sampler->sample(acceptedStep, writeEnergiesToFile);
+            m_sampler->sample(acceptedStep, writeEnergiesToFile, writePositionsToFile);
         }
 
         // print progression to terminal
@@ -174,7 +176,6 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceS
     finish = clock();
     cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
 
-    if (writeEnergiesToFile) { m_sampler->closeFile(); }
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
 }

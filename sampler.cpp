@@ -22,7 +22,7 @@ void Sampler::setNumberOfMetropolisSteps(int steps) {
     m_numberOfMetropolisSteps = steps;
 }
 
-void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile) {
+void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile, bool writePositionsToFile) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
         m_energy = 0;
@@ -33,7 +33,6 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile) {
         m_cumulativeWaveFunctionDerivative = 0;
         m_cumulativeWaveFunctionEnergy = 0;
     }
-
 
     double localEnergy = m_system->getHamiltonian()->
                          computeLocalEnergy(m_system->getParticles());
@@ -48,8 +47,9 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile) {
     m_cumulativeWaveFunctionDerivative += waveFunctionDerivative / waveFunction;
     m_cumulativeWaveFunctionEnergy += (waveFunctionDerivative / waveFunction) * localEnergy;
 
-    // store energies to do blocking
+    // store energies or positions
     if (writeEnergiesToFile) { writeToFile(localEnergy); }
+    if (writePositionsToFile) { writeToFile(); }
 
     m_stepNumber++;
 }
@@ -84,16 +84,39 @@ void Sampler::printOutputToTerminal() {
 }
 
 void Sampler::writeToFile(double localEnergy) {
-    if (m_stepNumber == 0) { m_outFile.open("energy.dat", std::ios::out); }
+    if (m_stepNumber == 0) {
+        m_outFile.open("energy.dat", std::ios::out | std::ios::trunc);
+        m_outFile << "Energies" << endl;
+        m_outFile.close();
+    }
 
     // write local energy to file to do blocking in python
+    m_outFile.open("energy.dat", std::ios::out | std::ios::app);
     m_outFile << localEnergy << endl;
+    m_outFile.close();
 
 
 }
 
-void Sampler::closeFile() {
-    m_outFile.close();
+void Sampler::writeToFile() {
+    if (m_stepNumber == 0) {
+        m_outFile2.open("positionsInteraction.dat", std::ios::out | std::ios::trunc);
+        m_outFile2.close();
+    }
+
+    // write local energy to file to do blocking in python
+    m_outFile2.open("positionsInteraction.dat", std::ios::out | std::ios::app);
+    std::vector<Particle*> particles = m_system->getParticles();
+    for (int i=0; i < m_system->getNumberOfParticles(); i++) {
+        for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
+            m_outFile2 << particles[i]->getPosition()[dim] << "  ";
+        }
+        m_outFile2 << endl;
+    }
+
+    m_outFile2.close();
+
+
 }
 
 void Sampler::computeAverages() {

@@ -29,7 +29,7 @@ void SteepestDescent::optimize(double initialAlpha) {
         m_system->getWaveFunction()->setAlpha(oldAlpha);
 
         // run metropolis steps
-        m_system->runMetropolisSteps((int) 1e5, false, false);
+        m_system->runMetropolisSteps((int) 1e5, false, false, false);
 
         // compute derivative of exp. value of local energy w.r.t. alpha
         double localEnergyDerivative = 2 * ( m_system->getSampler()->getWaveFunctionEnergy() -

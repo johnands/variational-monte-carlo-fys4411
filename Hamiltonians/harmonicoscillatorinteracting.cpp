@@ -14,11 +14,11 @@ HarmonicOscillatorInteracting::HarmonicOscillatorInteracting(class System* syste
 }
 
 
-double HarmonicOscillatorInteracting::computeAnalyticalKineticEnergy(std::vector<class Particle*> particles) {
+double HarmonicOscillatorInteracting::computeAnalyticalKineticEnergy(std::vector<Particle*> particles) {
     return 0;
 }
 
-double HarmonicOscillatorInteracting::computePotentialEnergy(std::vector<class Particle*> particles) {
+double HarmonicOscillatorInteracting::computePotentialEnergy(std::vector<Particle*> particles) {
 
    double potentialEnergy = 0;
    for (int i=0; i < m_system->getNumberOfParticles(); i++) {

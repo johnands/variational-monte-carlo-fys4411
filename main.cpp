@@ -19,9 +19,9 @@ int main() {
 
     int numberOfDimensions  = 3;
     int numberOfParticles   = 10;
-    int numberOfSteps       = (int) 1e5;
+    int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.7;          // variational parameter 1
+    double alpha            = 0.5;          // variational parameter 1
     double beta             = 2.82843;      // variational parameter 2
     double stepLength       = 0.73;         // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
@@ -32,6 +32,7 @@ int main() {
     bool useNumerical       = true;         // compute kinetic energy numerically
     bool useImportanceSampling = false;
     bool writeEnergiesToFile = false;
+    bool writePositionsToFile = true;
 
     System* system = new System();
     //system->setHamiltonian              (new HarmonicOscillator(system, omega, useNumerical));
@@ -42,13 +43,14 @@ int main() {
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
     system->setTimeStep                 (timeStep);
-    //system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile);
+    system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile,
+                                         writePositionsToFile);
 
     // optimize alpha
-
+    /*
     double stepLengthOptimize = 0.01;
     SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize);
-    sd->optimize(0.9);
+    sd->optimize(0.9);*/
 
     return 0;
 }
