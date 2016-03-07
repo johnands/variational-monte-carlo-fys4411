@@ -85,13 +85,12 @@ void Sampler::printOutputToTerminal() {
 
 void Sampler::writeToFile(double localEnergy) {
     if (m_stepNumber == 0) {
-        m_outFile.open("energy.dat", std::ios::out | std::ios::trunc);
-        m_outFile << "Energies" << endl;
+        m_outFile.open("energyInteracting0.7.dat", std::ios::out | std::ios::trunc);
         m_outFile.close();
     }
 
     // write local energy to file to do blocking in python
-    m_outFile.open("energy.dat", std::ios::out | std::ios::app);
+    m_outFile.open("energyInteracting0.7.dat", std::ios::out | std::ios::app);
     m_outFile << localEnergy << endl;
     m_outFile.close();
 

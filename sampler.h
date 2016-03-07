@@ -5,9 +5,10 @@ class Sampler {
 public:
     Sampler(class System* system);
     void setNumberOfMetropolisSteps(int steps);
-    void sample(bool acceptedStep, bool writeEnergiesTofile);
+    void sample(bool acceptedStep, bool writeEnergiesToFile, bool writePositionsToFile);
     void printOutputToTerminal();
     void writeToFile(double localEnergy);
+    void writeToFile();
     void closeFile();
     void computeAverages();
     void clean();
@@ -27,5 +28,6 @@ private:
     double  m_cumulativeWaveFunctionDerivative = 0;
     double  m_cumulativeWaveFunctionEnergy = 0;
     std::fstream m_outFile;
+    std::fstream m_outFile2;
     class System* m_system = nullptr;
 };
