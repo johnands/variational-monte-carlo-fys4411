@@ -31,7 +31,6 @@ double InteractingGaussian::evaluate(std::vector<Particle*> particles) {
             if (dim == 2) { r2 += beta*pow(particles[i]->getPosition()[dim], 2); }
             else { r2 += pow(particles[i]->getPosition()[dim], 2); }
         }
-        //gaussian *= exp(-alpha*r2); // one-particle wavefunction
         r2sum += r2;
 
         // correlation function
@@ -45,7 +44,7 @@ double InteractingGaussian::evaluate(std::vector<Particle*> particles) {
         }
     }
 
-    return exp(-alpha*r2sum)*correlation; // one-particle wavefunction
+    return exp(-alpha*r2sum)*correlation;
 }
 
 

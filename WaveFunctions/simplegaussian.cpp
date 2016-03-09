@@ -80,7 +80,6 @@ double SimpleGaussian::computeAlphaDerivative(std::vector<Particle *> particles)
         for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
             r2 += pow(particles[i]->getPosition()[dim], 2);
         }
-        //derivativeAlpha *= r2*exp(-alpha*r2);
         r2sum += r2;
     }
 

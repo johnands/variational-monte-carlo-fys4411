@@ -77,7 +77,7 @@ vector<double> System::driftForce(int particle) {
 
     vector<double> driftVector;
     for (int j=0; j < m_numberOfDimensions; j++) {
-        driftVector.push_back(-2*m_waveFunction->computeGradient(m_particles)[particle*m_numberOfDimensions + j]);
+        driftVector.push_back(2*m_waveFunction->computeGradient(m_particles)[particle*m_numberOfDimensions + j]);
     }
     return driftVector;
 }

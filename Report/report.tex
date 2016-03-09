@@ -1,0 +1,403 @@
+\documentclass[english, a4paper]{article}
+
+\usepackage[T1]{fontenc}    % Riktig fontencoding
+\usepackage[utf8]{inputenc} % Riktig tegnsett
+\usepackage{babel}   % Ordelingsregler, osv
+\usepackage{graphicx}       % Inkludere bilder
+\usepackage{booktabs}       % Ordentlige tabeller
+\usepackage{url}            % Skrive url-er
+\usepackage{textcomp}       % Den greske bokstaven micro i text-mode
+\usepackage{units}          % Skrive enheter riktig
+\usepackage{float}          % Figurer dukker opp der du ber om
+\usepackage{lipsum}         % Blindtekst
+\usepackage{subcaption} 
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{amsmath}  
+\usepackage{braket} 
+\usepackage{multicol}
+%\usepackage[]{mcode}
+\usepackage{listings}    %Add source code
+\usepackage{amsfonts}
+\usepackage{setspace}
+\usepackage[cm]{fullpage}		% Smalere marger.
+\usepackage{verbatim} % kommentarfelt.
+\setlength{\columnseprule}{1pt}	%(width of separationline)
+\setlength{\columnsep}{1.0cm}	%(space from separation line)
+\newcommand\lr[1]{\left(#1\right)} 
+\newcommand\lrb[1]{\left[#1\right]} 
+\newcommand\bk[1]{\langle#1\rangle} 
+\newcommand\uu[1]{\underline{\underline{#1}}} % Understreker dobbelt.
+
+
+
+% JF i margen
+\makeatletter
+\makeatother
+\newcommand{\jf}[1]{\subsubsection*{JF #1}\vspace*{-2\baselineskip}}
+
+% Skru av seksjonsnummerering (-1)
+\setcounter{secnumdepth}{3}
+
+\begin{document}
+\renewcommand{\figurename}{Figure}
+% Forside
+\begin{titlepage}
+\begin{center}
+
+\textsc{\Large FYS4411}\\[0.5cm]
+\textsc{\Large Spring 2016}\\[1.5cm]
+\rule{\linewidth}{0.5mm} \\[0.4cm]
+{ \huge \bfseries Variational Monte Carlo studies of bosonic systems}\\[0.10cm]
+\rule{\linewidth}{0.5mm} \\[1.5cm]
+
+% Av hvem?
+\begin{minipage}{0.49\textwidth}
+    \begin{center} \large
+        John-Anders Stende \\[0.8cm]
+    \end{center}
+\end{minipage}
+
+
+\vfill
+
+% Dato nederst
+\large{Date: \today}
+
+\end{center}
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{multicols*}{2}
+
+\begin{abstract}
+The aim of this project is to use the Variational Monte Carlo (VMC) method to evaluate the 
+ground state energy of a trapped, hard sphere Bose gas for different numbers of particles
+with a specific trial wave function. 
+
+***Main findings***
+\end{abstract}
+
+
+\section*{Introduction}
+Demonstrations of Bose-Einstein condensation (BEC) in gases of alkali atoms confined in magnetic traps has gained
+a lot of interest in the scientific community in recent years. Of interest is for instance the fraction of condensed atoms, 
+the nature of the condensate and the excitations above the condensate. \\
+
+\noindent An important feature of the trapped alkali systems is that they are dilute, i.e. the effective atom size
+is small compared to both the trap size and the inter-atomic spacing. In this situation the physics is
+dominated by two-body collisions, well discribed in terms of the $s$-wave scattering length $a$ of the atoms.
+The condition for diluteness is defined by the gas parameter $x(\mathbf{r}) = n(\mathbf{r})a^3$, where $n(\mathbf{r})$
+is the local density of the system. The theoretical framework of the Gross-Pitaevski equation is valid for $x_{av} \leq 10^{-3}$,
+but recent experiments have shown that the gas parameter may exceed this value due to the presence of so-called Feshbach resonance.
+Therefore, other methods like the VMC method may be needed. \\
+
+\noindent In this project we evaluate the ground state energy of a trapped BEC by simulating different numbers of bosons
+in a harmonic oscillator potential in one, two and three dimensions. The energy is obtained using the VMC method, both with 
+and without importance sampling. We have studied both the interacting and the non-interacting case, i.e. with both 
+an uncorrelated and a correlated trial wave function. The method of blocking is utilized to do statistical analysis on
+the numerical data. We optimize the variational parameter $\alpha$ using the steepest descent method. The one-body 
+density in the interacting and non-interacting case is alsox computed. 
+
+
+\section*{Theory}
+The trap we use is a spherical (S) or an elliptical (E) harmonic trap in one, two and three dimensions, with the latter given by
+\begin{equation}
+ V_{ext}({\bf r}) = 
+ \Bigg\{
+\begin{array}{ll}
+	 \frac{1}{2}m\omega_{ho}^2r^2 & (S)\\
+ \strut
+	 \frac{1}{2}m[\omega_{ho}^2(x^2+y^2) + \omega_z^2z^2] & (E)
+ \label{trap_eqn}
+\end{array}
+\end{equation}
+where $\omega_{ho}$ and $\omega_z$ defines the trap potential strength in the $xy$-plane and $z$-direction respectively.
+The two-body Hamiltonian is
+ \begin{equation}
+     H = \sum_i^N \left(
+	 \frac{-\hbar^2}{2m}
+	 { \bigtriangledown }_{i}^2 +
+	 V_{ext}({\bf{r}}_i)\right)  +
+	 \sum_{i<j}^{N} V_{int}({\bf{r}}_i,{\bf{r}}_j),
+ \end{equation}
+ and we reresent the inter-boson interaction by a pairwise, repulsive potential
+ \begin{equation}
+ V_{int}(|{\bf r}_i-{\bf r}_j|) =  \Bigg\{
+ \begin{array}{ll}
+	 \infty & {|{\bf r}_i-{\bf r}_j|} \leq {a}\\
+	 0 & {|{\bf r}_i-{\bf r}_j|} > {a}
+ \end{array}
+ \end{equation}
+ where ${a}$ is the so-called hard-core diameter of the bosons.
+ 
+ Our trial wave function for the ground state with N atoms is given by
+  \begin{equation}
+ \Psi_T({\bf R})=\Psi_T({\bf r}_1, {\bf r}_2, \dots {\bf r}_N,\alpha,\beta)=\prod_i g(\alpha,\beta,{\bf r}_i)\prod_{i<j}f(a,|{\bf r}_i-{\bf r}_j|),
+ \label{eq:trialwf}
+ \end{equation}
+ where $\alpha$ and $\beta$ are variational parameters.
+ The single-particle wave function is proportional to the harmonic
+ oscillator function for the ground state, i.e.,
+ \begin{equation}
+    g(\alpha,\beta,{\bf r}_i)= \exp{[-\alpha(x_i^2+y_i^2+\beta z_i^2)]}.
+ \end{equation}
+ For spherical traps we have $\beta = 1$ and for non-interacting
+ bosons ($a=0$) we have $\alpha = 1/2a_{ho}^2$.  The correlation wave
+ function is
+ \begin{equation}
+    f(a,|{\bf r}_i-{\bf r}_j|)=\Bigg\{
+ \begin{array}{ll}
+	 0 & {|{\bf r}_i-{\bf r}_j|} \leq {a}\\
+	 (1-\frac{a}{|{\bf r}_i-{\bf r}_j|}) & {|{\bf r}_i-{\bf r}_j|} > {a}.
+ \end{array}
+ \end{equation}
+ 
+ 
+\subsection*{Analytical results}
+
+The quantity we are aiming to compute is the expectiation value of the so-called local energy
+ \begin{equation}
+    E_L({\bf R})=\frac{1}{\Psi_T({\bf R})}H\Psi_T({\bf R}),
+    \label{eq:locale}
+ \end{equation}
+We can find closed-form expressions for the local energy with our specific Hamiltonian $H$ and trial wavefunction $\Psi_T$.
+Computing the local energy involves a second derivative of $\Psi_T$, which can be expensive to compute numerically. 
+Analytical expressions are therefore useful, as they can speed up the computations.\\
+
+\noindent First, we find the local energy with only the (spherical) harmonic oscillator potential, that is we set $a=0$ and $\beta=1$.
+During these calcuations we will use natural units, thus $\hbar=m=1$.
+For one particle in one dimension we have
+\begin{equation}
+\Psi_T(x) = e^{-\alpha x^2}
+\end{equation}
+and
+\begin{equation}
+    H =  
+	 -\frac{1}{2}
+	 \frac{\partial^2}{\partial x^2} +
+	 \frac{1}{2}\omega x^2
+\end{equation}
+The second derivate of the trial wave function is
+\begin{equation}
+ \frac{\partial^2 \Psi_T}{\partial x^2} = 2\alpha e^{-\alpha x^2}(2\alpha x^2 - 1)
+\end{equation}
+so that
+\begin{equation}
+ E_L = \frac{1}{\Psi_T}H\Psi_T = \alpha(1 - 2\alpha x^2) + \frac{1}{2}\omega^2x^2
+\end{equation}
+In three dimensions the double derivative is replaced by the Laplacian when computing the kinetic energy
+\begin{align}
+ \bigtriangledown^2\Psi_T &= 2\alpha(2\alpha x^2 - 1) + 2\alpha(2\alpha y^2 - 1) + 2\alpha(2\alpha z^2 - 1) \\
+                          &= 2\alpha(2\alpha r^2 - 3)
+\end{align}
+thus the local energy is
+\begin{equation}
+ E_L = -\frac{1}{2}\bigtriangledown^2\Psi_T + V_{ext} = \alpha(3 - 2\alpha r^2) + \frac{1}{2}\omega^2r^2 
+\end{equation}
+We now turn our attention to $N$ particles, with the following wavefunction and Hamiltonian
+\begin{align}
+ &\Psi_T({\bf R}) = \prod_i e^{-\alpha r_i^2} \\
+ &H =     \sum_i^N \left(
+	 -\frac{1}{2}
+	 { \bigtriangledown }_{i}^2 +
+	 \frac{1}{2}\omega^2r_i^2 \right)
+\end{align}
+The first term of the k-th Laplacian of this wavefunction is
+\begin{equation}
+ \bigtriangledown^2_k\prod_i e^{-\alpha r_i^2} = 2\alpha(2\alpha x_k^2 - 1)\prod_i e^{-\alpha r_i^2}
+\end{equation}
+and when we divide with $\Psi_T$ to obtain the the local energy we end up with
+\begin{equation}
+ E_L = \sum_i^N \left( \alpha(3 - 2\alpha r_i^2) + \frac{1}{2}\omega^2r_i^2 \right)
+\end{equation}
+For one dimension the expression is
+\begin{equation}
+ E_L = \sum_i^N \left( \alpha(1 - 2\alpha x_i^2) + \frac{1}{2}\omega^2x_i^2 \right)
+\end{equation}
+\\
+
+\noindent It is also useful to compute the analytical expression for the drift force $F$ to be used in importance sampling
+\begin{equation}
+ F = \frac{2\nabla \Psi_T}{\Psi_T}.
+\end{equation}
+The gradient of $\Psi_T$ is
+\begin{align}
+ \nabla \Psi_T &= (-2\alpha x, -2\alpha y, -2\alpha z)e^{-\alpha r^2} \\
+               &= -2\alpha e^{-\alpha r^2} \bf{r}
+\end{align}
+Dividing by the wavefunction yields
+\begin{equation}
+ F = -4\alpha \bf{r}
+\end{equation}
+
+
+Find local energy for the whole system...
+
+
+\section*{Methods}
+
+We use the \textit{Variational Monte Carlo} (VMC) method in this project to obtain the ground state energy
+for our bosonic system. VMC applies the \textit{variational principle} from quantum mechanics
+\begin{equation}
+ E_0 \leq \frac{\langle \Psi_T | H | \Psi_T \rangle}{\langle \Psi_T | \Psi_T \rangle}
+\end{equation}
+which states that the ground state energy is always less or equal than the expectation value of our Hamiltonian $H$
+for any trial wavefunction $\Psi_T$. VMC consists in choosing a trial wavefunction depending on one or more
+variational parameters, and finding the values of these parameters for which the expectation value of the 
+energy is the lowest possible. The main challenge is to compute the multidimensional integral
+\begin{equation}
+ \frac{\langle \Psi_T | H | \Psi_T \rangle}{\langle \Psi_T | \Psi_T \rangle} = \frac{\int d {\bf R} \Psi_T^* H \Psi_T}{\int d {\bf R} \Psi_T^* \Psi_T}
+\end{equation}
+Traditional integration methods like Gauss-Legendre methods are too computationally expensive, therefore 
+other methods are needed.
+
+\subsection*{Monte Carlo integration}
+
+Monte Carlo integration employs a non-deterministic approach to evaluate multidimensional integrals like
+\begin{equation}
+ I = \int_\Omega f({\bf x}) d{\bf x}
+\end{equation}
+Instead of using an explicit integration scheme, we sample points
+\begin{equation}
+ {\bf x}_1 \dots {\bf x}_N \in \Omega
+\end{equation}
+according to some rule. The naive approach, called brute force Monte Carlo, is to use $N$ uniform samples. 
+The integral can then be approximated as the average of the function values at these points
+\begin{equation}
+ I \approx \frac{1}{N} \sum_{i=1}^N f({\bf x}_i)
+\end{equation}
+The brute force method is however not very efficient, as it samples an equal amount of points in all regions of $\Omega$, 
+including those where $f$ is zero. A more clever approach is to sample points according to the probability distribution (PDF)
+defined by $f$, called \textit{importance sampling} (descibed in detail below). 
+Such a PDF is in general difficult to obtain, but using a PDF that fits $f$ well can greatly increase accuracy and efficiency. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ %\end{multicols*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+
+\begin{comment}
+
+% deloppgave
+\begin{enumerate}
+\item[\bf a)]
+\item[\bf b)]
+\item[\bf c)]
+\item[\bf d)]
+\end{enumerate}
+
+%%%%%%%%
+% Tabell
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ | c | r | r | r | r | r |}
+    \hline
+    & & & & & \\*
+    \hline
+    & & & & & \\*
+    \hline
+  \end{tabular}
+  \caption{some caption}
+  \label{tab:Tabell1}
+\end{table}
+
+%%%%%%%%
+% Enkel figur
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 120mm]{/users/filiphl/Desktop/Studie/Emne/ObligX/filnavn.png}
+  \caption{some caption}\label{fig:fig1}
+  \end{center}
+\end{figure}
+
+%%%%%%%%
+% 2 figurer sbs
+\begin{figure}
+\begin{minipage}[t]{0.48\linewidth}
+  \includegraphics[width=\textwidth]{fil}
+  \caption{}
+  \label{fig:minipage1}
+\end{minipage}
+\quad
+\begin{minipage}[t]{0.48\linewidth}
+\includegraphics[width=\textwidth]{fil}
+  \caption{}
+  \label{fig:minipage1}
+\end{minipage}
+\end{figure}
+
+%%%%%%%%
+% X antall kollonner
+\begin{multicols*}{X}
+\begin{spacing}{0.7} % verticale mellomrom
+%kan f.eks benytte align?
+\end{spacing}
+\end{multicols*}
+
+
+%%%%%%%%
+%Matrise
+\begin{equation*}
+    {\bf A} = \left(\begin{array}{cccccc}
+                           z &z &z &z &z &z \\
+                           z &z &z &z &z &z \\
+                           z &z &z &z &z &z \\
+                           z &z &z &z &z &z \\
+                           z &z &z &z &z &z \\
+                           z &z &z &z &z &z \\
+                      \end{array} \right)
+\end{equation*}
+%%%%%%%%
+

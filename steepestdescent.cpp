@@ -18,7 +18,7 @@ SteepestDescent::SteepestDescent(System* system, double stepLengthOptimize)
 void SteepestDescent::optimize(double initialAlpha) {
 
     int maxNumberOfSteps = 30;
-    double tolerance = 0.01;
+    double tolerance = 0.001;
     double oldAlpha = initialAlpha;
     for (int i=0; i < maxNumberOfSteps; i++) {
 
@@ -29,7 +29,7 @@ void SteepestDescent::optimize(double initialAlpha) {
         m_system->getWaveFunction()->setAlpha(oldAlpha);
 
         // run metropolis steps
-        m_system->runMetropolisSteps((int) 1e5, false, false, false);
+        m_system->runMetropolisSteps((int) 1e4, false, false, false);
 
         // compute derivative of exp. value of local energy w.r.t. alpha
         double localEnergyDerivative = 2 * ( m_system->getSampler()->getWaveFunctionEnergy() -
@@ -50,4 +50,15 @@ void SteepestDescent::optimize(double initialAlpha) {
         oldAlpha = newAlpha;
     }
     cout << "Optimal alpha = " << oldAlpha << endl;
+
+    // run many Metropolis steps with the optimal alpha
+
+    // make initial state
+    m_system->getInitialState()->setupInitialState();
+
+    // set value of alpha
+    m_system->getWaveFunction()->setAlpha(oldAlpha);
+
+    // run metropolis steps
+    m_system->runMetropolisSteps((int) 1e7, false, false, false);
 }
