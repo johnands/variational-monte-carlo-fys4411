@@ -17,7 +17,17 @@
 \usepackage{braket} 
 \usepackage{multicol}
 %\usepackage[]{mcode}
-\usepackage{listings}    %Add source code
+
+% add source code in box
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{%
+  \parbox{\textwidth}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}\vskip-4pt}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\lstset{frame=lrb,xleftmargin=\fboxsep,xrightmargin=-\fboxsep}
+
 \usepackage{amsfonts}
 \usepackage{setspace}
 \usepackage[cm]{fullpage}		% Smalere marger.
@@ -160,7 +170,7 @@ The two-body Hamiltonian is
 The quantity we are aiming to compute is the expectiation value of the so-called local energy
  \begin{equation}
     E_L({\bf R})=\frac{1}{\Psi_T({\bf R})}H\Psi_T({\bf R}),
-    \label{eq:locale}
+    \label{localenergy}
  \end{equation}
 We can find closed-form expressions for the local energy with our specific Hamiltonian $H$ and trial wavefunction $\Psi_T$.
 Computing the local energy involves a second derivative of $\Psi_T$, which can be expensive to compute numerically. 
@@ -248,14 +258,19 @@ for any trial wavefunction $\Psi_T$. VMC consists in choosing a trial wavefuncti
 variational parameters, and finding the values of these parameters for which the expectation value of the 
 energy is the lowest possible. The main challenge is to compute the multidimensional integral
 \begin{equation}
- \frac{\langle \Psi_T | H | \Psi_T \rangle}{\langle \Psi_T | \Psi_T \rangle} = \frac{\int d {\bf R} \Psi_T^* H \Psi_T}{\int d {\bf R} \Psi_T^* \Psi_T}
+ \frac{\langle \Psi_T | H | \Psi_T \rangle}{\langle \Psi_T | \Psi_T \rangle} = 
+ \frac{\int d {\bf R} \Psi_T^*({\bf R}, \boldsymbol{\alpha}) H({\bf R}) \Psi_T({\bf R}, \boldsymbol{\alpha})}
+       {\int d {\bf R} \Psi_T^*({\bf R}, \boldsymbol{\alpha}) \Psi_T({\bf R}, \boldsymbol{\alpha})}
+ \label{multidim}
 \end{equation}
+where $\bf{R}$ is the positions of all the particles and $\boldsymbol{\alpha}$ is the set of variational parameters.
 Traditional integration methods like Gauss-Legendre methods are too computationally expensive, therefore 
 other methods are needed.
 
 \subsection*{Monte Carlo integration}
 
-Monte Carlo integration employs a non-deterministic approach to evaluate multidimensional integrals like
+Monte Carlo integration employs a non-deterministic approach to evaluate multidimensional integrals like \eqref{multidim}, or
+in general
 \begin{equation}
  I = \int_\Omega f({\bf x}) d{\bf x}
 \end{equation}
@@ -269,9 +284,236 @@ The integral can then be approximated as the average of the function values at t
  I \approx \frac{1}{N} \sum_{i=1}^N f({\bf x}_i)
 \end{equation}
 The brute force method is however not very efficient, as it samples an equal amount of points in all regions of $\Omega$, 
-including those where $f$ is zero. A more clever approach is to sample points according to the probability distribution (PDF)
-defined by $f$, called \textit{importance sampling} (descibed in detail below). 
-Such a PDF is in general difficult to obtain, but using a PDF that fits $f$ well can greatly increase accuracy and efficiency. 
+including those where $f$ is zero. 
+
+\subsection*{Metropolis algorithm}
+
+A more clever approach than the brute force method is to sample points according to the probability distribution (PDF)
+defined by $f$. Such a PDF is in general difficult to obtain, thus we can't sample directly from it.
+The solution is the Metropolis algorithm, which is a method to obtain random samples from a PDF for which 
+direct sampling is difficult. 
+These sample values are produced iteratively, with the distribution of the next sample being dependent only on 
+the current sample value, thus making the sequence of samples into a Markov chain.
+We define ${\bf P}_i^{(n)}$ to be the 
+probability for finding the system in state $i$ at step $n$. 
+The Metropolis algorithm is as follows:
+\begin{itemize}
+ \item Sample a possible new state $j$ with some probability $T_{i\rightarrow j}$
+ \item Accept the new state with probability $A_{i\rightarrow j}$ and use it as the next sample, or
+ recect the new state with probability $1 - A_{i\rightarrow j}$ and use state $i$ as sample again
+\end{itemize}
+The transition probability $T$ and the acceptance probability $A$ must fulfill the principle of detailed balance
+\begin{equation}
+ \frac{A_{i\rightarrow j}}{A_{j\rightarrow i}} = \frac{p_i T_{i\rightarrow j}}{p_j T_{j\rightarrow i}}
+ \label{detailedbalance}
+\end{equation}
+which ensures that ${\bf P}_i^{(n\rightarrow \infty)} \rightarrow p_i$, i.e. we end up at the correct 
+distribution regardless of what we begin with. \\
+
+\noindent The particles undergo a random walk under the guidance of the Metropolis algorithm. 
+Defining the PDF 
+\begin{equation}
+ P({\bf R}) = \frac{|\Psi_T({\bf R})|^2}{\int |\Psi_T({\bf R})|^2 d{\bf R}}
+\end{equation}
+and the local energy \eqref{localenergy}, the integral \eqref{multidim} can be rewritten as
+\begin{equation}
+ \langle E_L \rangle = \int P({\bf R}) E_L({\bf R}) d{\bf R}
+\end{equation}
+and we see that our problem amounts to finding the expectation value of the local energy $E_L$ on the PDF $P$.
+The VMC method approximates this integral as
+\begin{equation}
+ \langle E_L \rangle \approx \frac{1}{N} \sum_{i=1}^N P({\bf R}_i, \boldsymbol{\alpha}) E_L({\bf R}_i, \boldsymbol{\alpha})
+\end{equation}
+where $N$ is the number of Monte Carlo cycles and ${\bf R}_i$ is the position of the particles at step $i$. 
+The integral $\int |\Psi_T({\bf R})|^2 d{\bf R}$ is very difficult to compute, but the Metropolis algorithm only needs
+a \textit{ratio} of probabilities to decide if a move is accepted or not. This can be seen if we rewrite 
+\eqref{detailedbalance} as
+\begin{equation}
+ \frac{p_j}{p_i} = \frac{T_{i\rightarrow j} A_{i\rightarrow j}}{T_{j\rightarrow i} A_{j\rightarrow i}}
+ \label{ratio}
+\end{equation}
+In our case $p_j = P({\bf R}_j)$ and $p_i = P({\bf R}_i)$. 
+The simplest form of the Metropolis algorithm, called brute force Metropolis, is to assume that
+the transition probability $T_{i\rightarrow j}$ is symmetric, implying that $T_{i\rightarrow j} = T_{j\rightarrow i}$;
+the ratio of probabilities \eqref{ratio} thus equals the ratio of acceptance probabilities. 
+This leads to a  description of the Metropolis algorithm where we accept or reject a new 
+move by calculating the ratio 
+\begin{equation}
+ w = \frac{|\Psi_T({\bf R}_j)|^2}{|\Psi_T({\bf R}_i)|^2}
+ \label{ratio2}
+\end{equation}
+If $w \geq s$, where $s$ is a random number $s \in [0,1]$, the new position is accepted, else we stay
+at the same place.
+We now have the full machinery of the Monte Carlo approach to obtain the ground state energy of our bosonic system:
+\begin{itemize}
+ \item Fix the number of Monte Carlo steps and choose the initial positions ${\bf R}$
+       and variational parameters $\boldsymbol{\alpha}$.
+       Also set the step size $\Delta {\bf R}$ to be used when moving from ${\bf R}_i$ to ${\bf R}_j$.
+ \item Initialize the local energy
+ \item Choose a random particle
+ \item Calculate a trial position ${\bf R}_j = {\bf R}_i + r \dot \Delta {\bf R}$ where $r$ is a random variable
+       $r \in [0,1]$
+ \item Use the Metropolis algorithm to accept or reject this move by calculating the ratio \eqref{ratio2}. 
+       If $w \geq s$, where $s$ is a random number $s \in [0,1]$, the new position is accepted, else we stay
+       at the same place.
+ \item If the step is accepted, set ${\bf R} = {\bf R}_j$ for the chosen particle
+ \item Update the local energy
+\end{itemize}
+When the Monte Carlo sampling is finished, we calculate the mean local energy, which is our approximation
+of the ground state energy of the system.
+The Metropolis algorithm is implemented as follows:
+\belowcaptionskip=-10pt
+\begin{lstlisting}[label=MetropolisBrute,caption=Brute Forde Metropolis algorithm]
+int particle = Random::nextInt(m_numberOfParticles);    // choose random particle
+int dimension = Random::nextInt(m_numberOfDimensions);  // choose random dimension
+double change = (Random::nextDouble()*2-1)*m_stepLength;  // propose change
+
+// get old wavefunction
+double waveFuncOld = m_waveFunction->evaluate(m_particles);
+
+// adjust position
+m_particles[particle]->adjustPosition(change, dimension);
+
+// get new wavefunction
+double waveFuncNew = m_waveFunction->evaluate(m_particles);
+
+// accept/reject new position using Metropolis algorithm
+double ratio = pow(waveFuncNew, 2) / pow(waveFuncOld, 2);
+
+if (ratio >= Random::nextDouble()) {
+    //cout << m_particles[particle]->getPosition()[0] << endl;
+    return true;
+}
+else {
+    // correct position change
+    m_particles[particle]->adjustPosition(-change, dimension);
+    return false;
+}
+\end{lstlisting}
+
+
+\subsection*{Steepest descent method}
+
+We turn now to the problem of finding the variational parameters that minimizes the expectation value
+of the local energy $\langle E_L({\bf R}, \alpha) \rangle$. This project considers a trial wavefunction with only one 
+variational parameter $\alpha$.
+There are many optimization algorithms to choose from, we have chosen the Steepest 
+descent method due to its simplicity. This method finds a local minimum of a function by taking steps proportional 
+to the negative gradient of the function at a given point, i.e. where the function has the steepest descent.
+The algorithm is as follows:
+\begin{itemize}
+ \item Choose an initial $\alpha_0$ and step length $\gamma_0$.
+ \item For $i \geq 0$: Compute $\alpha_{i+1} = \alpha_i - \gamma_i \frac{d \langle E_L({\bf R}, \alpha) \rangle}{d\alpha}$
+ \item Continue until a maximum number of steps are performed or $|\alpha_{i+1} - \alpha_{i}|$ is 
+       less than some tolerance
+\end{itemize}
+$\langle E_L({\bf R}, \alpha) \rangle$ is as we have seen a multidimensional integral, and the derivative w.r.t. $\alpha$
+is not easily computed. Let us define
+\begin{equation}
+ \bar{E}_\alpha = \frac{d \langle E_L(\alpha) \rangle}{d\alpha}
+\end{equation}
+and 
+\begin{equation}
+ \bar{\Psi}_T = \frac{d \Psi_T(\alpha)}{d\alpha}
+\end{equation}
+Using the chain rule and the hermicity of the Hamiltonian it can be shown that
+\begin{equation}
+ \bar{E}_\alpha = 2 \left( \Bigr\langle \frac{\bar{\Psi}_T}{\Psi_T(\alpha)} E_L(\alpha) \Bigr\rangle 
+ - \Bigr\langle \frac{\bar{\Psi}_T}{\Psi_T(\alpha)}\Bigr\rangle \langle E_L(\alpha) \rangle   \right)
+ \label{localenergyalpha}
+\end{equation}
+thus we need the expectation values of
+\begin{equation}
+ \frac{\bar{\Psi}_T}{\Psi_T(\alpha)} E_L(\alpha)
+ \label{waveenergy}
+\end{equation}
+and 
+\begin{equation}
+ \frac{\bar{\Psi}_T}{\Psi_T(\alpha)}
+ \label{wavederivative}
+\end{equation}
+The complete VMC method then amounts to the following:
+\begin{itemize}
+ \item Make initial guess $\alpha_0$
+ \item Run $10^4$-$10^5$ Metropolis steps, sample \eqref{waveenergy} and \eqref{wavederivative}
+ \item Compute \eqref{localenergyalpha} 
+ \item Compute new $\alpha$ using the Steepest descent method
+\end{itemize}
+The above steps are repeated until the value of $\alpha$ is sufficiently accurate, before a new round of
+Metropolis steps are run, this time with many cycles ($10^6$-$10^8$). We then obtain our approximation
+for the ground state energy of the system.\\
+
+\noindent The Steepest descent method is implemented as follows:
+\belowcaptionskip=-10pt
+\begin{lstlisting}[label=steepestdescent,caption=The Steepest Descent method]
+ void SteepestDescent::optimize(double initialAlpha) {
+
+    int maxNumberOfSteps = 30;
+    double tolerance = 0.001;
+    double oldAlpha = initialAlpha;
+    for (int i=0; i < maxNumberOfSteps; i++) {
+
+        // make initial state
+        m_system->getInitialState()->setupInitialState();
+
+        // set value of alpha
+        m_system->getWaveFunction()->setAlpha(oldAlpha);
+
+        // run metropolis steps
+        m_system->runMetropolisSteps((int) 1e4, false, false, false);
+
+        // compute derivative of exp. value of local energy w.r.t. alpha
+        double localEnergyDerivative = 2 * 
+                             ( m_system->getSampler()->getWaveFunctionEnergy() -
+                               m_system->getSampler()->getWaveFunctionDerivative() *
+                               m_system->getSampler()->getEnergy() );
+
+        cout << "localEnergyDerivative = " << localEnergyDerivative << endl;
+
+        // compute new alpha
+        double newAlpha = oldAlpha - m_stepLengthOptimize*localEnergyDerivative;
+        cout << "newAlhpa = " << newAlpha << endl;
+        cout << "oldAlpha = " << oldAlpha << endl;
+        cout << std::abs(newAlpha-oldAlpha) << endl;
+        if ( std::abs(newAlpha - oldAlpha) < tolerance ) {
+            break;
+        }
+        // before new iteration
+        oldAlpha = newAlpha;
+    }
+    cout << "Optimal alpha = " << oldAlpha << endl;
+
+    // run many Metropolis steps with the optimal alpha
+
+    // make initial state
+    m_system->getInitialState()->setupInitialState();
+
+    // set value of alpha
+    m_system->getWaveFunction()->setAlpha(oldAlpha);
+
+    // run metropolis steps
+    m_system->runMetropolisSteps((int) 1e7, false, false, false);
+}
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
