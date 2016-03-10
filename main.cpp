@@ -18,18 +18,18 @@ using namespace std;
 int main() {
 
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 10;
+    int numberOfParticles   = 100;
     int numberOfSteps       = (int) 1e4;
     double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.7;          // variational parameter 1
+    double alpha            = 0.5;          // variational parameter 1
     double beta             = 2.82843;      // variational parameter 2
-    double stepLength       = 0.73;         // metropolis step length
+    double stepLength       = 1.5;          // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
-    double timeStep         = 0.01;         // importance sampling
+    double timeStep         = 0.01;        // importance sampling
     double a                = 0.0043;       // hard sphere radius
     double gamma            = 2.82843;      // trap potential strength z-direction
 
-    bool useNumerical       = false;         // compute kinetic energy numerically
+    bool useNumerical       = true;         // compute kinetic energy numerically
     bool useImportanceSampling = true;
     bool writeEnergiesToFile = false;
     bool writePositionsToFile = false;

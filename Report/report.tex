@@ -497,7 +497,250 @@ for the ground state energy of the system.\\
 \end{lstlisting}
 
 
+\subsection*{Blocking}
 
+Monte Carlo simulations can be treated as computer experiments. The results can be analyzed with the same
+statistical tools as we would use analyzing experimental data. We are looking for expectation values
+of these data, and how accurate they are. 
+
+
+\subsection*{Implementation}
+
+The project code is split into different classes that handle different things. We will here give an overview
+of what the different classes do and how they communicate. \\
+
+\noindent The main program sets all the parameters needed to a simulatio. 
+
+
+\section*{Results}
+
+We investigate two different systems, both with only one variational parameter $\alpha$:
+\begin{enumerate}
+ \item $N=1$, $N=10$, $N=100$ and $N=500$ bosons in one, two and three dimensions in a
+       spherical harmonic oscillator potential with no interaction.       
+ \item $N=10$, $N=50$ and $N=100$ bosons in three dimensions
+       in an elliptical harmonic oscillator potential including interaction and a
+       correlated trial wavefunction. 
+\end{enumerate}
+
+We calculate the ground state energy for system 1 both with and without importance sampling.
+Only the brute force Metropolis algorithm is applied for system 2.
+The kinetic energy is calculated both numerically and analytically in both cases.\\
+
+\noindent We use blocking to analyze the error of the statistical data for both systems.
+The steepest descent method is applied to optimize $\alpha$. 
+In addition to this, the one-body density is computed for both systems.
+
+
+\subsection*{System 1 - brute force Metropolis}
+
+\begin{lstlisting}
+    int numberOfSteps       = (int) 1e4;
+    double omega            = 1.0;          // oscillator frequency
+    double alpha            = 0.5;          // variational parameter 1
+    double stepLength       = 1.5;          // metropolis step length
+    double equilibration    = 0.1;          
+\end{lstlisting}
+
+Acceptance rate: 0.55
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ | c | r | r | r | r |}
+    \hline
+    N& D& E& $\sigma$& Time \\*
+    \hline
+    1& 1& 0.5& 0& 5.53e-3 \\*
+    \hline
+    1& 2& 1& 0&  5.66e-3\\*
+    \hline
+    1& 3& 1.5& 0&  5.70e-3\\*
+    \hline
+    10& 1& 5& 0&  7.20e-3\\*
+    \hline
+    10& 2& 10& 0&  7.36e-3\\*
+    \hline
+    10& 3& 15& 0&  1.00-3\\*
+    \hline
+    100& 1& 50& 0&  0.0215\\*
+    \hline
+    100& 2& 100& 0&  0.223\\*
+    \hline
+    100& 3& 150& 0&  0.274\\*
+    \hline
+    500& 1& 200& 0&  0.0843\\*
+    \hline
+    500& 2& 500& 0&  0.110\\*
+    \hline
+    500& 3& 750& 0&  0.131\\*
+    \hline
+  \end{tabular}
+  \caption{Analytical}
+  \label{tab:Tabell1}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ | c | r | r | r | r |}
+    \hline
+    N& D& E& $\sigma$& Time \\*
+    \hline
+    1& 1& 0.49& 9.87e-8& 6.96e-3 \\*
+    \hline
+    1& 2& 0.99& 1.873-7&  0.0151\\*
+    \hline
+    1& 3& 1.49& 1.88e-7&  0.0157\\*
+    \hline
+    10& 1& 4.99& 4.42e-7&  0.0314\\*
+    \hline
+    10& 2& 9.99& 6.78e-7&  0.0598\\*
+    \hline
+    10& 3& 14.9& 1.11e-6&  0.0955\\*
+    \hline
+    100& 1& 49.9& 2.78e-6&  0.743\\*
+    \hline
+    100& 2& 99.9& 6.18e-6&  1.78\\*
+    \hline
+    100& 3& 149.9& 8.95e-6&  3.16\\*
+    \hline
+    500& 1& 199.9& 1.32e-5&  15.1\\*
+    \hline
+    500& 2& 499.9& 2.52e-5&  41.5\\*
+    \hline
+    500& 3& 749.9& 6.65e-5&  74.5\\*
+    \hline
+  \end{tabular}
+  \caption{Numerical}
+  \label{tab:Tabell1}
+\end{table}
+
+From quantum mechanics we know that the exact ground state energy for this system is
+\begin{equation}
+ E = \frac{\omega N}{2}
+\end{equation}
+
+
+\subsection*{System 1 - importance sampling}
+
+\begin{lstlisting}
+    int numberOfSteps       = (int) 1e4;
+    double omega            = 1.0;          // oscillator frequency
+    double alpha            = 0.5;          // variational parameter 1
+    double stepLength       = 1.5;          // metropolis step length
+    double equilibration    = 0.1;          // amount of the total steps
+    double timeStep         = 0.001;        // importance sampling
+\end{lstlisting}
+
+Acceptance rate: 0.9
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ | c | r | r | r | r |}
+    \hline
+    N& D& E& $\sigma$& Time \\*
+    \hline
+    1& 1& 0.5& 0& 0.0183 \\*
+    \hline
+    1& 2& 1& 0&  0.0338\\*
+    \hline
+    1& 3& 1.5& 0&  0.0501\\*
+    \hline
+    10& 1& 5& 0&  0.0479\\*
+    \hline
+    10& 2& 10& 0&  0.0488\\*
+    \hline
+    10& 3& 15& 0&  0.0812\\*
+    \hline
+    100& 1& 50& 0&  0.0605\\*
+    \hline
+    100& 2& 100& 0&  0.1212\\*
+    \hline
+    100& 3& 150& 0&  0.218\\*
+    \hline
+    500& 1& 200& 0&  0.171\\*
+    \hline
+    500& 2& 500& 0&  0.451\\*
+    \hline
+    500& 3& 750& 0&  0.941\\*
+    \hline
+  \end{tabular}
+  \caption{Analytical}
+  \label{tab:Tabell1}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ | c | r | r | r | r |}
+    \hline
+    N& D& E& $\sigma$& Time \\*
+    \hline
+    1& 1& 0.5& 9.41e-8& 0.0170 \\*
+    \hline
+    1& 2& 1& 1.48e-7&  0.0352\\*
+    \hline
+    1& 3& 1.5& 1.58e-7&  0.0618\\*
+    \hline
+    10& 1& 5& 3.42e-7&  0.0413\\*
+    \hline
+    10& 2& 10& 3.50e-7&  0.104\\*
+    \hline
+    10& 3& 15& 9.23e-7&  0.163\\*
+    \hline
+    100& 1& 50& 3.02e-6&  0.737\\*
+    \hline
+    100& 2& 100& 5.72e-6&  1.889\\*
+    \hline
+    100& 3& 150& 6.88e-6&  3.319\\*
+    \hline
+    500& 1& 200& 1.01e-5&  15.509\\*
+    \hline
+    500& 2& 500& 4.94e-5&  41.047\\*
+    \hline
+    500& 3& 750& 2.42e-5&  75.584\\*
+    \hline
+  \end{tabular}
+  \caption{Numerical}
+  \label{tab:Tabell1}
+\end{table}
+
+
+Dependence on importance sampling time step:\\
+N = 100, D = 3
+
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ | c | r | r |}
+    \hline
+    Time step& Acceptance rate& $\sigma$ \\*
+    \hline
+    0.001& 0.871& 0 \\*
+    \hline
+    0.005& 0.831& 0 \\*
+    \hline
+    0.01&  0.801& 0 \\*
+    \hline
+  \end{tabular}
+  \caption{Analytical}
+  \label{tab:Tabell1}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ | c | r | r |}
+    \hline
+    Time step& Acceptance rate& $\sigma$ \\*
+    \hline
+    0.001& 0.871& 6.88e-6 \\*
+    \hline
+    0.005& 0.831& 7.39e-6 \\*
+    \hline
+    0.01&  0.801& 9.91e-6 \\*
+    \hline
+  \end{tabular}
+  \caption{Numerical}
+  \label{tab:Tabell1}
+\end{table}
 
 
 

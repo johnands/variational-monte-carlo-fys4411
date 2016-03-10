@@ -174,7 +174,8 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceS
 
     }
     finish = clock();
-    cout << "Time elapsed: " << ((finish-start)/CLOCKS_PER_SEC) << endl;
+    cout << "Time elapsed: " << std::setprecision(5) << ((double) (finish-start)/CLOCKS_PER_SEC)
+         << " s" << endl;
 
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();

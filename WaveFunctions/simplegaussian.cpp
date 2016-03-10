@@ -28,7 +28,6 @@ double SimpleGaussian::evaluate(std::vector<Particle*> particles) {
          gaussian += r2;
      }
     return exp(-alpha * gaussian);
-     //return gaussian;
 }
 
 double SimpleGaussian::computeLaplacian(std::vector<Particle*> particles) {
@@ -41,14 +40,9 @@ double SimpleGaussian::computeLaplacian(std::vector<Particle*> particles) {
         for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
             r2 += pow(particles[i]->getPosition()[dim], 2);
         }
-        doubleDerivative += 2*alpha*(2*alpha*r2 - m_system->getNumberOfDimensions());
+        doubleDerivative += 2*alpha*r2 - m_system->getNumberOfDimensions();
     }
-    return doubleDerivative;
-
-    /*// 1d, one particle
-    double x = particles[0]->getPosition()[0];
-    double alpha = m_parameters[0];
-    return 2*alpha*exp(-alpha*x*x)*(2*alpha*x*x - 1);*/
+    return doubleDerivative*2*alpha;
 }
 
 std::vector<double> SimpleGaussian::computeGradient(std::vector<Particle*> particles) {

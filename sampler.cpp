@@ -78,19 +78,19 @@ void Sampler::printOutputToTerminal() {
     cout << endl;
     cout << "  -- Reults -- " << endl;
     cout << " Energy : " << std::setprecision(10) << m_energy << endl;
-    cout << " Standard deviation : " << m_standardDeviation << endl;
+    cout << " Standard deviation : " << std::setprecision(10) << m_standardDeviation << endl;
     cout << " Acceptance rate : " << as / (double) ms*(1 - ef) << endl;
     cout << endl;
 }
 
 void Sampler::writeToFile(double localEnergy) {
     if (m_stepNumber == 0) {
-        m_outFile.open("energyInteracting0.7.dat", std::ios::out | std::ios::trunc);
+        m_outFile.open("energy0.7.dat", std::ios::out | std::ios::trunc);
         m_outFile.close();
     }
 
     // write local energy to file to do blocking in python
-    m_outFile.open("energyInteracting0.7.dat", std::ios::out | std::ios::app);
+    m_outFile.open("energy0.7.dat", std::ios::out | std::ios::app);
     m_outFile << localEnergy << endl;
     m_outFile.close();
 
@@ -122,7 +122,7 @@ void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities
 
     m_energy                    = m_cumulativeEnergy / (double) m_stepNumber;
-    m_standardDeviation         = sqrt(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy);
+    m_standardDeviation         = sqrt(std::abs(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy));
     m_waveFunctionDerivative    = m_cumulativeWaveFunctionDerivative / (double) m_stepNumber;
     m_waveFunctionEnergy        = m_cumulativeWaveFunctionEnergy / (double) m_stepNumber;
 
