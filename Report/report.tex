@@ -501,7 +501,36 @@ for the ground state energy of the system.\\
 
 Monte Carlo simulations can be treated as computer experiments. The results can be analyzed with the same
 statistical tools as we would use analyzing experimental data. We are looking for expectation values
-of these data, and how accurate they are. 
+of these data, and how accurate they are. The standard deviation $\sigma$ is an estimate of the error of 
+a stochastic experiment, but this is not the true error when the data is \textit{correlated}.
+A stochastic process like a Monte Carlo experiment produces sequentially a chain of values
+\begin{equation}
+ \{x_1, x_2 \dots x_k \dots x_n \}
+\end{equation}
+called a sample. Each value $x_k$ is called a measurement. The sample covariance
+\begin{equation}
+ cov(x) \equiv \frac{1}{n} \sum_{kl} (x_k - \bar{x}_n) (x_l - \bar{x}_n)
+\end{equation}
+is a measure of the sequential correlation between succeding measurements of a sample.
+Note that this is the \textit{sample} covariance and not the \textit{true} covariance
+of a stochastic variable. The law of large numbers states that as the size of our sample
+grows to infinity, the sample mean approaches the true mean. 
+It can be shown that an estimate of the error $err_X$ of the sample mean $\bar{x}_n$ is
+\begin{equation}
+ err_X = \frac{1}{n} cov(x)
+\end{equation}
+This is in general a very time-consuming property to compute. 
+However, with the help of the \textit{autocorrelation function} from statistical theory we can write
+$err_X$ as
+\begin{equation}
+ err_X = \frac{\tau}{n} var(x)
+\end{equation}
+where $var(x)$ is the uncorrelated sample variance and $\tau$ is a correlation factor which accounts
+for the correlation between measurements. 
+
+
+
+
 
 
 \subsection*{Implementation}
