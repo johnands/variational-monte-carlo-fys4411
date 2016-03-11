@@ -497,36 +497,75 @@ for the ground state energy of the system.\\
 \end{lstlisting}
 
 
+\subsection*{Importance sampling}
+
+A more efficient way to 
+
+
 \subsection*{Blocking}
 
 Monte Carlo simulations can be treated as computer experiments. The results can be analyzed with the same
 statistical tools as we would use analyzing experimental data. We are looking for expectation values
-of these data, and how accurate they are. The standard deviation $\sigma$ is an estimate of the error of 
-a stochastic experiment, but this is not the true error when the data is \textit{correlated}.
+of these data, and how accurate they are.
 A stochastic process like a Monte Carlo experiment produces sequentially a chain of values
 \begin{equation}
  \{x_1, x_2 \dots x_k \dots x_n \}
 \end{equation}
-called a sample. Each value $x_k$ is called a measurement. The sample covariance
+called a sample. Each value $x_k$ is called a measurement. The sample variance
+\begin{equation}
+ var(x) = \frac{1}{n} \sum_{k=1}^n (x_k - \bar{x}_n)
+ \label{samplevariance}
+\end{equation}
+where $\bar{x}_n$ is the sample mean, is a measure of the statistical error of a \textit{uncorrelated} sample.
+However, a Monte Carlo simulation produces a correlated sample, thus we need another measure of the sample error.
+The sample covariance
 \begin{equation}
  cov(x) \equiv \frac{1}{n} \sum_{kl} (x_k - \bar{x}_n) (x_l - \bar{x}_n)
 \end{equation}
 is a measure of the sequential correlation between succeding measurements of a sample.
-Note that this is the \textit{sample} covariance and not the \textit{true} covariance
-of a stochastic variable. The law of large numbers states that as the size of our sample
-grows to infinity, the sample mean approaches the true mean. 
-It can be shown that an estimate of the error $err_X$ of the sample mean $\bar{x}_n$ is
+(Note that these are experimental values for the sample, not the \textit{true} properties of
+the stochastic variables, which we need an infinite number of measurements to calculate).
+
+\noindent It can be shown that an estimate of the error $err_X$ 
+of a correlated sample is
 \begin{equation}
  err_X = \frac{1}{n} cov(x)
 \end{equation}
-This is in general a very time-consuming property to compute. 
-However, with the help of the \textit{autocorrelation function} from statistical theory we can write
-$err_X$ as
+With the help of the \textit{autocorrelation function} from statistical theory we can rewrite
+this error as
 \begin{equation}
  err_X = \frac{\tau}{n} var(x)
 \end{equation}
-where $var(x)$ is the uncorrelated sample variance and $\tau$ is a correlation factor which accounts
-for the correlation between measurements. 
+where $\tau$ is the \textit{autocorrelation time} which accounts
+for the correlation between measurements. In the presence of
+correlation the effective number of measurements becomes
+\begin{equation}
+ n_{eff} = \frac{n}{\tau}
+\end{equation}
+Neglecting $\tau$ thus gives an error estimate that is less than the true sample error. 
+The autocorrelation time is however expensive to compute. We can avoid the computation of this quantity by using
+the technique of blocking. The idea behind this method is to split the sample into blocks, find the mean of each block
+and then calculate the total mean and variance of all the block means.
+This is done for increasing block sizes until the measurements of two sequential blocks are uncorrelated, which
+are governed by the autocorrelation time $\tau$\\
+
+\noindent The blocking algorithm is as follows:
+\begin{itemize}
+ \item Do a Monte Carlo simulation, store the local energy for each step to file
+ \item Read the file into an array
+ \item Loop over increasing block sizes:
+ \begin{itemize}
+     \item For each block size $n_b$, loop over array in steps of $n_b$ taking the mean of elements
+           $[in_b, (i+1)n_b] , \dots $
+     \item Calculate total mean and variance of all block means and store
+ \end{itemize}
+ \item Plot total variance for all block sizes. 
+\end{itemize}
+
+According to the above discussion, the variance will increase for increasing block size until
+we reach a plateau. A more correct measure of the sample error is thus obtained. 
+
+
 
 
 
