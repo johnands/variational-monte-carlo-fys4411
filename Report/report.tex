@@ -499,7 +499,60 @@ for the ground state energy of the system.\\
 
 \subsection*{Importance sampling}
 
-A more efficient way to 
+A more efficient way to do Monte Carlo sampling is to replace the brute force Metropolis algorithm
+with a walk in coordinate space biased by the trial wavefunction. This approach is based on the 
+Fokker-Planck equation and the Langevin equation for generating a trajectory in coordinate space. \\
+
+\noindent The Langevin equation is a stochastic differential equation
+\begin{equation}
+ \frac{\partial x(t)}{\partial t} = D F(x(t)) + \eta
+ \label{Langevin}
+\end{equation}
+where $D$ is the diffusion constant and $\eta$ a random variable.
+The new positions $y$ in coordinate space are the solutions of \eqref{Langevin} using Euler's method:
+\begin{equation}
+ y = x + DF(x)\Delta t + \xi \sqrt{\Delta t}
+ \label{LangevinSolution}
+\end{equation}
+where $\xi$ is a gaussian random variable and $\Delta t$ is a chosen time step. $D$ is equal to $1/2$
+which comes from the factor $1/2$ in the kinetic energy operator. $\Delta t$ is to be viewed as a
+parameter which yields stable values of the ground state energy for values $\Delta t \in [0.001, 0.01]$.
+\eqref{LangevinSolution} is similar to the brute force Metropolis equation for updating positions except for the
+term  containing $F(x)$. This is the function that pushes the particles towards regions of configuration space
+where the wavefunction is large, in contrast to the brute force method where all regions are equally probable. 
+In three dimension $F(x)$ is called the \textit{drift vector} ${\bf F}({\bf x})$. This quantity can be found from the
+Fokker-Planck equation
+\begin{equation}
+ \frac{\partial P}{\partial t} = \sum_i D \frac{\partial}{\partial {\bf x}_i}
+ \left( {\bf x}_i - {\bf F}_i \right) P({\bf x}, t)
+\end{equation}
+which describes the process of isotropic diffusion
+by a time-dependent probability density $P({\bf x}, t)$ with a drift ${\bf F}$.
+The convergence to a stationary probability density can be obtained by settinf the left hand side to zero. 
+The resulting equation is only satisfied if all terms of the sum are equal to zero, 
+\begin{equation}
+ \frac{\partial^2 P}{\partial {\bf x}_i^2} = P \frac{\partial}{\partial {\bf x}_i} {\bf F}_i
+ + {\bf F}_i \frac{\partial}{\partial {\bf x}_i} P
+ \label{stationaryFokker}
+\end{equation}
+The drift vector should have the form ${\bf F} = g({\bf x}) \frac{\partial P}{\partial {\bf x}}$. Inserting this in
+\eqref{stationaryFokker} yields 
+\begin{equation}
+ {\bf F} = 2 \frac{1}{\Psi_T} \nabla \Psi_T
+\end{equation}
+which is known as the \textit{quantum force}. \\
+
+\\ The Monte Carlo method with the Metropolis algoritgh can be seen as isotropic diffusion by a time-dependent probability density, 
+with or without a drift, corresponding to brute force
+
+
+
+
+
+
+
+
+
 
 
 \subsection*{Blocking}
