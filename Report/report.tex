@@ -520,15 +520,16 @@ parameter which yields stable values of the ground state energy for values $\Del
 \eqref{LangevinSolution} is similar to the brute force Metropolis equation for updating positions except for the
 term  containing $F(x)$. This is the function that pushes the particles towards regions of configuration space
 where the wavefunction is large, in contrast to the brute force method where all regions are equally probable. 
-In three dimension $F(x)$ is called the \textit{drift vector} ${\bf F}({\bf x})$. This quantity can be found from the
+In three dimension $F(x)$ is called the \textit{drift vector} ${\bf F}({\bf x})$.
+The Monte Carlo method with the Metropolis algorithm can be seen as isotropic diffusion process by a time-dependent 
+probability density, with or without a drift. corresponding to brute force and importance samling respectively.
+The drift vector can be found from the
 Fokker-Planck equation
 \begin{equation}
  \frac{\partial P}{\partial t} = \sum_i D \frac{\partial}{\partial {\bf x}_i}
  \left( {\bf x}_i - {\bf F}_i \right) P({\bf x}, t)
 \end{equation}
-which describes the process of isotropic diffusion
-by a time-dependent probability density $P({\bf x}, t)$ with a drift ${\bf F}$.
-The convergence to a stationary probability density can be obtained by settinf the left hand side to zero. 
+The convergence to a stationary probability density can be obtained by setting the left hand side to zero. 
 The resulting equation is only satisfied if all terms of the sum are equal to zero, 
 \begin{equation}
  \frac{\partial^2 P}{\partial {\bf x}_i^2} = P \frac{\partial}{\partial {\bf x}_i} {\bf F}_i
@@ -542,14 +543,22 @@ The drift vector should have the form ${\bf F} = g({\bf x}) \frac{\partial P}{\p
 \end{equation}
 which is known as the \textit{quantum force}. \\
 
-\\ The Monte Carlo method with the Metropolis algoritgh can be seen as isotropic diffusion by a time-dependent probability density, 
-with or without a drift, corresponding to brute force
-
-
-
-
-
-
+\noindent The Monte Carlo method with the Metropolis algorithm can be seen as isotropic diffusion process by a time-dependent 
+probability density, with or without a drift. corresponding to brute force and importance samling respectively.
+Our new transition probabilty is thus a solution to the Fokker-Planck equation, yielding
+\begin{equation}
+ G(y, x, \Delta t) = \frac{1}{(4\pi D \Delta t)^{3N/2}}
+ \textrm{exp}(-(y - x - D\Delta t F(x))^2 / 4D\Delta t)
+\end{equation}
+which in turn means that our brute force Metropolis accept/reject ratio \eqref{ratio2} is replaced by
+the so-called \text{Metropolis-Hastings} article
+\begin{equation}
+ q(y, x) = \frac{G(x, y, \Delta t)|\Psi_T(y)|^2}{G(y, x, \Delta t)|\Psi_T(x)|^2}
+ \label{metropolisHastings}
+\end{equation}
+The Metropolis Hastings algorithm has the same role as the brute force method in the Monte Carlo approach
+to obatin expectation values, now with \eqref{ratio2} replaced by \eqref{metropolisHastings} and trial position
+calculated according to \eqref{LangevinSolution}.
 
 
 
@@ -566,34 +575,34 @@ A stochastic process like a Monte Carlo experiment produces sequentially a chain
 \end{equation}
 called a sample. Each value $x_k$ is called a measurement. The sample variance
 \begin{equation}
- var(x) = \frac{1}{n} \sum_{k=1}^n (x_k - \bar{x}_n)
+ \textrm{var}(x) = \frac{1}{n} \sum_{k=1}^n (x_k - \bar{x}_n)
  \label{samplevariance}
 \end{equation}
 where $\bar{x}_n$ is the sample mean, is a measure of the statistical error of a \textit{uncorrelated} sample.
 However, a Monte Carlo simulation produces a correlated sample, thus we need another measure of the sample error.
 The sample covariance
 \begin{equation}
- cov(x) \equiv \frac{1}{n} \sum_{kl} (x_k - \bar{x}_n) (x_l - \bar{x}_n)
+ \textrm{cov}(x) \equiv \frac{1}{n} \sum_{kl} (x_k - \bar{x}_n) (x_l - \bar{x}_n)
 \end{equation}
 is a measure of the sequential correlation between succeding measurements of a sample.
 (Note that these are experimental values for the sample, not the \textit{true} properties of
-the stochastic variables, which we need an infinite number of measurements to calculate).
+the stochastic variables, which we need an infinite number of measurements to calculate).\\
 
 \noindent It can be shown that an estimate of the error $err_X$ 
 of a correlated sample is
 \begin{equation}
- err_X = \frac{1}{n} cov(x)
+ \textrm{err}_X = \frac{1}{n} \textrm{cov}(x)
 \end{equation}
 With the help of the \textit{autocorrelation function} from statistical theory we can rewrite
 this error as
 \begin{equation}
- err_X = \frac{\tau}{n} var(x)
+ \textrm{err}_X = \frac{\tau}{n} \textrm{var}(x)
 \end{equation}
 where $\tau$ is the \textit{autocorrelation time} which accounts
 for the correlation between measurements. In the presence of
 correlation the effective number of measurements becomes
 \begin{equation}
- n_{eff} = \frac{n}{\tau}
+ n_{\textrm{eff}} = \frac{n}{\tau}
 \end{equation}
 Neglecting $\tau$ thus gives an error estimate that is less than the true sample error. 
 The autocorrelation time is however expensive to compute. We can avoid the computation of this quantity by using
