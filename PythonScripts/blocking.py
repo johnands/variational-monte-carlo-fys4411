@@ -44,13 +44,13 @@ def mean(blockEnergies):
 def main():
 
     # extract data and convert to array
-    energies = np.array(extract('energy0.7.dat'))
+    energies = np.array(extract('energyNum10interacting.dat'))
     
     # block parameters
     numberOfEnergies = len(energies)
-    blockSizeStepLength = 200 
+    blockSizeStepLength = 5
     minimumBlockSize = 1
-    maximumBlockSize = len(energies) / 100
+    maximumBlockSize = len(energies) / 50
     numberOfBlockSizes = (maximumBlockSize - minimumBlockSize) / blockSizeStepLength
     
     print 'No of energies = ', numberOfEnergies
@@ -81,7 +81,7 @@ def main():
 
 # main
 varianceOfGivenBlockSize, allBlockSizes = main()
-plt.plot(allBlockSizes, np.sqrt(varianceOfGivenBlockSize))
+plt.plot(allBlockSizes, varianceOfGivenBlockSize)
 plt.xlabel('Block Size')
 plt.ylabel('Standard deviation')
 plt.show()

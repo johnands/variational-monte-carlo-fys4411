@@ -18,9 +18,14 @@ SteepestDescent::SteepestDescent(System* system, double stepLengthOptimize)
 void SteepestDescent::optimize(double initialAlpha) {
 
     int maxNumberOfSteps = 30;
-    double tolerance = 0.001;
+    double tolerance = 1e-10;
     double oldAlpha = initialAlpha;
+    double oldEnergy = 1e10;
     for (int i=0; i < maxNumberOfSteps; i++) {
+
+        if (i > 0) {
+            oldEnergy = m_system->getSampler()->getEnergy();
+        }
 
         // make initial state
         m_system->getInitialState()->setupInitialState();
@@ -29,23 +34,31 @@ void SteepestDescent::optimize(double initialAlpha) {
         m_system->getWaveFunction()->setAlpha(oldAlpha);
 
         // run metropolis steps
-        m_system->runMetropolisSteps((int) 1e4, false, false, false);
+        m_system->runMetropolisSteps((int) 1e5, false, false, false);
+
+        double newEnergy = m_system->getSampler()->getEnergy();
 
         // compute derivative of exp. value of local energy w.r.t. alpha
         double localEnergyDerivative = 2 * ( m_system->getSampler()->getWaveFunctionEnergy() -
                                              m_system->getSampler()->getWaveFunctionDerivative() *
-                                             m_system->getSampler()->getEnergy() );
+                                             newEnergy );
 
-        cout << "localEnergyDerivative = " << localEnergyDerivative << endl;
+        if (newEnergy > oldEnergy) {
+            m_stepLengthOptimize /= 2.0;
+            cout << "New step length: " << m_stepLengthOptimize << endl;
+        }
 
         // compute new alpha
         double newAlpha = oldAlpha - m_stepLengthOptimize*localEnergyDerivative;
         cout << "newAlhpa = " << newAlpha << endl;
         cout << "oldAlpha = " << oldAlpha << endl;
-        cout << std::abs(newAlpha-oldAlpha) << endl;
-        if ( std::abs(newAlpha - oldAlpha) < tolerance ) {
+        /*if ( std::abs(newAlpha - oldAlpha) < tolerance ) {
+            break;
+        }*/
+        if ( localEnergyDerivative < tolerance ) {
             break;
         }
+
         // before new iteration
         oldAlpha = newAlpha;
     }
@@ -60,5 +73,5 @@ void SteepestDescent::optimize(double initialAlpha) {
     m_system->getWaveFunction()->setAlpha(oldAlpha);
 
     // run metropolis steps
-    m_system->runMetropolisSteps((int) 1e7, false, false, false);
+    m_system->runMetropolisSteps((int) 1e6, false, false, false);
 }

@@ -15,7 +15,8 @@ HarmonicOscillatorInteracting::HarmonicOscillatorInteracting(class System* syste
 
 
 double HarmonicOscillatorInteracting::computeAnalyticalKineticEnergy(std::vector<Particle*> particles) {
-    return 0;
+    double kineticEnergy = -0.5*m_system->getWaveFunction()->computeLaplacian(particles);
+    return kineticEnergy;
 }
 
 double HarmonicOscillatorInteracting::computePotentialEnergy(std::vector<Particle*> particles) {

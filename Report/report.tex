@@ -90,7 +90,7 @@ with a specific trial wave function.
 \end{abstract}
 
 
-\section*{Introduction}
+\section{Introduction}
 Demonstrations of Bose-Einstein condensation (BEC) in gases of alkali atoms confined in magnetic traps has gained
 a lot of interest in the scientific community in recent years. Of interest is for instance the fraction of condensed atoms, 
 the nature of the condensate and the excitations above the condensate. \\
@@ -111,7 +111,7 @@ the numerical data. We optimize the variational parameter $\alpha$ using the ste
 density in the interacting and non-interacting case is alsox computed. 
 
 
-\section*{Theory}
+\section{Theory}
 The trap we use is a spherical (S) or an elliptical (E) harmonic trap in one, two and three dimensions, with the latter given by
 \begin{equation}
  V_{ext}({\bf r}) = 
@@ -145,7 +145,7 @@ The two-body Hamiltonian is
  Our trial wave function for the ground state with N atoms is given by
   \begin{equation}
  \Psi_T({\bf R})=\Psi_T({\bf r}_1, {\bf r}_2, \dots {\bf r}_N,\alpha,\beta)=\prod_i g(\alpha,\beta,{\bf r}_i)\prod_{i<j}f(a,|{\bf r}_i-{\bf r}_j|),
- \label{eq:trialwf}
+ \label{trialwf}
  \end{equation}
  where $\alpha$ and $\beta$ are variational parameters.
  The single-particle wave function is proportional to the harmonic
@@ -165,7 +165,7 @@ The two-body Hamiltonian is
  \end{equation}
  
  
-\subsection*{Analytical results}
+\subsection{Analytical results}
 
 The quantity we are aiming to compute is the expectiation value of the so-called local energy
  \begin{equation}
@@ -199,12 +199,13 @@ so that
 \end{equation}
 In three dimensions the double derivative is replaced by the Laplacian when computing the kinetic energy
 \begin{align}
- \bigtriangledown^2\Psi_T &= 2\alpha(2\alpha x^2 - 1) + 2\alpha(2\alpha y^2 - 1) + 2\alpha(2\alpha z^2 - 1) \\
-                          &= 2\alpha(2\alpha r^2 - 3)
+ \frac{1}{\Psi_T}\bigtriangledown^2\Psi_T &= 2\alpha(2\alpha x^2 - 1) + 2\alpha(2\alpha y^2 - 1) + 2\alpha(2\alpha z^2 - 1) \\
+                          &= 2\alpha(2\alpha r^2 - 3) \label{analytickinnoninteracing}
 \end{align}
 thus the local energy is
 \begin{equation}
- E_L = -\frac{1}{2}\bigtriangledown^2\Psi_T + V_{ext} = \alpha(3 - 2\alpha r^2) + \frac{1}{2}\omega^2r^2 
+ E_L = \frac{1}{\Psi_T}\left(-\frac{1}{2}\bigtriangledown^2\Psi_T + V_{ext}\right) = \alpha(3 - 2\alpha r^2) + 
+ \frac{1}{2}\omega^2r^2 
 \end{equation}
 We now turn our attention to $N$ particles, with the following wavefunction and Hamiltonian
 \begin{align}
@@ -237,16 +238,147 @@ The gradient of $\Psi_T$ is
  \nabla \Psi_T &= (-2\alpha x, -2\alpha y, -2\alpha z)e^{-\alpha r^2} \\
                &= -2\alpha e^{-\alpha r^2} \bf{r}
 \end{align}
-Dividing by the wavefunction yields
+where ${\bf r} = (x, y, z)$.
+Dividing by the wavefunction and multiplying with 2
 \begin{equation}
  F = -4\alpha \bf{r}
 \end{equation}
 
 
-Find local energy for the whole system...
+\subsubsection{Analytic energy for interacting system}
+
+We rewrite \eqref{trialwf},
+\begin{equation}
+ \Psi_T(\alpha, \beta, {\bf R}) = \prod_i g(\alpha,\beta,{\bf r}_i)\textrm{exp} \left(
+ \sum_{i<j}u(r_{ij}) \right)
+ \label{wfinteracting}
+\end{equation}
+where $r_{ij} = |{\bf r}_i - {\bf r}_j|$ and $u(r_{ij}) = \textrm{ln}f(r_{ij})$.  We also set
+\begin{equation}
+ g(\alpha, \beta, {\bf r}_i) = \textrm{exp}\bigr(-\alpha(x_i^2 + y_i^2 + \beta z_i^2\bigr) = \phi({\bf r}_i)
+\end{equation}
+so that our trial wave function can be written
+\begin{equation}
+ \Psi_T({\bf R}) = \prod_i \phi({\bf r}_i) \textrm{exp} \left(
+ \sum_{i<j}u(r_{ij}) \right)
+ \label{wfinteracting2}
+\end{equation}
+We need the Laplacian of this wave function to compute kinetic energy analytically.
+We start with finding the gradient,
+\begin{align}
+ \nabla_k \prod_i \phi({\bf r}_i) &= \prod_{i\neq k} \phi({\bf r}_i) \nabla_k \phi({\bf r}_k) \\
+                                  &= \nabla_k\phi({\bf r}_k) \prod_{i\neq k}\phi({\bf r}_i)
+\end{align}
+and 
+\begin{align}
+ \nabla_k \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right) &=
+ \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right) \nabla_k \sum_{i<j}u(r_{ij}) \\ &= 
+ \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right)  \sum_{j\neq k}\nabla_k u( r_{kj})
+\end{align}
+where the last equality follows because all terms that lack $k$ as index in the sum $\sum_{i<j}u(r_{ij})$ 
+will diseappear when differentiating. The first compononet of the $k$-th gradient of $u(r_{kj})$ is
+\begin{align}
+ \frac{\partial u(r_{kj})}{\partial x_k} &= \frac{\partial r_{kj}}{\partial x_k} 
+ \frac{\partial u(r_{kj})}{\partial r_{kj}} \\
+ &= \frac{(x_k - x_j)}{r_{kj}}u^\prime(r_{kj})
+\end{align}
+where we have defined
+\begin{equation}
+ u^\prime(r_{kj}) = \frac{\partial u(r_{kj})}{\partial r_{kj}}
+\end{equation}
+thus
+\begin{equation}
+ \nabla_k u(r_{kj}) = \frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj})
+\end{equation}
+Using the product rule, the total gradient equals
+\begin{equation}
+ \nabla_k \Psi_T({\bf R}) = \nabla_k\phi({\bf r}_k) \left[\prod_{i\neq k}\phi({\bf r}_i) \right] \textrm{exp}
+                           \left( \sum_{i<j}u(r_{ij}) \right) + \prod_i\phi({\bf r}_i)
+                           \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right)  
+                           \sum_{j\neq k}\frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj})
+ \label{wfgradient}
+\end{equation}
+Differentiating the first term of this expression and dividing with $\Psi_T({\bf R})$,
+\begin{equation}
+  \frac{\nabla^2_k\phi({\bf r}_k)}{\phi({\bf r}_k)} + 
+  \frac{\nabla_k\phi({\bf r}_k)}{\phi({\bf r}_k)} 
+  \left( \sum_{j\neq k}\frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj}) \right)
+\end{equation}
+Differentiating the three factors in the second term of \eqref{wfgradient},
+\begin{align}
+ &\nabla_k\phi({\bf r}_k) \left[\prod_{i\neq k}\phi({\bf r}_i) \right]
+ \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right)  
+ \sum_{j\neq k}\nabla_k u(r_{kj}) \quad + \\ 
+ &\prod_i\phi({\bf r}_i)\textrm{exp}  \left( \sum_{i<j}u(r_{ij}) \right) \left[
+ \sum_{i\neq k}\nabla_k u(r_{ki}) \sum_{j\neq k}\nabla_k u(r_{kj}) + \sum_{j\neq k}\nabla^2_k u(r_{kj}) \right]
+\end{align}
+The first term in the square brackets results in
+\begin{equation}
+ \sum_{i,j\neq k} (\frac{({\bf r}_k - {\bf r}_i)({\bf r}_k - {\bf r}_j)}{r_{ki}r_{kj}} u^\prime(r_{ki})u^\prime(r_{kj})
+\end{equation}
+To compute the second term in square brackets we define
+\begin{equation}
+ M = \nabla_k u(r_{kj}) = \frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj})
+\end{equation}
+Then
+\begin{align}
+ \nabla_k^2 u(r_{kj}) = \frac{\partial M}{\partial r_{kj}} 
+ &= \frac{\partial}{\partial r_{kj}}\left[\frac{({\bf r}_k - {\bf r}_j)}{r_{kj}}\right]u^\prime(r_{kj}) + 
+ \frac{({\bf r}_k - {\bf r}_j)}{r_{kj}}u^{\prime\prime}(r_{kj}) \\
+ &= \frac{({\bf r}_k - {\bf r}_j)({\bf r}_k - {\bf r}_j)}{r_{kj}^2} \left(u^{\prime\prime}(r_{kj}) + 
+ \frac{2}{r_{kj}} u^\prime(r_{kj})\right) \\
+ &= u^{\prime\prime}(r_{kj}) + \frac{2}{r_{kj}} u^\prime(r_{kj}) \\
+\end{align}
+The analytic expression for the Laplacian of the trial wavefunction is thus
+\begin{align}
+ \frac{1}{\Psi_T({\bf R})}\nabla^2_k\Psi_T({\bf R}) &= 
+ \frac{\nabla^2_k\phi({\bf r}_k)}{\phi({\bf r}_k)} + \frac{\nabla_k\phi({\bf r}_k)}{\phi({\bf r}_k)} 
+ \sum_{j\neq k}\frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj}) \quad + \\
+ &\sum_{i,j\neq k} (\frac{({\bf r}_k - {\bf r}_i)({\bf r}_k - {\bf r}_j)}{r_{ki}r_{kj}} u^\prime(r_{ki})u^\prime(r_{kj})
+ + \sum_{j\neq k}\left( u^{\prime\prime}(r_{kj}) + \frac{2}{r_{kj}} u^\prime(r_{kj}) \right)
+ \label{analytickin}
+\end{align}
+We need the first and second derivative of $u(r_{kj}) = \textrm{ln} f(r_{kj}) = \textrm{ln} (1-a/r_{kj})$.
+\begin{equation}
+ u^\prime(r_{kj}) = \frac{1}{1-a/r_{kj}} 
+ \frac{a}{r^2_{kj}} = \frac{a}{r_{kj}(r_{kj} - a)}
+\end{equation}
+and
+\begin{equation}
+ u^{\prime\prime}(r_{kj}) = \frac{a(a - 2r_{kj})}{r_{kj}^2 ( r_{kj} - a)^2}
+\end{equation}
+We now have everything we need to obtain the full expression, except the gradient and Laplacian of
+$\phi({\bf r})$, which is
+\begin{align}
+ \frac{\nabla^2_k\phi({\bf r}_k)}{\phi({\bf r}_k)} &= 2a(2ax_k^2 - 1) + 2a(2ay_k^2 - 1) + 2a(2a\beta^2z_k^2 - \beta) \\
+ &= 2a(2a(x_k^2 + y_k^2 + \beta z_k^2) - 2 - \beta)
+\end{align}
+and
+\begin{equation}
+ \frac{\nabla_k\phi({\bf r}_k)}{\phi({\bf r}_k)}  = 
+ -2a(x, y, \beta z)
+\end{equation}
 
 
-\section*{Methods}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Methods}
 
 We use the \textit{Variational Monte Carlo} (VMC) method in this project to obtain the ground state energy
 for our bosonic system. VMC applies the \textit{variational principle} from quantum mechanics
@@ -267,7 +399,7 @@ where $\bf{R}$ is the positions of all the particles and $\boldsymbol{\alpha}$ i
 Traditional integration methods like Gauss-Legendre methods are too computationally expensive, therefore 
 other methods are needed.
 
-\subsection*{Monte Carlo integration}
+\subsection{Monte Carlo integration}
 
 Monte Carlo integration employs a non-deterministic approach to evaluate multidimensional integrals like \eqref{multidim}, or
 in general
@@ -286,7 +418,7 @@ The integral can then be approximated as the average of the function values at t
 The brute force method is however not very efficient, as it samples an equal amount of points in all regions of $\Omega$, 
 including those where $f$ is zero. 
 
-\subsection*{Metropolis algorithm}
+\subsection{Metropolis algorithm}
 
 A more clever approach than the brute force method is to sample points according to the probability distribution (PDF)
 defined by $f$. Such a PDF is in general difficult to obtain, thus we can't sample directly from it.
@@ -392,7 +524,7 @@ else {
 \end{lstlisting}
 
 
-\subsection*{Steepest descent method}
+\subsection{Steepest descent method}
 
 We turn now to the problem of finding the variational parameters that minimizes the expectation value
 of the local energy $\langle E_L({\bf R}, \alpha) \rangle$. This project considers a trial wavefunction with only one 
@@ -497,7 +629,7 @@ for the ground state energy of the system.\\
 \end{lstlisting}
 
 
-\subsection*{Importance sampling}
+\subsection{Importance sampling}
 
 A more efficient way to do Monte Carlo sampling is to replace the brute force Metropolis algorithm
 with a walk in coordinate space biased by the trial wavefunction. This approach is based on the 
@@ -564,7 +696,7 @@ calculated according to \eqref{LangevinSolution}.
 
 
 
-\subsection*{Blocking}
+\subsection{Blocking}
 
 Monte Carlo simulations can be treated as computer experiments. The results can be analyzed with the same
 statistical tools as we would use analyzing experimental data. We are looking for expectation values
@@ -634,7 +766,7 @@ we reach a plateau. A more correct measure of the sample error is thus obtained.
 
 
 
-\subsection*{Implementation}
+\subsection{Implementation}
 
 The project code is split into different classes that handle different things. We will here give an overview
 of what the different classes do and how they communicate. \\
@@ -642,7 +774,7 @@ of what the different classes do and how they communicate. \\
 \noindent The main program sets all the parameters needed to a simulatio. 
 
 
-\section*{Results}
+\section{Results}
 
 We investigate two different systems, both with only one variational parameter $\alpha$:
 \begin{enumerate}
@@ -662,7 +794,7 @@ The steepest descent method is applied to optimize $\alpha$.
 In addition to this, the one-body density is computed for both systems.
 
 
-\subsection*{System 1 - brute force Metropolis}
+\subsection{System 1 - brute force Metropolis}
 
 \begin{lstlisting}
     int numberOfSteps       = (int) 1e4;
@@ -750,7 +882,7 @@ From quantum mechanics we know that the exact ground state energy for this syste
 \end{equation}
 
 
-\subsection*{System 1 - importance sampling}
+\subsection{System 1 - importance sampling}
 
 \begin{lstlisting}
     int numberOfSteps       = (int) 1e4;
