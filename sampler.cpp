@@ -84,12 +84,12 @@ void Sampler::printOutputToTerminal() {
 
 void Sampler::writeToFile(double localEnergy) {
     if (m_stepNumber == 0) {
-        m_outFile.open("energyNum10interacting.dat", std::ios::out | std::ios::trunc);
+        m_outFile.open("energy10interacting.dat", std::ios::out | std::ios::trunc);
         m_outFile.close();
     }
 
     // write local energy to file to do blocking in python
-    m_outFile.open("energyNum10interacting.dat", std::ios::out | std::ios::app);
+    m_outFile.open("energy10interacting.dat", std::ios::out | std::ios::app);
     m_outFile << std::setprecision(10) << localEnergy << endl;
     m_outFile.close();
 
@@ -98,12 +98,12 @@ void Sampler::writeToFile(double localEnergy) {
 
 void Sampler::writeToFile() {
     if (m_stepNumber == 0) {
-        m_outFile2.open("positionsInteraction.dat", std::ios::out | std::ios::trunc);
+        m_outFile2.open("positionsInteraction6.dat", std::ios::out | std::ios::trunc);
         m_outFile2.close();
     }
 
     // write local energy to file to do blocking in python
-    m_outFile2.open("positionsInteraction.dat", std::ios::out | std::ios::app);
+    m_outFile2.open("positionsInteraction6.dat", std::ios::out | std::ios::app);
     std::vector<Particle*> particles = m_system->getParticles();
     for (int i=0; i < m_system->getNumberOfParticles(); i++) {
         for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {

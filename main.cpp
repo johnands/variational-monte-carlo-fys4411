@@ -14,14 +14,13 @@
 
 using namespace std;
 
-
 int main() {
 
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 100;
-    int numberOfSteps       = (int) 1e5;
+    int numberOfParticles   = 10;
+    int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.5;          // variational parameter 1
+    double alpha            = 0.5000605;    // variational parameter 1
     double beta             = 2.82843;      // variational parameter 2
     double stepLength       = 1.5;          // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
@@ -32,7 +31,7 @@ int main() {
     bool useNumerical       = false;        // compute kinetic energy numerically
     bool useImportanceSampling = false;
     bool writeEnergiesToFile = false;
-    bool writePositionsToFile = false;
+    bool writePositionsToFile = true;
 
     System* system = new System();
     //system->setHamiltonian              (new HarmonicOscillator(system, omega, useNumerical));
@@ -46,7 +45,7 @@ int main() {
     system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile, writePositionsToFile);
 
     // optimize alpha
-    /*double initialAlpha = 0.8;
+    /*double initialAlpha = 0.7;
     double stepLengthOptimize = 0.01;
     SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize);
     sd->optimize(initialAlpha);*/

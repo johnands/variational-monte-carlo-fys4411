@@ -18,8 +18,8 @@ SteepestDescent::SteepestDescent(System* system, double stepLengthOptimize)
 void SteepestDescent::optimize(double initialAlpha) {
 
     int maxNumberOfSteps = 30;
-    double tolerance = 1e-10;
-    double oldAlpha = initialAlpha;
+    double tolerance = 1e-6;
+    double alpha = initialAlpha;
     double oldEnergy = 1e10;
     for (int i=0; i < maxNumberOfSteps; i++) {
 
@@ -31,7 +31,7 @@ void SteepestDescent::optimize(double initialAlpha) {
         m_system->getInitialState()->setupInitialState();
 
         // set value of alpha
-        m_system->getWaveFunction()->setAlpha(oldAlpha);
+        m_system->getWaveFunction()->setAlpha(alpha);
 
         // run metropolis steps
         m_system->runMetropolisSteps((int) 1e5, false, false, false);
@@ -47,22 +47,19 @@ void SteepestDescent::optimize(double initialAlpha) {
             m_stepLengthOptimize /= 2.0;
             cout << "New step length: " << m_stepLengthOptimize << endl;
         }
+        else {
+            // compute new alpha
+            alpha -= m_stepLengthOptimize*localEnergyDerivative;
+        }
 
-        // compute new alpha
-        double newAlpha = oldAlpha - m_stepLengthOptimize*localEnergyDerivative;
-        cout << "newAlhpa = " << newAlpha << endl;
-        cout << "oldAlpha = " << oldAlpha << endl;
-        /*if ( std::abs(newAlpha - oldAlpha) < tolerance ) {
-            break;
-        }*/
+        cout << "newAlhpa = " << alpha << endl;
+
         if ( localEnergyDerivative < tolerance ) {
             break;
         }
 
-        // before new iteration
-        oldAlpha = newAlpha;
     }
-    cout << "Optimal alpha = " << oldAlpha << endl;
+    cout << "Optimal alpha = " << alpha << endl;
 
     // run many Metropolis steps with the optimal alpha
 
@@ -70,8 +67,8 @@ void SteepestDescent::optimize(double initialAlpha) {
     m_system->getInitialState()->setupInitialState();
 
     // set value of alpha
-    m_system->getWaveFunction()->setAlpha(oldAlpha);
+    m_system->getWaveFunction()->setAlpha(alpha);
 
     // run metropolis steps
-    m_system->runMetropolisSteps((int) 1e6, false, false, false);
+    m_system->runMetropolisSteps((int) 1e5, false, false, false);
 }
