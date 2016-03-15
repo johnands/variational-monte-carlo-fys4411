@@ -209,7 +209,7 @@ thus the local energy is
 \end{equation}
 We now turn our attention to $N$ particles, with the following wavefunction and Hamiltonian
 \begin{align}
- &\Psi_T({\bf R}) = \prod_i e^{-\alpha r_i^2} \\
+ &\Psi_T({\bf R}) = \prod_i e^{-\alpha r_i^2} \\ \label{wfsystem1}
  &H =     \sum_i^N \left(
 	 -\frac{1}{2}
 	 { \bigtriangledown }_{i}^2 +
@@ -226,8 +226,7 @@ and when we divide with $\Psi_T$ to obtain the the local energy we end up with
 For one dimension the expression is
 \begin{equation}
  E_L = \sum_i^N \left( \alpha(1 - 2\alpha x_i^2) + \frac{1}{2}\omega^2x_i^2 \right)
-\end{equation}
-\\
+\end{equation} \\
 
 \noindent It is also useful to compute the analytical expression for the drift force $F$ to be used in importance sampling
 \begin{equation}
@@ -359,6 +358,50 @@ and
  -2a(x, y, \beta z)
 \end{equation}
 
+
+\subsection{Benchmarks}
+We need to compare our results to exact theoretical results or other research to validate our code. 
+$N$ particles in a harmonic oscillator potential withouth interaction
+is a well known problem in quantum mechanics. 
+The exact ground state energy and wavefunction for this system is (in natural units),
+\begin{equation}
+ E = \frac{\omega dN}{2}
+ \label{exactenergy}
+\end{equation}
+and
+\begin{equation}
+ \Psi = \prod_{i=1}^N \textrm{exp}\left(-\frac{1}{2}r_i^2 \right)
+ \label{exactwf}
+\end{equation}
+where $d$ is the number of spatial dimensions for each particle.
+Comparing \eqref{wfsystem1} and \eqref{exactwf}, we see that $\alpha = 0.5$ 
+yields $\Psi_T = \Psi$. Setting $\alpha = 0.5$ in our code should therefore reproduce the exact energies
+given by \eqref{exactenergy}. \\
+
+\noindent For system 2 there is no exact, analytical answer. Instead, we benchmark
+our results with \cite{ref1} (for $d=3$),
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ | c | r | r | r | }
+    \hline
+    $\alpha$& $N=10$& $N=50$& $N=100$ \\*
+    \hline
+    0.2& 34.9& 175& 353 \\*
+    \hline
+    0.3& 24.7& 138& 278 \\*
+    \hline
+    0.4& 24.2& 125& 253 \\*
+    \hline
+    0.5& 24.2& 122& 247 \\*
+    \hline
+    0.6& 24.6& 125& 252 \\*
+    \hline
+    0.7& 25.5& 129& 263 \\*
+    \hline
+  \end{tabular}
+  \caption{Benchmarks for system 2}
+  \label{tab:Tabell1}
+\end{table}
 
 
 
@@ -796,7 +839,9 @@ In addition to this, the one-body density is computed for both systems.
 
 \subsection{System 1 - brute force Metropolis}
 
-\begin{lstlisting}
+The parameters used to produce the below results are as follows
+\belowcaptionskip=-10pt
+\begin{lstlisting}[label=parameters1,caption=Parameters brute force Metropolis system 1]
     int numberOfSteps       = (int) 1e4;
     double omega            = 1.0;          // oscillator frequency
     double alpha            = 0.5;          // variational parameter 1
@@ -804,13 +849,14 @@ In addition to this, the one-body density is computed for both systems.
     double equilibration    = 0.1;          
 \end{lstlisting}
 
-Acceptance rate: 0.55
+We want to compare the CPU time difference for computing kinetic energy numerically vs analytically. 
+The Metropolis step length is set so that the acceptance rate equals about $0.5$.
 
 \begin{table}[H]
   \centering
   \begin{tabular}{ | c | r | r | r | r |}
     \hline
-    N& D& E& $\sigma$& Time \\*
+    N& d& E& $\sigma$& CPU time \\*
     \hline
     1& 1& 0.5& 0& 5.53e-3 \\*
     \hline
@@ -837,7 +883,7 @@ Acceptance rate: 0.55
     500& 3& 750& 0&  0.131\\*
     \hline
   \end{tabular}
-  \caption{Analytical}
+  \caption{Analytical kinetic energy}
   \label{tab:Tabell1}
 \end{table}
 
@@ -845,7 +891,7 @@ Acceptance rate: 0.55
   \centering
   \begin{tabular}{ | c | r | r | r | r |}
     \hline
-    N& D& E& $\sigma$& Time \\*
+    N& d& E& $\sigma$& CPU time \\*
     \hline
     1& 1& 0.49& 9.87e-8& 6.96e-3 \\*
     \hline
@@ -872,19 +918,19 @@ Acceptance rate: 0.55
     500& 3& 749.9& 6.65e-5&  74.5\\*
     \hline
   \end{tabular}
-  \caption{Numerical}
+  \caption{Numerical kinetic energy}
   \label{tab:Tabell1}
 \end{table}
 
-From quantum mechanics we know that the exact ground state energy for this system is
-\begin{equation}
- E = \frac{\omega N}{2}
-\end{equation}
+As expected, the CPU time increases with $N$ and $Dim$ (number of dimensions).
+
+
 
 
 \subsection{System 1 - importance sampling}
 
-\begin{lstlisting}
+\belowcaptionskip=-10pt
+\begin{lstlisting}[label=parameters2,caption=Parameters importance sampling Metropolis system 1]
     int numberOfSteps       = (int) 1e4;
     double omega            = 1.0;          // oscillator frequency
     double alpha            = 0.5;          // variational parameter 1
@@ -899,7 +945,7 @@ Acceptance rate: 0.9
   \centering
   \begin{tabular}{ | c | r | r | r | r |}
     \hline
-    N& D& E& $\sigma$& Time \\*
+    N& d& E& $\sigma$& Time \\*
     \hline
     1& 1& 0.5& 0& 0.0183 \\*
     \hline
@@ -934,7 +980,7 @@ Acceptance rate: 0.9
   \centering
   \begin{tabular}{ | c | r | r | r | r |}
     \hline
-    N& D& E& $\sigma$& Time \\*
+    N& D& E& $\sigma$& CPU time \\*
     \hline
     1& 1& 0.5& 9.41e-8& 0.0170 \\*
     \hline
@@ -1005,9 +1051,24 @@ N = 100, D = 3
 \end{table}
 
 
+\subsection{System 2}
 
 
 
+
+What remains:
+\begin{itemize}
+ \item Error analysis with blocking, only for system 2? Before or after optimization?
+ \item Run $N = 10, 50, 100$ for system 2, compare with system 1. Run for several $alpha$.
+ \item Run steepest descent method on system 2 to optimize, then calculate resulting energy
+ \item Plot one-body density with optimal alpha for system 1 and 2. 
+ \item Rearrange report: Move analytical results to appendix?
+ \item Write about benchmarks
+ \item Rewrite introduction and abstract
+ \item Write text on results 
+ \item Add reference, the same as in the project description
+ \item Look through whole report
+\end{itemize}
 
 
 
@@ -1060,19 +1121,15 @@ N = 100, D = 3
 
 
 
+\begin{thebibliography}{9}
 
+\bibitem{ref1}
+  J. K. Nilsen, J. Mur-Petit, M. Guilleumas, M. Hjorth-Jensen and A. Polls, 
+  \textit{Vortices in atomic Bose-Einstein condensates in the large-gas-parameter region}, 
+  Phys. Rev. A {\bf 71}, 053610 (2005).
 
+\end{thebibliography}
 
-
-
-
-
-
-
-
- %\end{multicols*}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
 
 \begin{comment}

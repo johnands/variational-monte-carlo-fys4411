@@ -18,7 +18,7 @@ using namespace std;
 int main() {
 
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 10;
+    int numberOfParticles   = 100;
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // oscillator frequency
     double alpha            = 0.5;          // variational parameter 1
@@ -29,7 +29,7 @@ int main() {
     double a                = 0.0043;       // hard sphere radius
     double gamma            = 2.82843;      // trap potential strength z-direction
 
-    bool useNumerical       = true;        // compute kinetic energy numerically
+    bool useNumerical       = false;        // compute kinetic energy numerically
     bool useImportanceSampling = false;
     bool writeEnergiesToFile = false;
     bool writePositionsToFile = false;
@@ -43,13 +43,13 @@ int main() {
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
     system->setTimeStep                 (timeStep);
-    //system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile, writePositionsToFile);
+    system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile, writePositionsToFile);
 
     // optimize alpha
-    double initialAlpha = 0.8;
+    /*double initialAlpha = 0.8;
     double stepLengthOptimize = 0.01;
     SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize);
-    sd->optimize(initialAlpha);
+    sd->optimize(initialAlpha);*/
 
     return 0;
 }

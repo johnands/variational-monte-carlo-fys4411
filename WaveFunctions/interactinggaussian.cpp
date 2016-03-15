@@ -52,6 +52,7 @@ double InteractingGaussian::evaluate(std::vector<Particle*> particles) {
 double InteractingGaussian::computeLaplacian(std::vector<Particle*> particles) {
     // compute Laplacian of trial wavefunction divided by trial wavefunction
 
+    double alpha = m_parameters[0];
     double beta = m_parameters[1];
     int numberOfParticles = m_system->getNumberOfParticles();
     int numberOfDimensions = m_system->getNumberOfDimensions();
@@ -68,7 +69,7 @@ double InteractingGaussian::computeLaplacian(std::vector<Particle*> particles) {
             if (dim == 2) { r2 += pow(beta*particles[k]->getPosition()[dim], 2); }
             else { r2 += pow(particles[k]->getPosition()[dim], 2); }
         }
-        term1 += 2*m_a*(2*m_a*r2 - 2 - beta);
+        term1 += 2*alpha*(2*alpha*r2 - 2 - beta);
 
         // term 2
         std::vector<double> r_kj;
@@ -89,8 +90,8 @@ double InteractingGaussian::computeLaplacian(std::vector<Particle*> particles) {
             }
         }
         for (int dim=0; dim < numberOfDimensions; dim++) {
-            if (dim == 2) { term2 += -2*m_a*beta*particles[k]->getPosition()[dim]*r_kj[dim]; }
-            else { term2 += -2*m_a*particles[k]->getPosition()[dim]*r_kj[dim]; }
+            if (dim == 2) { term2 += -2*alpha*beta*particles[k]->getPosition()[dim]*r_kj[dim]; }
+            else { term2 += -2*alpha*particles[k]->getPosition()[dim]*r_kj[dim]; }
         }
 
         // term 3
@@ -133,7 +134,7 @@ double InteractingGaussian::computeLaplacian(std::vector<Particle*> particles) {
     }
 
 
-    return term1 + term2 + term3 + term4;
+    return term1 + 2*term2 + term3 + term4;
 }
 
 std::vector<double> InteractingGaussian::computeGradient(std::vector<Particle*> particles) {
