@@ -25,8 +25,14 @@ def extract(filename):
 def density():
 
     distances = extract('positionsInteraction6.dat')
+    mean_distance = sum(distances)/len(distances)
     
-    plt.hist(distances, bins=100)
+    figure = plt.hist(distances, bins=200, color='b', normed=1)
+    plt.axvline(mean_distance, color='r', linestyle='dashed', label='Average distance')
+    plt.legend(fontsize=20)
+    plt.xlabel(r'$r/a_{ho}$', fontsize=20)
+    plt.ylabel('Normalized number of particles', fontsize=20)
+    plt.title('System 2', fontsize=20)
     plt.show()
 
     

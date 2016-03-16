@@ -112,19 +112,6 @@ and system 2 respectively. The method of blocking is utilized to do statistical 
 the numerical data. We optimize the variational parameter $\alpha$ using the steepest descent method. The one-body 
 density in the interacting and non-interacting case is also computed. 
 
-\noindent This report consists of three parts:
-\begin{enumerate}
- \item Theory - mathematical description of the systems under consideration
- \begin{enumerate}
-  \item Benchmarks - to validate our code
- \end{enumerate}
- \item Methods - description of the algorithms and how they are implemented
- \item Results - presentation and validation of results
- \item Conclusion
- \item Appendix - closed-form expressions used in code for speed-up
-\end{enumerate}
-
-
 
 
 \section{Theory}
@@ -148,7 +135,7 @@ The two-body Hamiltonian is
 	 V_{ext}({\bf{r}}_i)\right)  +
 	 \sum_{i<j}^{N} V_{int}({\bf{r}}_i,{\bf{r}}_j),
  \end{equation}
- and we reresent the inter-boson interaction by a pairwise, repulsive potential
+ and we represent the inter-boson interaction by a pairwise, repulsive potential
  \begin{equation}
  V_{int}(|{\bf r}_i-{\bf r}_j|) =  \Bigg\{
  \begin{array}{ll}
@@ -169,8 +156,7 @@ The two-body Hamiltonian is
  \begin{equation}
     g(\alpha,\beta,{\bf r}_i)= \exp{[-\alpha(x_i^2+y_i^2+\beta z_i^2)]}.
  \end{equation}
- For spherical traps we have $\beta = 1$ and for non-interacting
- bosons ($a=0$) we have $\alpha = 1/2a_{ho}^2$.  The correlation wave
+ The correlation wave
  function is
  \begin{equation}
     f(a,|{\bf r}_i-{\bf r}_j|)=\Bigg\{
@@ -179,13 +165,13 @@ The two-body Hamiltonian is
 	 (1-\frac{a}{|{\bf r}_i-{\bf r}_j|}) & {|{\bf r}_i-{\bf r}_j|} > {a}.
  \end{array}
  \end{equation}
+ System 1 is non-interacting bosons ($a=0$) in a spherical harmonic oscillator ($\beta=1$). 
+ System 2 is interacting bosons ($a \geq 0$) in an elliptical harmonic oscillator ($\beta \neq 1$).
  
- 
-
 
 
 \subsection{Benchmarks}
-We need to compare our results to exact theoretical results or other research to validate our code. 
+We need to compare our results to exact theoretical closed-form expressions or other research to validate our code. 
 $N$ particles in a harmonic oscillator potential withouth interaction
 is a well known problem in quantum mechanics. 
 The exact ground state energy and wavefunction for this system is (in natural units),
@@ -234,18 +220,6 @@ our results with \cite{ref1} (for $d=3$),
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 \section{Methods}
 
 We use the \textit{Variational Monte Carlo} (VMC) method in this project to obtain the ground state energy
@@ -278,19 +252,19 @@ Instead of using an explicit integration scheme, we sample points
 \begin{equation}
  {\bf x}_1 \dots {\bf x}_N \in \Omega
 \end{equation}
-according to some rule. The naive approach, called brute force Monte Carlo, is to use $N$ uniform samples. 
+according to some rule. The most naive approach is to use $N$ uniform samples. 
 The integral can then be approximated as the average of the function values at these points
 \begin{equation}
  I \approx \frac{1}{N} \sum_{i=1}^N f({\bf x}_i)
 \end{equation}
-The brute force method is however not very efficient, as it samples an equal amount of points in all regions of $\Omega$, 
+This simple approach is however not very efficient, as it samples an equal amount of points in all regions of $\Omega$, 
 including those where $f$ is zero. 
 
 \subsection{Metropolis algorithm}
 
-A more clever approach than the brute force method is to sample points according to the probability distribution (PDF)
+A more clever approach is to sample points according to the probability distribution (PDF)
 defined by $f$. Such a PDF is in general difficult to obtain, thus we can't sample directly from it.
-The solution is the Metropolis algorithm, which is a method to obtain random samples from a PDF for which 
+Instead we use the Metropolis algorithm, which is a method to obtain random samples from a PDF for which 
 direct sampling is difficult. 
 These sample values are produced iteratively, with the distribution of the next sample being dependent only on 
 the current sample value, thus making the sequence of samples into a Markov chain.
@@ -466,9 +440,13 @@ The algorithm is as follows:
 \begin{itemize}
  \item Choose an initial $\alpha_0$ and step length $\gamma_0$.
  \item For $i \geq 0$: Compute $\alpha_{i+1} = \alpha_i - \gamma_i \frac{d \langle E_L({\bf R}, \alpha) \rangle}{d\alpha}$
- \item Continue until a maximum number of steps are performed or $|\alpha_{i+1} - \alpha_{i}|$ is 
+ \item Continue until a maximum number of steps are performed or 
+ $|\frac{d \langle E_L({\bf R}, \alpha) \rangle}{d\alpha}|$ is 
        less than some tolerance
 \end{itemize}
+We should get $\langle E_L({\bf R}, \alpha_i) \rangle \geq \langle E_L({\bf R}, \alpha_{i+1}) \rangle \geq \dots$.
+If this is not the case, we reject the new step and decrease the step size by a factor of 2 to obtain a more
+accurate value. 
 $\langle E_L({\bf R}, \alpha) \rangle$ is as we have seen a multidimensional integral, and the derivative w.r.t. $\alpha$
 is not easily computed. Let us define
 \begin{equation}
@@ -499,7 +477,7 @@ The complete VMC method then amounts to the following:
  \item Make initial guess $\alpha_0$
  \item Run $10^4$-$10^5$ Metropolis steps, sample \eqref{waveenergy} and \eqref{wavederivative}
  \item Compute \eqref{localenergyalpha} 
- \item Compute new $\alpha$ using the Steepest descent method
+ \item Calculate new $\alpha$ using the Steepest descent method
 \end{itemize}
 The above steps are repeated until the value of $\alpha$ is sufficiently accurate, before a new round of
 Metropolis steps are run, this time with many cycles ($10^6$-$10^8$). We then obtain our approximation
@@ -636,10 +614,41 @@ can then be calculated. \\
 
 \subsection{Implementation}
 
-The project code is split into different classes that handle different things. We will here give an overview
-of what the different classes do and how they communicate. \\
+We have made an object-oriented code in C++. We give here 
+an overview of the class structure and what the different classes do,
+\begin{itemize}
+ \item \textit{Main program}: Sets all the parameters needed to a simulation. 
+ \item \textit{System}: Runs the Monte Carlo cycles with/without importance sampling
+ \item \textit{Sampler}: Samples quantities we want to measure for each cycle and computes expectation values
+ \item \textit{Particle}: Sets and adjusts particle positions
+ \item \textit{SteepestDescent}: Runs the steepest descent method
+ \item \textit{InitialState}: Super-class for setting up different initial states
+ \begin{itemize}
+     \item \textit{RandomUniform}: Assigns initial positions according to a uniform distribution
+ \end{itemize}
+ \item \textit{WaveFunction}: Super-class for different wave functions. Sets the variational parameters.
+       All subclasses must implement functions to evalute the analytical expressions for $\Psi_T$, 
+       $\nabla \Psi_T$, $\nabla^2 \Psi_T$ and $d\Psi_T / d\alpha$.
+ \begin{itemize}
+     \item \textit{SimpleGaussian}: Implements the above quantities for $\Psi_T$ used in system 1
+     \item \textit{InteractingGaussian}: Implements the above quantities for $\Psi_T$ used in system 2
+ \end{itemize}
+     \item \textit{Hamiltonian}: Super-class for different Hamiltonians. Calculates $E_L$ by computing
+       potential and kinetic energy, either numerically or analytically for the latter. The analytical
+       Laplacian is obtained from \textit{WaveFunction}.
+  \begin{itemize}
+       \item \textit{HarmonicOscillator}: Hamiltonian for system 1
+       \item \textit{HarmonicOscillatorInteracting}: Hamiltonian for system 2
+  \end{itemize}
+\end{itemize}
+In addition to these we use class \textit{Random} to generate pseudo-random numbers. \\
 
-\noindent The main program sets all the parameters needed to a simulatio. 
+\noindent All the information are stored in System in the form of class objects of the other classes, which in turn 
+recieves the System object so that they can access this information via
+setters and getters in the System class. This way of communicating between classes limits the user's 
+capability to alter vital functionality and also makes the program more user-friendly. 
+Object-oriented code is also easy to expand on. We don't need to add new functionality to
+e.g. implement a new wave function; only the specifics of this new wave function needs to be implemented. 
 
 
 \section{Results}
@@ -935,21 +944,21 @@ are not included in the error estimate. A proper error analysis is done using th
 First, we plot the standard deviation $\sigma$ as a function of block size $n_b$,
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width = 160mm]{error_10.png}
+  \includegraphics[width = 160mm]{error_10.pdf}
   \caption{N = 10}\label{fig:error10}
   \end{center}
 \end{figure}
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width = 160mm]{error_50.png}
+  \includegraphics[width = 160mm]{error_50.pdf}
   \caption{N = 50}\label{fig:error50}
   \end{center}
 \end{figure}
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width = 160mm]{error_100.png}
+  \includegraphics[width = 160mm]{error_100.pdf}
   \caption{N = 100}\label{fig:error100}
   \end{center}
 \end{figure}
@@ -969,7 +978,56 @@ The true sample errors are then, according to \eqref{trueSampleError},
 
 
 \subsection{One-body density}
+The one-body density is defined as
+\begin{equation}
+ \rho({\bf r}) = \int d{\bf r}_2 \dots d{\bf r}_N |\Psi({\bf r}, {\bf r}_2, \dots , {\bf r}_N)|^2
+\end{equation}
+This quantity can be visuzalized by making a histogram of the radial distance of the bosons.
+The following paramters,
+\belowcaptionskip=-10pt
+\begin{lstlisting}[label=parameters3,caption=Parameters system 2]
+    int numberOfDimensions  = 3;
+    int numberOfParticles   = 30;
+    int numberOfSteps       = (int) 1e6;
+    double omega            = 1.0;          // oscillator frequency
+    double alpha            = 0.5;          // variational parameter 1
+    double beta             = 2.82843;      // variational parameter 2
+    double stepLength       = 1.5;          // metropolis step length
+    double equilibration    = 0.1;          // amount of the total steps used
+    double a                = 0.0043;       // hard sphere radius
+    double gamma            = 2.82843;      // trap potential strength z-direction
+\end{lstlisting}
+results in
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 200mm]{radialDistSystem1.pdf}
+  \caption{Radial distribution of particles - system 1}\label{fig:density1}
+  \end{center}
+\end{figure}
 
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 200mm]{radialDistSystem2.pdf}
+  \caption{Radial distribution of particles - system 2}\label{fig:density2}
+  \end{center}
+\end{figure}
+The distribution for system 1 is shifted towards the right compared to system 2, thus
+the average radial distance is larger. 
+
+\begin{figure}
+\begin{minipage}[t]{0.48\linewidth}
+  \includegraphics[width=\textwidth]{radialDist1XYZ.pdf}
+  \caption{System 1}
+  \label{fig:density3}
+\end{minipage}
+\quad
+\begin{minipage}[t]{0.48\linewidth}
+\includegraphics[width=\textwidth]{radialDist1XYZ.pdf}
+  \caption{System 2}
+  \label{fig:density4}
+\end{minipage}
+\end{figure}
+The distribution of particles in the $xy$-plane is included for visualization purposes. 
 
 
 

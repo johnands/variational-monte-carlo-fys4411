@@ -17,10 +17,10 @@ using namespace std;
 int main() {
 
     int numberOfDimensions  = 3;
-    int numberOfParticles   = 10;
+    int numberOfParticles   = 30;
     int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.5000605;    // variational parameter 1
+    double alpha            = 0.5;    // variational parameter 1
     double beta             = 2.82843;      // variational parameter 2
     double stepLength       = 1.5;          // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
