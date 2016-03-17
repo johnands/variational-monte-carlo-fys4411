@@ -29,14 +29,14 @@ bool System::metropolisStepImportance() {
     vector<double> plusChange = driftForce(particle);
 
     // compute proposed change
-    for (int j=0; j < m_numberOfDimensions; j++) {
-        plusChange[j] = 0.5*plusChange[j]*m_timeStep + Random::nextGaussian(0.0, sqrt(m_timeStep));
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        plusChange[dim] = 0.5*plusChange[dim]*m_timeStep + Random::nextGaussian(0.0, sqrt(m_timeStep));
     }
 
     // compute negative of proposed change
     vector<double> minusChange;
-    for (int j=0; j < m_numberOfDimensions; j++) {
-        minusChange.push_back(-plusChange[j]);
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        minusChange.push_back(-plusChange[dim]);
     }
 
     // get old wavefunction

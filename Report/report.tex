@@ -84,9 +84,16 @@
 \begin{abstract}
 The aim of this project is to use the Variational Monte Carlo (VMC) method to evaluate the 
 ground state energy of a trapped, hard sphere Bose gas for different numbers of particles
-with a specific trial wave function. 
+both with and without interaction. Statistical error analysis is done using the blocking method 
+and the one-body density is computed. 
 
-***Main findings***
+We found that the exact ground state energies were reproduced for non-interacting bosons
+when the trial wavefuntion was equal to the exact wavefunction of this system.
+The energies for the interacting system had a small error, but the results were in good
+accordance with \cite{ref1}. Using closed-form expressions for the trial wavefuctions etc. was vital 
+for saving CPU time. 
+
+
 \end{abstract}
 
 \tableofcontents
@@ -107,10 +114,10 @@ Therefore, other methods like the VMC method may be needed. \\
 
 \noindent In this project we evaluate the ground state energy of a trapped BEC by simulating different numbers of bosons
 in a harmonic oscillator potential in one, two and three dimensions. The energy is obtained using the VMC method, both with 
-and without importance sampling. We have studied both the interacting and the non-interacting case, called system 1
+and without importance sampling. We study both interacting and non-interacting bosons, called system 1
 and system 2 respectively. The method of blocking is utilized to do statistical analysis on
 the numerical data. We optimize the variational parameter $\alpha$ using the steepest descent method. The one-body 
-density in the interacting and non-interacting case is also computed. 
+density in the interacting and non-interacting case is also computed.
 
 
 
@@ -294,7 +301,7 @@ and the local energy \eqref{localenergy}, the integral \eqref{multidim} can be r
  \langle E_L \rangle = \int P({\bf R}) E_L({\bf R}) d{\bf R}
 \end{equation}
 and we see that our problem amounts to finding the expectation value of the local energy $E_L$ on the PDF $P$.
-The VMC method approximates this integral as
+Using Monte Carlo integration, we approximate this integral as
 \begin{equation}
  \langle E_L \rangle \approx \frac{1}{N} \sum_{i=1}^N P({\bf R}_i, \boldsymbol{\alpha}) E_L({\bf R}_i, \boldsymbol{\alpha})
 \end{equation}
@@ -325,19 +332,19 @@ We now have the full machinery of the Monte Carlo approach to obtain the ground 
        Also set the step size $\Delta {\bf R}$ to be used when moving from ${\bf R}_i$ to ${\bf R}_j$.
  \item Initialize the local energy
  \item Choose a random particle
- \item Calculate a trial position ${\bf R}_j = {\bf R}_i + r \dot \Delta {\bf R}$ where $r$ is a random variable
+ \item Calculate a trial position ${\bf R}_j = {\bf R}_i + r  \Delta {\bf R}$ where $r$ is a random variable
        $r \in [0,1]$
  \item Use the Metropolis algorithm to accept or reject this move by calculating the ratio \eqref{ratio2}. 
        If $w \geq s$, where $s$ is a random number $s \in [0,1]$, the new position is accepted, else we stay
        at the same place.
  \item If the step is accepted, set ${\bf R} = {\bf R}_j$ for the chosen particle
- \item Update the local energy
+ \item Sample the local energy
 \end{itemize}
 When the Monte Carlo sampling is finished, we calculate the mean local energy, which is our approximation
 of the ground state energy of the system.
 The Metropolis algorithm is implemented as follows:
 \belowcaptionskip=-10pt
-\begin{lstlisting}[label=MetropolisBrute,caption=Brute Forde Metropolis algorithm]
+\begin{lstlisting}[label=MetropolisBrute,caption=Brute Force Metropolis algorithm]
 int particle = Random::nextInt(m_numberOfParticles);    // choose random particle
 int dimension = Random::nextInt(m_numberOfDimensions);  // choose random dimension
 double change = (Random::nextDouble()*2-1)*m_stepLength;  // propose change
@@ -389,13 +396,12 @@ parameter which yields stable values of the ground state energy for values $\Del
 term  containing $F(x)$. This is the function that pushes the particles towards regions of configuration space
 where the wavefunction is large, in contrast to the brute force method where all regions are equally probable. 
 In three dimension $F(x)$ is called the \textit{drift vector} ${\bf F}({\bf x})$.
-The Monte Carlo method with the Metropolis algorithm can be seen as isotropic diffusion process by a time-dependent 
-probability density, with or without a drift. corresponding to brute force and importance samling respectively.
 The drift vector can be found from the
 Fokker-Planck equation
 \begin{equation}
  \frac{\partial P}{\partial t} = \sum_i D \frac{\partial}{\partial {\bf x}_i}
  \left( {\bf x}_i - {\bf F}_i \right) P({\bf x}, t)
+ \label{FokkerPlanck}
 \end{equation}
 The convergence to a stationary probability density can be obtained by setting the left hand side to zero. 
 The resulting equation is only satisfied if all terms of the sum are equal to zero, 
@@ -411,9 +417,11 @@ The drift vector should have the form ${\bf F} = g({\bf x}) \frac{\partial P}{\p
 \end{equation}
 which is known as the \textit{quantum force}. \\
 
-\noindent The Monte Carlo method with the Metropolis algorithm can be seen as isotropic diffusion process by a time-dependent 
-probability density, with or without a drift. corresponding to brute force and importance samling respectively.
-Our new transition probabilty is thus a solution to the Fokker-Planck equation, yielding
+\noindent The Monte Carlo method with the Metropolis algorithm can be seen as isotropic diffusion process 
+by a time-dependent 
+probability density, with or without a drift, corresponding to brute force and importance samling respectively.
+The Fokker-Planck equation \eqref{FokkerPlanck} describes such a diffusion process, our
+new transition probabilty is thus the solution to this equation, given by the Green's function
 \begin{equation}
  G(y, x, \Delta t) = \frac{1}{(4\pi D \Delta t)^{3N/2}}
  \textrm{exp}(-(y - x - D\Delta t F(x))^2 / 4D\Delta t)
@@ -424,9 +432,9 @@ the so-called \text{Metropolis-Hastings} article
  q(y, x) = \frac{G(x, y, \Delta t)|\Psi_T(y)|^2}{G(y, x, \Delta t)|\Psi_T(x)|^2}
  \label{metropolisHastings}
 \end{equation}
-The Metropolis Hastings algorithm has the same role as the brute force method in the Monte Carlo approach
-to obatin expectation values, now with \eqref{ratio2} replaced by \eqref{metropolisHastings} and trial position
-calculated according to \eqref{LangevinSolution}
+The Metropolis Hastings algorithm is the same as the brute force method, now with \eqref{ratio2} replaced by 
+\eqref{metropolisHastings} and trial positions
+calculated according to \eqref{LangevinSolution}.
 
 \subsection{Steepest descent method}
 
@@ -479,49 +487,59 @@ The complete VMC method then amounts to the following:
  \item Compute \eqref{localenergyalpha} 
  \item Calculate new $\alpha$ using the Steepest descent method
 \end{itemize}
-The above steps are repeated until the value of $\alpha$ is sufficiently accurate, before a new round of
+The above steps are repeated until the above stopping condition is fulfilled, before a new round of
 Metropolis steps are run, this time with many cycles ($10^6$-$10^8$). We then obtain our approximation
 for the ground state energy of the system.\\
 
 \noindent The Steepest descent method is implemented as follows:
 \belowcaptionskip=-10pt
 \begin{lstlisting}[label=steepestdescent,caption=The Steepest Descent method]
- void SteepestDescent::optimize(double initialAlpha) {
+void SteepestDescent::optimize(double initialAlpha) {
 
     int maxNumberOfSteps = 30;
-    double tolerance = 0.001;
-    double oldAlpha = initialAlpha;
+    double tolerance = 1e-6;
+    double alpha = initialAlpha;
+    double oldEnergy = 1e10;
     for (int i=0; i < maxNumberOfSteps; i++) {
+
+        if (i > 0) {
+            oldEnergy = m_system->getSampler()->getEnergy();
+        }
 
         // make initial state
         m_system->getInitialState()->setupInitialState();
 
         // set value of alpha
-        m_system->getWaveFunction()->setAlpha(oldAlpha);
+        m_system->getWaveFunction()->setAlpha(alpha);
 
         // run metropolis steps
-        m_system->runMetropolisSteps((int) 1e4, false, false, false);
+        m_system->runMetropolisSteps((int) 1e5, false, false, false);
+
+        double newEnergy = m_system->getSampler()->getEnergy();
 
         // compute derivative of exp. value of local energy w.r.t. alpha
         double localEnergyDerivative = 2 * 
-                             ( m_system->getSampler()->getWaveFunctionEnergy() -
-                               m_system->getSampler()->getWaveFunctionDerivative() *
-                               m_system->getSampler()->getEnergy() );
+                              ( m_system->getSampler()->getWaveFunctionEnergy() -
+                                m_system->getSampler()->getWaveFunctionDerivative() *
+                                newEnergy );
 
-        cout << "localEnergyDerivative = " << localEnergyDerivative << endl;
+        if (newEnergy > oldEnergy) {
+            m_stepLengthOptimize /= 2.0;
+            cout << "New step length: " << m_stepLengthOptimize << endl;
+        }
+        else {
+            // compute new alpha
+            alpha -= m_stepLengthOptimize*localEnergyDerivative;
+        }
 
-        // compute new alpha
-        double newAlpha = oldAlpha - m_stepLengthOptimize*localEnergyDerivative;
-        cout << "newAlhpa = " << newAlpha << endl;
-        cout << "oldAlpha = " << oldAlpha << endl;
-        cout << std::abs(newAlpha-oldAlpha) << endl;
-        if ( std::abs(newAlpha - oldAlpha) < tolerance ) {
+        cout << "newAlhpa = " << alpha << endl;
+
+        if ( localEnergyDerivative < tolerance ) {
             break;
         }
-        // before new iteration
-        oldAlpha = newAlpha;
+
     }
-    cout << "Optimal alpha = " << oldAlpha << endl;
+    cout << "Optimal alpha = " << alpha << endl;
 
     // run many Metropolis steps with the optimal alpha
 
@@ -529,10 +547,10 @@ for the ground state energy of the system.\\
     m_system->getInitialState()->setupInitialState();
 
     // set value of alpha
-    m_system->getWaveFunction()->setAlpha(oldAlpha);
+    m_system->getWaveFunction()->setAlpha(alpha);
 
     // run metropolis steps
-    m_system->runMetropolisSteps((int) 1e7, false, false, false);
+    m_system->runMetropolisSteps((int) 1e6, false, false, false);
 }
 \end{lstlisting}
 .
@@ -548,38 +566,40 @@ statistical tools as we would use analyzing experimental data. We are looking fo
 of these data, and how accurate they are.
 A stochastic process like a Monte Carlo experiment produces sequentially a chain of values
 \begin{equation}
- \{x_1, x_2 \dots x_k \dots x_n \}
+ \{x_1, x_2 \dots x_k \dots x_N \}
 \end{equation}
 called a sample. Each value $x_k$ is called a measurement. The sample variance
 \begin{equation}
- \textrm{var}(x) = \frac{1}{n} \sum_{k=1}^n (x_k - \bar{x}_n)
+ \textrm{var}(x) = \frac{1}{N} \sum_{k=1}^n (x_k - \bar{x}_N)
  \label{samplevariance}
 \end{equation}
-where $\bar{x}_n$ is the sample mean, is a measure of the statistical error of a \textit{uncorrelated} sample.
-However, a Monte Carlo simulation produces a correlated sample, thus we need another measure of the sample error.
-The sample covariance
-\begin{equation}
- \textrm{cov}(x) \equiv \frac{1}{n} \sum_{kl} (x_k - \bar{x}_n) (x_l - \bar{x}_n)
-\end{equation}
-is a measure of the sequential correlation between succeding measurements of a sample.
-(Note that these are experimental values for the sample, not the \textit{true} properties of
-the stochastic variables, which we need an infinite number of measurements to calculate).\\
-
-\noindent It can be shown that an estimate of the error $err_X$ 
+where $\bar{x}_N$ is the sample mean, is a measure of the statistical error of a \textit{uncorrelated} sample.
+However, a Monte Carlo simulation with interacting particles produces a correlated sample, 
+thus we need another measure of the sample error.
+It can be shown that an estimate of the error $err_X$ 
 of a correlated sample is
 \begin{equation}
- \textrm{err}_X = \frac{1}{n} \textrm{cov}(x)
+ \textrm{err}_X = \frac{1}{N} \textrm{cov}(x)
 \end{equation}
+where $\textrm{cov(x)}$  is the sample covariance
+\begin{equation}
+ \textrm{cov}(x) \equiv \frac{1}{N} \sum_{kl} (x_k - \bar{x}_N) (x_l - \bar{x}_N)
+ \label{samplecovariance}
+\end{equation}
+which is a measure of the sequential correlation between succeding measurements of a sample.
+(Note that \eqref{samplevariance} and \eqref{samplecovariance}
+are experimental values for the sample, not the \textit{true} properties of
+the stochastic variables, which we need an infinite number of measurements to calculate).
 With the help of the \textit{autocorrelation function} from statistical theory we can rewrite
 this error as
 \begin{equation}
- \textrm{err}_X = \frac{\tau}{n} \textrm{var}(x)
+ \textrm{err}_X = \frac{\tau}{N} \textrm{var}(x)
 \end{equation}
 where $\tau$ is the \textit{autocorrelation time} which accounts
 for the correlation between measurements. In the presence of
 correlation the effective number of measurements becomes
 \begin{equation}
- n_{\textrm{eff}} = \frac{n}{\tau}
+ n_{\textrm{eff}} = \frac{N}{\tau}
 \end{equation}
 Neglecting $\tau$ thus gives an error estimate that is less than the true sample error. 
 The autocorrelation time is however expensive to compute. We can avoid the computation of this quantity by using
@@ -588,7 +608,7 @@ and then calculate the total mean and variance of all the block means.
 This is done for increasing block sizes $n_b$ until the measurements of two sequential blocks are uncorrelated,
 enabling us to extract the value of $\tau = n_b\Delta t$. The true sample error,
 \begin{equation}
- \sigma = \left( \frac{1 + 2\tau / \Delta t}{n} \bigr( \langle E_L^2\rangle - \langle E_L \rangle^2\bigr) \right)^{1/2}
+ \sigma = \left( \frac{1 + 2\tau / \Delta t}{N} \bigr( \langle E_L^2\rangle - \langle E_L \rangle^2\bigr) \right)^{1/2}
  \label{trueSampleError}
 \end{equation}
 can then be calculated. \\
@@ -668,7 +688,7 @@ The kinetic energy is calculated both numerically and analytically for system 1,
 referred to as the \textit{numerical method} and the \textit{analytical method} respectively.
 Only the analytical method is applied for system 2. 
 
-\noindent We use blocking to analyze the error of the statistical data for both systems.
+\noindent We use blocking to analyze the error of the statistical data for system 2.
 The steepest descent method is applied to optimize $\alpha$. 
 In addition to this, the one-body density is computed for both systems.
 
@@ -693,8 +713,9 @@ having a trial wavefunction that is exact for this system, according to \eqref{e
 to obtain the exact energy.
 
 \begin{table}[H]
-  \centering
-  \begin{tabular}{ | c | r | r | r | r |}
+    \begin{minipage}{.5\linewidth}
+      \centering
+   \begin{tabular}{ | c | r | r | r | r |}
     \hline
     N& d& $\langle \textrm{E}\rangle$& $\sigma$& CPU time \\*
     \hline
@@ -723,13 +744,12 @@ to obtain the exact energy.
     500& 3& 750& 0&  0.131\\*
     \hline
   \end{tabular}
-  \caption{Analytical kinetic energy}
-  \label{tab:Tabell1}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \begin{tabular}{ | c | r | r | r | r |}
+        \caption{Analytical kinetic energy}
+    \end{minipage}
+    \begin{minipage}{.5\linewidth}
+      \centering
+       
+   \begin{tabular}{ | c | r | r | r | r |}
     \hline
     N& d& $\langle {\textrm E_L} \rangle$& $\sigma$& CPU time \\*
     \hline
@@ -758,15 +778,18 @@ to obtain the exact energy.
     500& 3& 750& 6.65e-5&  74.5\\*
     \hline
   \end{tabular}
-  \caption{Numerical kinetic energy}
-  \label{tab:Tabell1}
+   \caption{Numerical kinetic energy}
+    \end{minipage} 
 \end{table}
 As expected, the CPU time increases with $N$ and $d$ (number of dimensions).
 Calcuating the kinetic energy analytically speeds up the simulation a great deal and 
 the CPU time difference increases exponentially with $N$.\\
-\noindent The analytical approach reproduces the exact energies with zero error. 
-Calculating the kinetic energy numerically results in a small deviation due to the inherent 
+
+\noindent The analytical method reproduces the exact energies with zero error. 
+The numerical method results in a small deviation due to the inherent 
 error of the differentiation algorithm that increases with $N$.
+This is not a statistical error, thus we do not perform an error analysis with the blocking method
+for system 1. 
 
 
 \subsection{System 1 - importance sampling}
@@ -782,8 +805,8 @@ With the following parameters,
     double timeStep         = 0.001;        // importance sampling
 \end{lstlisting}
 we obtain
-
 \begin{table}[H]
+      \begin{minipage}{.5\linewidth}
   \centering
   \begin{tabular}{ | c | r | r | r | r |}
     \hline
@@ -814,13 +837,12 @@ we obtain
     500& 3& 750& 0&  0.941\\*
     \hline
   \end{tabular}
-  \caption{Analytical}
-  \label{tab:Tabell1}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \begin{tabular}{ | c | r | r | r | r |}
+  \caption{Analytical kinetic energy}
+  \label{tab:Tabell3}
+  \end{minipage}
+  \begin{minipage}{.5\linewidth}
+   \centering
+     \begin{tabular}{ | c | r | r | r | r |}
     \hline
     N& D& $\langle {\textrm E_L}\rangle$& $\sigma$& CPU time \\*
     \hline
@@ -849,17 +871,24 @@ we obtain
     500& 3& 750& 2.42e-5&  75.584\\*
     \hline
   \end{tabular}
-  \caption{Numerical}
-  \label{tab:Tabell1}
+  \caption{Numerical kinetic energy}
+  \label{tab:Tabell4}
+  \end{minipage}
 \end{table}
-There are two differences between the brute force algorithm and Metropolis with importance sampling.
-Firstly, the CPU time increases because we have to calculate the drift vector and Green's function for each Monte Carlo cycle.
-Secondly, the error (for numerical kinetic energy) \textit{decreases}, as we should expect considering the more efficient
+The analytic method again reproduces the exact energies, while the numerical method has a small error. 
+However,there are two differences between the results produced by the brute force algorithm and 
+Metropolis with importance sampling.
+Firstly, the CPU time increases because we have to calculate the drift vector and Green's function for 
+each Monte Carlo cycle.
+Secondly, the error (for numerical kinetic energy) \textit{decreases} for the same number of Monte Carlo cycles
+as we should expect 
+considering the more efficient
 way of sampling positions compared to brute force sampling. \\
 
 \noindent We also want to investigate how the results depend on the chosen time step.
 For $N = 100$ and $d = 3$ we get,
 \begin{table}[H]
+  \begin{minipage}{.5\linewidth}
   \centering
   \begin{tabular}{ | c | r | r |}
     \hline
@@ -872,13 +901,12 @@ For $N = 100$ and $d = 3$ we get,
     0.01&  0.801& 0 \\*
     \hline
   \end{tabular}
-  \caption{Analytical}
-  \label{tab:Tabell1}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \begin{tabular}{ | c | r | r |}
+  \caption{Analytical kinetic energy}
+  \label{tab:Tabell5}
+  \end{minipage}
+  \begin{minipage}{.5\linewidth}
+   \centering
+    \begin{tabular}{ | c | r | r |}
     \hline
     Time step& Acceptance rate& $\sigma$ \\*
     \hline
@@ -889,12 +917,17 @@ For $N = 100$ and $d = 3$ we get,
     0.01&  0.801& 9.91e-6 \\*
     \hline
   \end{tabular}
-  \caption{Numerical}
+  \caption{Numerical kinetic energy}
   \label{tab:Tabell1}
+  \end{minipage}
 \end{table}
-We see that the acceptance rate increases while the error decreases for increasing time step.
-This make sense because accepting fewer steps leads to fewer energy samples???
-This reduces the statistical error, but there souldn't be statistical errors in this case????
+We see that the acceptance rate decreases for increasing time step. This is because
+the probability of accepting a new state is larger for small $\Delta t$; the ratio
+\eqref{metropolisHastings} yields a value near $1$ when the wave function at the proposed 
+new position is very close to the old one. \\
+
+\noindent The error increases slightly with the time step, caused by the fact
+that the decreasing acceptance rate leads to more inaccurate sampling.  
 
 \subsection{System 2}
 
@@ -914,7 +947,8 @@ double initialAlpha = 0.7;
 double stepLengthOptimize = 0.01;
 \end{lstlisting}
 yields the the optimal variational parameter $\alpha = 0.500605$. 
-We now run simulations for $N=10$, $N=50$ and $N=100$ bosons with this optimal $\alpha$. 
+We now run simulations for $N=10$, $N=50$ and $N=100$ bosons with this optimal $\alpha$, computing
+the Laplacian analytically. 
 The number of Monte Carlo steps is $1e6$ for $N=10$ and $1e5$ for $N=50$ and $N=100$.
 \begin{table}[H]
   \centering
@@ -929,7 +963,6 @@ The number of Monte Carlo steps is $1e6$ for $N=10$ and $1e5$ for $N=50$ and $N=
     100& 239.5& 1.114& 687.66\\*
     \hline
   \end{tabular}
-  \caption{Numerical}
   \label{tab:Tabell1}
 \end{table}
 These energies are quite close to those in \ref{tab:benchmarks} from \cite{ref1}. 
@@ -975,6 +1008,8 @@ The true sample errors are then, according to \eqref{trueSampleError},
  \item N=50: $\sigma_{true} = 0.77$
  \item N=100: $\sigma_{true} = 6.1$
 \end{itemize}
+We observe that the true sample errors are almost one order of magnitude larger than the uncorrelated
+error estimates. 
 
 
 \subsection{One-body density}
@@ -985,7 +1020,7 @@ The one-body density is defined as
 This quantity can be visuzalized by making a histogram of the radial distance of the bosons.
 The following paramters,
 \belowcaptionskip=-10pt
-\begin{lstlisting}[label=parameters3,caption=Parameters system 2]
+\begin{lstlisting}[label=parameters3,caption=Parameters one-body density]
     int numberOfDimensions  = 3;
     int numberOfParticles   = 30;
     int numberOfSteps       = (int) 1e6;
@@ -1012,33 +1047,46 @@ results in
   \end{center}
 \end{figure}
 The distribution for system 1 is shifted towards the right compared to system 2, thus
-the average radial distance is larger. 
+the average radial distance is larger. \\
 
-\begin{figure}
-\begin{minipage}[t]{0.48\linewidth}
-  \includegraphics[width=\textwidth]{radialDist1XYZ.pdf}
-  \caption{System 1}
-  \label{fig:density3}
-\end{minipage}
-\quad
-\begin{minipage}[t]{0.48\linewidth}
-\includegraphics[width=\textwidth]{radialDist1XYZ.pdf}
-  \caption{System 2}
-  \label{fig:density4}
-\end{minipage}
+\noindent The distribution of particles in the $yz$-plane is included for visualization purposes,
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 140mm]{radialDist1YZ.pdf}
+  \caption{System 1}\label{fig:density3}
+  \end{center}
 \end{figure}
-The distribution of particles in the $xy$-plane is included for visualization purposes. 
 
-
-
-
-
-
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 140mm]{radialDist2YZ.pdf}
+  \caption{System 2}\label{fig:density4}
+  \end{center}
+\end{figure}
+We observe also here that system 1 is more spread out than system 2. System 1 has a spherical distribution
+centered around origo. System 2 is however shifted towards positive y- and z-direction and has a slightly 
+elliptical shape with an elongation in the z-direction. 
+The latter is caused by the elliptical harmonic oscillator potential \eqref{trap_eqn} with
+$\omega_z / \omega_{ho} = 2.82834$.
 
 
 \section{Conclusions}
 
+For system 1, the exact ground state energies were reproduced with zero error when using the closed-form expression
+for the Laplacian of the wave function. Computing this quantity numerically resulted in a small variance caused by 
+the error in the differentiation algorithm. Implementing closed-form expressions saved significant CPU time. 
 
+The error in the energies for system 2 were larger, but quite close to those in \cite{ref1}. This tells us 
+that the optimal $\alpha$ found by the steepest descent method was a good approximation. 
+Doing a proper error analysis by applying the blocking method was important to estimate the true sample errors, which was
+almost one order of magnitude larger than the initial suggestions. 
+
+The one-body density visualizations showed that system 2 were more dense than system 1. The different traps we used
+decided how the distribution of particles looked like: The spherical trap resulted in a spherical distribution
+centered around zero, while the elliptical trap stretched out the distribution in the z-direction. 
+
+The framework we have developed can also be used to model fermionic systems if we include the proper
+symmetry requirements. Further optimization of the code can be done, especially by applying parallelization. 
 
 
 
@@ -1237,76 +1285,6 @@ and
  \frac{\nabla_k\phi({\bf r}_k)}{\phi({\bf r}_k)}  = 
  -2a(x, y, \beta z)
 \end{equation}
-
-
-
-
-
-
-
-
-What remains:
-\begin{itemize}
- \item Error analysis with blocking, only for system 2? Before or after optimization?
- \item Run $N = 10, 50, 100$ for system 2, compare with system 1. Run for several $alpha$.
- \item Run steepest descent method on system 2 to optimize, then calculate resulting energy
- \item Plot one-body density with optimal alpha for system 1 and 2. 
- \item Rearrange report: Move analytical results to appendix?
- \item Write about benchmarks
- \item Rewrite introduction and abstract
- \item Write text on results 
- \item Add reference, the same as in the project description
- \item Look through whole report
-\end{itemize}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

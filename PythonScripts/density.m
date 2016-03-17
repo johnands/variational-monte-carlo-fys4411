@@ -1,20 +1,28 @@
-%A = load('positionsInteraction6.dat');
+A = load('positionsInteraction6.dat');
 %A1 = load('positionsNoInteraction6.dat');
 
-positionsXY = A(:,2:3);
+positionsYZ = A(:,2:3);
 
 pathname = '/home/fenics/Documents/FYS4411/variational-monte-carlo-fys4411/Report/';
 
 colormap('bone');
-[z,N] = hist3(positionsXY,[800 800]);
+[x,N] = hist3(positionsYZ,[800 800]);
 
-xb = linspace(min(positionsXY(:,1)), max(positionsXY(:,1)), size(z,1)+1);
-yb = linspace(min(positionsXY(:,2)), max(positionsXY(:,2)), size(z,1)+1);
+yb = linspace(min(positionsYZ(:,1)), max(positionsYZ(:,1)), size(x,1)+1);
+zb = linspace(min(positionsYZ(:,2)), max(positionsYZ(:,2)), size(x,1)+1);
 
 figure(1)
-imagesc(xb,yb,max(max(z))-z);
-xlabel('x');
+imagesc(yb,zb,max(max(x))-x);
+xlabel('z');
 ylabel('y');
-title('Distribution of particles in xy-plane')
+hold('on');
+x1 = get(gca, 'xlim');
+y1 = get(gca, 'ylim');
+plot([-1,-1], y1, 'r-')
+plot([1,1,], y1, 'r-')
+plot(x1, [-1,-1], 'r-')
+plot(x1, [1,1], 'r-')   
+axis('equal');
+title('Distribution of particles in yz-plane')
 remove_frame(); 
-%print(gcf, '-dpdf', strcat(pathname, 'radialDist2XY'));
+print(gcf, '-dpdf', strcat(pathname, 'radialDist2YZ'));

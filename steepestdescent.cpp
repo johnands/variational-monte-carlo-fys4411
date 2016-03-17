@@ -70,5 +70,5 @@ void SteepestDescent::optimize(double initialAlpha) {
     m_system->getWaveFunction()->setAlpha(alpha);
 
     // run metropolis steps
-    m_system->runMetropolisSteps((int) 1e5, false, false, false);
+    m_system->runMetropolisSteps((int) 1e6, false, false, false);
 }

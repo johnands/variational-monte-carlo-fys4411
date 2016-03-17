@@ -82,7 +82,7 @@ def main():
 
 # ----- main -----
 varianceOfGivenBlockSize, allBlockSizes = main()
-plt.plot(allBlockSizes, np.sqrt(varianceOfGivenBlockSize))
+plt.plot(allBlockSizes, varianceOfGivenBlockSize)
 plt.xlabel(r'$n_b$', fontsize=30)
 plt.ylabel(r'$\sigma$', fontsize=30)
 plt.title('N = 100')
