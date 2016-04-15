@@ -16,7 +16,9 @@ SOURCES += main.cpp \
     WaveFunctions/simplegaussian.cpp \
     Hamiltonians/harmonicoscillatorinteracting.cpp \
     WaveFunctions/interactinggaussian.cpp \
-    steepestdescent.cpp
+    steepestdescent.cpp \
+    WaveFunctions/quantumdottwoelectrons.cpp \
+    Hamiltonians/harmonicoscillatorquantumdot2.cpp
 
 HEADERS += \
     system.h \
@@ -31,5 +33,7 @@ HEADERS += \
     WaveFunctions/simplegaussian.h \
     Hamiltonians/harmonicoscillatorinteracting.h \
     WaveFunctions/interactinggaussian.h \
-    steepestdescent.h
+    steepestdescent.h \
+    WaveFunctions/quantumdottwoelectrons.h \
+    Hamiltonians/harmonicoscillatorquantumdot2.h
 

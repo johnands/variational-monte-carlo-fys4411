@@ -15,6 +15,11 @@ using std::endl;
 
 Sampler::Sampler(System* system) {
     m_system = system;
+    m_numberOfParameters = m_system->getWaveFunction()->getNumberOfParameters();
+    m_waveFunctionDerivative.resize(m_numberOfParameters);
+    m_waveFunctionEnergy.resize(m_numberOfParameters);
+    m_cumulativeWaveFunctionDerivative.resize(m_numberOfParameters);
+    m_cumulativeWaveFunctionEnergy.resize(m_numberOfParameters);
     m_stepNumber = 0;
 }
 
@@ -26,12 +31,14 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile, bool writePosi
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_stepNumber == 0) {
         m_energy = 0;
-        m_waveFunctionDerivative = 0;
-        m_waveFunctionEnergy = 0;
         m_cumulativeEnergy = 0;
         m_cumulativeEnergySquared = 0;
-        m_cumulativeWaveFunctionDerivative = 0;
-        m_cumulativeWaveFunctionEnergy = 0;
+        for (int i=0; i < m_numberOfParameters; i++) {
+            m_waveFunctionDerivative[i] = 0;
+            m_waveFunctionEnergy[i] = 0;
+            m_cumulativeWaveFunctionDerivative[i] = 0;
+            m_cumulativeWaveFunctionEnergy[i] = 0;
+        }
     }
 
     double localEnergy = m_system->getHamiltonian()->
@@ -39,12 +46,16 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile, bool writePosi
 
     double waveFunction = m_system->getWaveFunction()->evaluate(m_system->getParticles());
 
-    double waveFunctionDerivative = m_system->getWaveFunction()->computeAlphaDerivative(m_system->getParticles());
+    std::vector<double> waveFunctionDerivative =
+            m_system->getWaveFunction()->computeParametersGradient(m_system->getParticles());
 
     m_cumulativeEnergy  += localEnergy;
     m_cumulativeEnergySquared += localEnergy*localEnergy;
-    m_cumulativeWaveFunctionDerivative += waveFunctionDerivative / waveFunction;
-    m_cumulativeWaveFunctionEnergy += (waveFunctionDerivative / waveFunction) * localEnergy;
+
+    for (int i=0; i < m_numberOfParameters; i++) {
+        m_cumulativeWaveFunctionDerivative[i] += waveFunctionDerivative[i] / waveFunction;
+        m_cumulativeWaveFunctionEnergy[i] += (waveFunctionDerivative[i] / waveFunction) * localEnergy;
+    }
 
     // store energies or positions
     if (writeEnergiesToFile) { writeToFile(localEnergy); }
@@ -84,12 +95,12 @@ void Sampler::printOutputToTerminal() {
 
 void Sampler::writeToFile(double localEnergy) {
     if (m_stepNumber == 0) {
-        m_outFile.open("energyNum50NoInteraction.dat", std::ios::out | std::ios::trunc);
+        m_outFile.open("energyTest2.dat", std::ios::out | std::ios::trunc);
         m_outFile.close();
     }
 
     // write local energy to file to do blocking in python
-    m_outFile.open("energyNum50NoInteraction.dat", std::ios::out | std::ios::app);
+    m_outFile.open("energyTest2.dat", std::ios::out | std::ios::app);
     m_outFile << std::setprecision(10) << localEnergy << endl;
     m_outFile.close();
 
@@ -121,18 +132,22 @@ void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities
 
     m_energy                    = m_cumulativeEnergy / (double) m_stepNumber;
-    m_standardDeviation         = sqrt(std::abs(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy));
-    m_waveFunctionDerivative    = m_cumulativeWaveFunctionDerivative / (double) m_stepNumber;
-    m_waveFunctionEnergy        = m_cumulativeWaveFunctionEnergy / (double) m_stepNumber;
+    m_standardDeviation         = sqrt(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy);
+    for (int i=0; i < m_numberOfParameters; i++) {
+        m_waveFunctionDerivative[i]    = m_cumulativeWaveFunctionDerivative[i] / (double) m_stepNumber;
+        m_waveFunctionEnergy[i]        = m_cumulativeWaveFunctionEnergy[i] / (double) m_stepNumber;
+    }
 }
 
 void Sampler::clean() {
     m_energy = 0;
-    m_waveFunctionDerivative = 0;
-    m_waveFunctionEnergy = 0;
     m_cumulativeEnergy = 0;
     m_cumulativeEnergySquared = 0;
-    m_cumulativeWaveFunctionDerivative = 0;
-    m_cumulativeWaveFunctionEnergy = 0;
     m_stepNumber = 0;
+    for (int i=0; i < m_numberOfParameters; i++) {
+        m_waveFunctionDerivative[i] = 0;
+        m_waveFunctionEnergy[i] = 0;
+        m_cumulativeWaveFunctionDerivative[i] = 0;
+        m_cumulativeWaveFunctionEnergy[i] = 0;
+    }
 }

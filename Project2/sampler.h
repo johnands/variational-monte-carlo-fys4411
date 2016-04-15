@@ -1,5 +1,6 @@
 #pragma once
 #include <fstream>
+#include <vector>
 
 class Sampler {
 public:
@@ -13,20 +14,21 @@ public:
     void computeAverages();
     void clean();
     double getEnergy()          { return m_energy; }
-    double getWaveFunctionDerivative() { return m_waveFunctionDerivative; }
-    double getWaveFunctionEnergy() { return m_waveFunctionEnergy; }
+    std::vector<double> getWaveFunctionDerivative() { return m_waveFunctionDerivative; }
+    std::vector<double> getWaveFunctionEnergy() { return m_waveFunctionEnergy; }
 
 private:
     int     m_numberOfMetropolisSteps = 0;
+    int     m_numberOfParameters = 0;
     int     m_stepNumber = 0;
     double  m_energy = 0;
     double  m_standardDeviation = 0;
-    double  m_waveFunctionDerivative = 0;
-    double  m_waveFunctionEnergy = 0;
+    std::vector<double>  m_waveFunctionDerivative = std::vector<double>();
+    std::vector<double>  m_waveFunctionEnergy = std::vector<double>();
     double  m_cumulativeEnergy = 0;
     double  m_cumulativeEnergySquared = 0;
-    double  m_cumulativeWaveFunctionDerivative = 0;
-    double  m_cumulativeWaveFunctionEnergy = 0;
+    std::vector<double>  m_cumulativeWaveFunctionDerivative = std::vector<double>();
+    std::vector<double>  m_cumulativeWaveFunctionEnergy = std::vector<double>();
     std::fstream m_outFile;
     std::fstream m_outFile2;
     class System* m_system = nullptr;

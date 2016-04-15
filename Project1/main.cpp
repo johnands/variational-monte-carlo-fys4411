@@ -18,7 +18,7 @@ int main() {
 
     int numberOfDimensions  = 3;
     int numberOfParticles   = 10;
-    int numberOfSteps       = (int) 1e6;
+    int numberOfSteps       = (int) 1e4;
     double omega            = 1.0;          // oscillator frequency
     double alpha            = 0.5;    // variational parameter 1
     double beta             = 2.82843;      // variational parameter 2
@@ -30,7 +30,7 @@ int main() {
 
     bool useNumerical       = false;        // compute kinetic energy numerically
     bool useImportanceSampling = false;
-    bool writeEnergiesToFile = false;
+    bool writeEnergiesToFile = true;
     bool writePositionsToFile = false;
 
     System* system = new System();

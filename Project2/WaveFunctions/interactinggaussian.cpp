@@ -9,10 +9,10 @@
 InteractingGaussian::InteractingGaussian(System* system, double alpha, double beta, double a) :
         WaveFunction(system) {
     assert(alpha >= 0);
-    m_numberOfParameters = 2;
-    m_parameters.reserve(2);
+    m_numberOfParameters = 1;
+    m_parameters.reserve(1);
     m_parameters.push_back(alpha);
-    m_parameters.push_back(beta);
+    m_beta = beta;
     m_a = a;
 }
 
@@ -20,7 +20,6 @@ double InteractingGaussian::evaluate(std::vector<Particle*> particles) {
     // return value of product of gaussian one-particle wavefunctions
 
     double alpha = m_parameters[0];
-    double beta  = m_parameters[1];
     double r2sum = 0;
     double correlation = 1;
     for (int i=0; i < m_system->getNumberOfParticles(); i++) {
@@ -28,7 +27,7 @@ double InteractingGaussian::evaluate(std::vector<Particle*> particles) {
         // one-particle wavefunctions
         double r2 = 0;
         for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
-            if (dim == 2) { r2 += beta*pow(particles[i]->getPosition()[dim], 2); }
+            if (dim == 2) { r2 += m_beta*pow(particles[i]->getPosition()[dim], 2); }
             else { r2 += pow(particles[i]->getPosition()[dim], 2); }
         }
         r2sum += r2;
@@ -52,7 +51,6 @@ double InteractingGaussian::computeLaplacian(std::vector<Particle*> particles) {
     // compute Laplacian of trial wavefunction divided by trial wavefunction
 
     double alpha = m_parameters[0];
-    double beta = m_parameters[1];
     int numberOfParticles = m_system->getNumberOfParticles();
 
     double term1 = 0;
@@ -66,9 +64,9 @@ double InteractingGaussian::computeLaplacian(std::vector<Particle*> particles) {
         double yk = particles[k]->getPosition()[1];
         double zk = particles[k]->getPosition()[2];
 
-        double rk2 = xk*xk + yk*yk + beta*beta*zk*zk;
+        double rk2 = xk*xk + yk*yk + m_beta*m_beta*zk*zk;
 
-        term1 += 2*alpha*(2*alpha*rk2 - 2 - beta);
+        term1 += 2*alpha*(2*alpha*rk2 - 2 - m_beta);
 
         for (int j=0; j < numberOfParticles; j++) {
             if (k != j) {
@@ -81,7 +79,7 @@ double InteractingGaussian::computeLaplacian(std::vector<Particle*> particles) {
 
                 double du_drkj = m_a / (rkj*(rkj - m_a));
 
-                double gradient_dot_rkj =  -2*m_a*(xk*xkj + yk*ykj + beta*zk*zkj);
+                double gradient_dot_rkj =  -2*m_a*(xk*xkj + yk*ykj + m_beta*zk*zkj);
 
                 term2 += gradient_dot_rkj * du_drkj / rkj;
 
@@ -115,11 +113,13 @@ std::vector<double> InteractingGaussian::computeGradient(std::vector<Particle*> 
 
 }
 
-double InteractingGaussian::computeAlphaDerivative(std::vector<Particle *> particles) {
+std::vector<double> InteractingGaussian::computeParametersGradient(std::vector<Particle *> particles) {
     // compute derivative of wavefunction w.r.t. alpha
 
     double alpha = m_parameters[0];
-    double beta  = m_parameters[1];
+
+    std::vector<double> gradient(m_numberOfParameters);
+
     double r2sum = 0;
     double correlation = 1;
     for (int i=0; i < m_system->getNumberOfParticles(); i++) {
@@ -127,7 +127,7 @@ double InteractingGaussian::computeAlphaDerivative(std::vector<Particle *> parti
         // one-particle wavefunctions
         double r2 = 0;
         for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
-            if (dim == 2) { r2 += beta*pow(particles[i]->getPosition()[dim], 2); }
+            if (dim == 2) { r2 += m_beta*pow(particles[i]->getPosition()[dim], 2); }
             else { r2 += pow(particles[i]->getPosition()[dim], 2); }
         }
         r2sum += r2; // one-particle wavefunction
@@ -144,5 +144,6 @@ double InteractingGaussian::computeAlphaDerivative(std::vector<Particle *> parti
 
     }
 
-    return -r2sum*exp(-alpha*r2sum)*correlation;
+    gradient[0] = -r2sum*exp(-alpha*r2sum)*correlation;
+    return gradient;
 }

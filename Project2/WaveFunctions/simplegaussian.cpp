@@ -18,16 +18,15 @@ double SimpleGaussian::evaluate(std::vector<Particle*> particles) {
      // return value of product of gaussian one-particle wavefunctions
 
      double alpha = m_parameters[0];
-     double gaussian = 0;
+     double r2sum = 0;
      for (int i=0; i < m_system->getNumberOfParticles(); i++) {
          double r2 = 0;
          for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
              r2 += pow(particles[i]->getPosition()[dim], 2);
          }
-         //gaussian *= exp(-alpha*r2);
-         gaussian += r2;
+         r2sum += r2;
      }
-    return exp(-alpha * gaussian);
+    return exp(-alpha * r2sum);
 }
 
 double SimpleGaussian::computeLaplacian(std::vector<Particle*> particles) {
@@ -49,25 +48,27 @@ std::vector<double> SimpleGaussian::computeGradient(std::vector<Particle*> parti
     // calculate gradient of trial wavefunction divided by trial wavefunction
     // used to calculate drift velocity / quantum force
 
-    std::vector<double> firstDerivative;
+    std::vector<double> gradient;
     int numberOfParticles = m_system->getNumberOfParticles();
     int numberOfDimensions = m_system->getNumberOfDimensions();
-    firstDerivative.resize(numberOfParticles*numberOfDimensions);
+    gradient.resize(numberOfParticles*numberOfDimensions);
 
     double alpha = m_parameters[0];
 
     for (int i=0; i < numberOfParticles; i++) {
         for (int dim=0; dim < numberOfDimensions; dim++) {
-        firstDerivative[i+dim] += -2*alpha*particles[i]->getPosition()[dim];
+            gradient[i+dim] += -2*alpha*particles[i]->getPosition()[dim];
         }
     }
-    return firstDerivative;
+    return gradient;
 }
 
-double SimpleGaussian::computeAlphaDerivative(std::vector<Particle *> particles) {
+std::vector<double> SimpleGaussian::computeParametersGradient(std::vector<Particle *> particles) {
     // return derivative of wavefunction w.r.t. alpha
 
     double alpha = m_parameters[0];
+    std::vector<double> gradient(m_numberOfParameters);
+
     double r2sum = 0;
     for (int i=0; i < m_system->getNumberOfParticles(); i++) {
         double r2 = 0;
@@ -77,7 +78,8 @@ double SimpleGaussian::computeAlphaDerivative(std::vector<Particle *> particles)
         r2sum += r2;
     }
 
-    return -r2sum*exp(-alpha*r2sum);
+    gradient[0] = -r2sum*exp(-alpha*r2sum);
+    return gradient;
 }
 
 
