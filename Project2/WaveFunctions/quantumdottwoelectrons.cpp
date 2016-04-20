@@ -33,7 +33,7 @@ double QuantumDotTwoElectrons::evaluate(std::vector<Particle*> particles) {
     double r2_2 = x2*x2 + y2*y2;
     double r12 = sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
 
-    return exp(-0.5*alpha*m_omega*(r1_2 + r2_2))*exp(r12/(1 + beta*r12));
+    return exp(-0.5*alpha*m_omega*(r1_2 + r2_2))*exp((m_a*r12)/(1 + beta*r12));
 }
 
 double QuantumDotTwoElectrons::computeLaplacian(std::vector<Particle *> particles) {
@@ -50,11 +50,11 @@ double QuantumDotTwoElectrons::computeLaplacian(std::vector<Particle *> particle
     double r1_2 = x1*x1 + y1*y1;
     double r2_2 = x2*x2 + y2*y2;
     double r12 = sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
-    double K = 1.0/(1 + beta*r12)*(1 + beta*r12);
+    double K = 1.0/((1 + beta*r12)*(1 + beta*r12));
 
-    double term1 = 2*m_a*(r12*(m_a + beta) + 1)*K*K / r12;
-    double term2 = -m_a*(r1_2 + r2_2 - 2*r12*r12)*K / r12;
-    double term3 = 2*alpha*m_omega*(alpha*m_omega*(r1_2 + r2_2) - 4);
+    double term1 = 2*alpha*m_omega*(alpha*m_omega*(r1_2 + r2_2) - 2);
+    double term2 = -2*m_a*alpha*m_omega*r12*K;
+    double term3 = 2*m_a*K*(m_a*K + 1.0/r12 - 2*beta*sqrt(K));
 
     return term1 + term2 + term3;
 }

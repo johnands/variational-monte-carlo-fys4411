@@ -30,13 +30,14 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
         // make initial state
         m_system->getInitialState()->setupInitialState();
 
-        // set value of alpha
+        // set parameter values
         m_system->getWaveFunction()->setParameters(parameters);
 
         // run metropolis steps
         m_system->runMetropolisSteps((int) 1e5, false, false, false);
 
         double newEnergy = m_system->getSampler()->getEnergy();
+        cout << "New Energy: " << newEnergy << endl;
 
         // compute gradient of exp. value of local energy w.r.t. the variational parameters
         std::vector<double> localEnergyGradient(numberOfParameters);
@@ -51,7 +52,7 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
             cout << "New step length: " << m_stepLengthOptimize << endl;
         }
         else {
-            // compute new alpha
+            // compute new paramters
             for (int i=0; i < numberOfParameters; i++) {
                 parameters[i] -= m_stepLengthOptimize*localEnergyGradient[i];
             }
@@ -68,12 +69,12 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
         cout << " Optimal parameter " << i+1 << " : " << parameters.at(i) << endl;
     }
 
-    // run many Metropolis steps with the optimal alpha
+    // run many Metropolis steps with the optimal parameters
 
     // make initial state
     m_system->getInitialState()->setupInitialState();
 
-    // set value of alpha
+    // set value of parameters
     m_system->getWaveFunction()->setParameters(parameters);
 
     // run metropolis steps

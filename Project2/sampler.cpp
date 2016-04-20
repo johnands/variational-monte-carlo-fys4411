@@ -53,8 +53,8 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile, bool writePosi
     m_cumulativeEnergySquared += localEnergy*localEnergy;
 
     for (int i=0; i < m_numberOfParameters; i++) {
-        m_cumulativeWaveFunctionDerivative[i] += waveFunctionDerivative[i] / waveFunction;
-        m_cumulativeWaveFunctionEnergy[i] += (waveFunctionDerivative[i] / waveFunction) * localEnergy;
+        m_cumulativeWaveFunctionDerivative[i] += waveFunctionDerivative[i];
+        m_cumulativeWaveFunctionEnergy[i] += waveFunctionDerivative[i] * localEnergy;
     }
 
     // store energies or positions
