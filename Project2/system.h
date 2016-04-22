@@ -3,8 +3,10 @@
 
 class System {
 public:
-    bool metropolisStep             ();
-    bool metropolisStepImportance   ();
+    bool metropolisStep                 ();
+    bool metropolisStepImportance       ();
+    bool metropolisStepSlater           ();
+    bool metropolisStepSlaterImportance ();
     std::vector<double> driftForce  (int particle);
     double evaluateGreensFunction   (int particle, std::vector<double> oldPosition, std::vector<double> newPosition);
     void runMetropolisSteps         (int numberOfMetropolisSteps, bool useImportanceSampling,
@@ -18,6 +20,7 @@ public:
     void setHamiltonian             (class Hamiltonian* hamiltonian);
     void setWaveFunction            (class WaveFunction* waveFunction);
     void setInitialState            (class InitialState* initialState);
+    void setParticles               (std::vector<class Particle*> particles);
     class WaveFunction*             getWaveFunction()   { return m_waveFunction; }
     class Hamiltonian*              getHamiltonian()    { return m_hamiltonian; }
     class Sampler*                  getSampler()        { return m_sampler; }

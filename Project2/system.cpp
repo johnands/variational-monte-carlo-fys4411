@@ -16,6 +16,32 @@ using std::endl;
 using std::setprecision;
 using std::vector;
 
+bool System::metropolisStepSlater() {
+
+    int particle = Random::nextInt(m_numberOfParticles);        // choose random particle
+    int dimension = Random::nextInt(m_numberOfDimensions);      // choose random dimension
+    double change = (Random::nextDouble()*2-1)*m_stepLength;    // propose change of particle's position
+
+    // store new proposed position
+    m_particles[particle]->setNewPosition(change, dimension);
+
+    double ratio = m_waveFunction->computeRatio(m_particles, particle);
+
+    // this are the same for Slater
+    if (ratio >= Random::nextDouble()) {
+        m_waveFunction->updateRowSlater(particle);
+        m_particles[particle]->adjustPosition(change, dimension);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool System::metropolisStepSlaterImportance() {
+
+}
+
 bool System::metropolisStepImportance() {
     /* With importance sampling
      * The proposed change is now altered to make the particles drift
@@ -123,7 +149,6 @@ bool System::metropolisStep() {
     double ratio = pow(waveFuncNew, 2) / pow(waveFuncOld, 2);
 
     if (ratio >= Random::nextDouble()) {
-        //cout << m_particles[particle]->getPosition()[0] << endl;
         return true;
     }
     else {
@@ -136,7 +161,6 @@ bool System::metropolisStep() {
 void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceSampling,
                                 bool writeEnergiesToFile, bool writePositionsToFile)
 {
-    m_particles                 = m_initialState->getParticles();
     m_numberOfAcceptedSteps = 0;
     if (m_samplerSetup == false) {
         m_sampler                   = new Sampler(this);
@@ -215,4 +239,7 @@ void System::setInitialState(InitialState* initialState) {
     m_initialState = initialState;
 }
 
+void System::setParticles(std::vector<Particle*> particles) {
+    m_particles = particles;
+}
 

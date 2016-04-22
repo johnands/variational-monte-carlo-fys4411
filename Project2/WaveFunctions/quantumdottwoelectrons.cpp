@@ -52,7 +52,7 @@ double QuantumDotTwoElectrons::computeLaplacian(std::vector<Particle *> particle
     double r12 = sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
     double K = 1.0/((1 + beta*r12)*(1 + beta*r12));
 
-    double term1 = 2*alpha*m_omega*(alpha*m_omega*(r1_2 + r2_2) - 2);
+    double term1 = alpha*m_omega*(alpha*m_omega*(r1_2 + r2_2) - 4);
     double term2 = -2*m_a*alpha*m_omega*r12*K;
     double term3 = 2*m_a*K*(m_a*K + 1.0/r12 - 2*beta*sqrt(K));
 
@@ -78,13 +78,13 @@ std::vector<double> QuantumDotTwoElectrons::computeGradient(std::vector<Particle
 
     double r12 = sqrt(dx*dx + dy*dy);
 
-    double K1 = alpha*m_omega;
+    double K1 = -alpha*m_omega;
     double K2 = m_a / (r12*(1 + beta*r12)*(1 + beta*r12));
 
-    gradient[0] = -K1*x1 + K2*dx;
-    gradient[1] = -K1*y1 + K2*dy;
-    gradient[2] = -K1*x2 - K2*dx;
-    gradient[3] = -K1*y2 - K2*dy;
+    gradient[0] = K1*x1 + K2*dx;
+    gradient[1] = K1*y1 + K2*dy;
+    gradient[2] = K1*x2 - K2*dx;
+    gradient[3] = K1*y2 - K2*dy;
 
     return gradient;
 }

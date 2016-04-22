@@ -2,6 +2,7 @@
 #include <cassert>
 
 Particle::Particle() {
+
 }
 
 void Particle::setPosition(const std::vector<double> &position) {
@@ -15,12 +16,16 @@ void Particle::adjustPosition(double change, int dimension) {
 }
 
 void Particle::adjustPositionAllDimensions(std::vector<double> change) {
-    for (int j=0; j < m_numberOfDimensions; j++) {
-        m_position.at(j) += change.at(j);
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        m_position.at(dim) += change.at(dim);
     }
 }
 
+void Particle::setNewPosition(double change, int dimension) {
+    m_newPosition = m_position;
+    m_newPosition.at(dimension) += change;
+}
+
 void Particle::setNumberOfDimensions(int numberOfDimensions) {
-    // setter for number of dimensions for each particle (Particle class doesn't have access to System instance)
     m_numberOfDimensions = numberOfDimensions;
 }

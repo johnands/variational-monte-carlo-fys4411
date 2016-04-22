@@ -18,7 +18,9 @@ SOURCES += main.cpp \
     WaveFunctions/interactinggaussian.cpp \
     steepestdescent.cpp \
     WaveFunctions/quantumdottwoelectrons.cpp \
-    Hamiltonians/harmonicoscillatorquantumdot2.cpp
+    Hamiltonians/harmonicoscillatorquantumdot2.cpp \
+    WaveFunctions/manybodyquantumdot.cpp \
+    singleparticlewavefunctions.cpp
 
 HEADERS += \
     system.h \
@@ -35,5 +37,10 @@ HEADERS += \
     WaveFunctions/interactinggaussian.h \
     steepestdescent.h \
     WaveFunctions/quantumdottwoelectrons.h \
-    Hamiltonians/harmonicoscillatorquantumdot2.h
+    Hamiltonians/harmonicoscillatorquantumdot2.h \
+    WaveFunctions/manybodyquantumdot.h \
+    slater.h \
+    singleparticlewavefunctions.h
+
+LIBS += -larmadillo -lblas -llapack
 

@@ -37,4 +37,5 @@ void RandomUniform::setupInitialState() {
         m_particles.at(i)->setNumberOfDimensions(m_numberOfDimensions);
         m_particles.at(i)->setPosition(position);
     }
+    m_system->setParticles(m_particles);
 }
