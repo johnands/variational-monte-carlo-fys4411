@@ -6,6 +6,7 @@
 #include "../system.h"
 #include "../particle.h"
 #include <armadillo>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
@@ -72,7 +73,8 @@ double ManyBodyQuantumDot::computeRatio(std::vector<Particle *> particles, int i
     }
     double ratioJastrow = exp(m_a*exponent);
 
-    return ratioSD*ratioJastrow;
+    m_ratio = ratioSD*ratioJastrow;
+    return m_ratio;
 }
 
 void ManyBodyQuantumDot::setUpSlater() {
@@ -93,8 +95,8 @@ void ManyBodyQuantumDot::setUpSlater() {
     m_quantumNumbers(9,0) = 0; m_quantumNumbers(9,1) = 3;
 
     // fill the matrix elements, which are the one-particle harm. osc. wavefunctions
-    m_slaterSpinUp = arma::zeros<arma::mat>(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
-    m_slaterSpinDown = arma::zeros<arma::mat>(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
+    m_slaterSpinUpOld = arma::zeros<arma::mat>(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
+    m_slaterSpinDownOld = arma::zeros<arma::mat>(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
 
     for (int i=0; i < m_numberOfParticlesHalf; i++) {
         for (int j=0; j < m_numberOfParticlesHalf; j++) {
@@ -104,13 +106,13 @@ void ManyBodyQuantumDot::setUpSlater() {
             double yUp = m_system->getParticles()[i]->getPosition()[1];
             double xDown = m_system->getParticles()[i+m_numberOfParticlesHalf]->getPosition()[0];
             double yDown = m_system->getParticles()[i+m_numberOfParticlesHalf]->getPosition()[1];
-            m_slaterSpinUp(i,j) = singleParticleWaveFunctions(nx, ny, xUp, yUp);
-            m_slaterSpinDown(i,j) = singleParticleWaveFunctions(nx, ny, xDown, yDown);
+            m_slaterSpinUpOld(i,j) = singleParticleWaveFunctions(nx, ny, xUp, yUp);
+            m_slaterSpinDownOld(i,j) = singleParticleWaveFunctions(nx, ny, xDown, yDown);
         }
     }
 
-    m_slaterSpinUpInverse = arma::inv(m_slaterSpinUp);
-    m_slaterSpinDownInverse = arma::inv(m_slaterSpinDown);
+    m_slaterSpinUpInverse = arma::inv(m_slaterSpinUpOld);
+    m_slaterSpinDownInverse = arma::inv(m_slaterSpinDownOld);
 }
 
 double ManyBodyQuantumDot::singleParticleWaveFunctions(int nx, int ny, double x, double y) {
@@ -119,6 +121,28 @@ double ManyBodyQuantumDot::singleParticleWaveFunctions(int nx, int ny, double x,
     return hermitePolynomials(nx, x)*hermitePolynomials(ny, y) *
            exp(-0.5*m_omega*(x*x + y*y));
 }
+
+std::vector<double> ManyBodyQuantumDot::singleParticleWFGradient(int nx, int ny, double x, double y) {
+
+    std::vector<double> gradient(2);
+    gradient[0] =  exp(-0.5*m_omega*(x*x + y*y)) * hermitePolynomials(ny, y) *
+                   ( hermitePolynomialsDerivative1(nx, x) - hermitePolynomials(nx, x)*m_omega*x);
+    gradient[1] =  exp(-0.5*m_omega*(x*x + y*y)) * hermitePolynomials(nx, x) *
+                   ( hermitePolynomialsDerivative1(ny, y) - hermitePolynomials(ny, y)*m_omega*y);
+    return gradient;
+}
+
+double ManyBodyQuantumDot::singleParticleWFLaplacian(int nx, int ny, double x, double y) {
+
+    return exp(-0.5*m_omega*(x*x + y*y)) *
+           ( - 2*m_omega*x*hermitePolynomialsDerivative1(nx, x)
+             - 2*m_omega*y*hermitePolynomialsDerivative1(ny, y)
+             + m_omega*m_omega*hermitePolynomials(nx, x)*x*x
+             + m_omega*m_omega*hermitePolynomials(ny, y)*y*y
+             - m_omega*hermitePolynomials(nx, x) - m_omega*hermitePolynomials(ny, y)
+             + hermitePolynomialsDerivative2(nx, x) + hermitepolynomialsDerivative2(ny, y) )
+}
+
 
 double ManyBodyQuantumDot::hermitePolynomials(int energyLevel, double position) {
 
@@ -131,20 +155,77 @@ double ManyBodyQuantumDot::hermitePolynomials(int energyLevel, double position) 
     }
 
     else if (energyLevel == 2) {
-        return 4*m_omegaSqrt*position*position;
+        return 4*m_omega*position*position;
     }
 
     else if (energyLevel == 3) {
-        return 8*m_omegaSqrt*position*position*position - 12*m_omegaSqrt*position;
+        return 8*m_omega*m_omegaSqrt*position*position*position - 12*m_omegaSqrt*position;
     }
 
     else if (energyLevel == 4) {
-        return 16*m_omegaSqrt*position*position*position*position -
-               48*m_omegaSqrt*position*position + 12;
+        return 16*m_omega*m_omega*position*position*position*position -
+               48*m_omega*position*position + 12;
     }
 
     else {
-        cout << "The energy level is too high" << endl;
+        cout << "Energy level should not exceed n = 4" << endl;
+        exit(0);
+    }
+}
+
+double ManyBodyQuantumDot::hermitePolynomialsDerivative1(int energyLevel, double position) {
+
+    if (energyLevel == 0) {
+        return 0;
+    }
+
+    else if (energyLevel == 1) {
+        return 2;
+    }
+
+    else if (energyLevel == 2) {
+        return 8*m_omegaSqrt*position;
+    }
+
+    else if (energyLevel == 3) {
+        return 24*m_omega*position*position - 12;
+    }
+
+    else if (energyLevel == 4) {
+        return 64*m_omega*m_omegaSqrt*position*position*position -
+               96*m_omegaSqrt*position;
+    }
+
+    else {
+        cout << "Energy level should not exceed n = 4" << endl;
+        exit(0);
+    }
+}
+
+double ManyBodyQuantumDot::hermitepolynomialsDerivative2(int energyLevel, double position) {
+
+    if (energyLevel == 0) {
+        return 0;
+    }
+
+    else if (energyLevel == 1) {
+        return 0;
+    }
+
+    else if (energyLevel == 2) {
+        return 8;
+    }
+
+    else if (energyLevel == 3) {
+        return 48*m_omegaSqrt*position;
+    }
+
+    else if (energyLevel == 4) {
+        return 192*m_omega*position*position - 96;
+    }
+
+    else {
+        cout << "Energy level should not exceed n = 4" << endl;
         exit(0);
     }
 }
@@ -168,43 +249,59 @@ void ManyBodyQuantumDot::updateRowSlater(int i) {
             int nx = m_quantumNumbers(j,0);
             int ny = m_quantumNumbers(j,1);
             // compute new inverse here?
-            m_slaterSpinUp(i,j) = singleParticleWaveFunctions(nx, ny, xNew, yNew);
+            m_slaterSpinUpNew(i,j) = singleParticleWaveFunctions(nx, ny, xNew, yNew);
         }
     }
     else {
         for (int j=0; j < m_numberOfParticlesHalf; j++) {
             int nx = m_quantumNumbers(j,0);
             int ny = m_quantumNumbers(j,1);
-            m_slaterSpinDown(i,j) = singleParticleWaveFunctions(nx, ny, xNew, yNew);
+            m_slaterSpinDownNew(i,j) = singleParticleWaveFunctions(nx, ny, xNew, yNew);
         }
     }
-    updateRowSlaterInverse(i);
+    updateSlaterInverse(i);
 }
 
-void ManyBodyQuantumDot::updateRowSlaterInverse(int i) {
+void ManyBodyQuantumDot::updateSlaterInverse(int i) {
     // update row corresponding to particle i in inverse Slater matrix
 
     // get new position of particle i
     double xNew = m_system->getParticles()[i]->getNewPosition()[0];
     double yNew = m_system->getParticles()[i]->getNewPosition()[1];
 
+    // compute Sj for all columns except column i
+    std::vector<double> S(m_numberOfParticlesHalf);
+    std::fill(S.begin(), S.end(), 0);
     if (i < m_numberOfParticlesHalf) {
         for (int j=0; j < m_numberOfParticlesHalf; j++) {
-            if (j == i) {
-                int nx = m_quantumNumbers(j,0);
-                int ny = m_quantumNumbers(j,1);
-                m_slaterSpinUp(i,j) = singleParticleWaveFunctions(nx, ny, xNew, yNew);
+            if (!(j == i)) {
+                for (int l=0; l < m_numberOfParticlesHalf; l++) {
+                    S.at(j) += m_slaterSpinUpNew(i,l)*m_slaterSpinUpInverse(l,j);
+                }
+                for (int k=0; k < m_numberOfParticlesHalf; k++) {
+                    m_slaterSpinUpInverse(k,j) = m_slaterSpinUpInverse(k,j) -
+                                                 S.at(j)*m_slaterSpinUpInverse(k,i) / m_ratio;
+                }
             }
             else {
-
+                m_slaterSpinUpInverse(k,i) = m_slaterSpinUpInverse(k,i) / m_ratio;
             }
         }
     }
     else {
         for (int j=0; j < m_numberOfParticlesHalf; j++) {
-            int nx = m_quantumNumbers(j,0);
-            int ny = m_quantumNumbers(j,1);
-            m_slaterSpinDown(i,j) = singleParticleWaveFunctions(nx, ny, xNew, yNew);
+            if (!(j == i)) {
+                for (int l=0; l < m_numberOfParticlesHalf; l++) {
+                    S.at(j) += m_slaterSpinDownNew(i,l)*m_slaterSpinDownInverse(l,j);
+                }
+                for (int k=0; k < m_numberOfParticlesHalf; k++) {
+                    m_slaterSpinDownInverse(k,j) = m_slaterSpinDownInverse(k,j) -
+                                                 S.at(j)*m_slaterSpinDownInverse(k,i) / m_ratio;
+                }
+            }
+            else {
+                m_slaterSpinDownInverse(k,i) = m_slaterSpinDownInverse(k,i) / m_ratio;
+            }
         }
     }
 
@@ -222,6 +319,8 @@ double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
 std::vector<double> ManyBodyQuantumDot::computeGradient(std::vector<Particle *> particles) {
     // calculate gradient of trial wavefunction divided by trial wavefunction
     // used to calculate drift velocity / quantum force
+
+    std::vector<double> gradient(2);
 
 
 }
