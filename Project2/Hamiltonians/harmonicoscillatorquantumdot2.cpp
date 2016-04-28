@@ -8,8 +8,8 @@
 
 HarmonicOscillatorQuantumDot2::HarmonicOscillatorQuantumDot2(class System* system, double omega, bool useNumerical) :
         Hamiltonian(system, useNumerical) {
-    //assert(m_system->getNumberOfParticles() == 2);
-    //assert(m_system->getNumberOfDimensions() == 2);
+    assert(m_system->getNumberOfParticles() == 2);
+    assert(m_system->getNumberOfDimensions() == 2);
     m_omega = omega;
 }
 

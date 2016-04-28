@@ -31,5 +31,6 @@ private:
     std::vector<double>  m_cumulativeWaveFunctionEnergy = std::vector<double>();
     std::fstream m_outFile;
     std::fstream m_outFile2;
+    bool m_firstStep = true;
     class System* m_system = nullptr;
 };

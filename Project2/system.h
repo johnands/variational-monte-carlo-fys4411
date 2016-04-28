@@ -16,6 +16,8 @@ public:
     void setStepLength              (double stepLength);
     void setEquilibrationFraction   (double equilibrationFraction);
     void setTimeStep                (double timeStep);
+    void setUseSlater               (bool useSlater);
+    void setOptimizeParameters      (bool optimizeParameters);
 
     void setHamiltonian             (class Hamiltonian* hamiltonian);
     void setWaveFunction            (class WaveFunction* waveFunction);
@@ -32,6 +34,8 @@ public:
     double getEquilibrationFraction()   { return m_equilibrationFraction; }
     int getNumberOfAcceptedSteps()      { return m_numberOfAcceptedSteps; }
     double getTimeStep()                { return m_timeStep; }
+    bool getUseSlater()                 { return m_useSlater; }
+    bool getOptimizeParameters()        { return m_optimizeParameters; }
 
 private:
     int                             m_numberOfParticles = 0;
@@ -42,6 +46,8 @@ private:
     double                          m_timeStep = 0.01;
     int                             m_numberOfAcceptedSteps = 0;
     bool                            m_samplerSetup = false;
+    bool                            m_useSlater = false;
+    bool                            m_optimizeParameters = false;
 
 
     class WaveFunction*             m_waveFunction = nullptr;

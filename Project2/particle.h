@@ -9,6 +9,7 @@ public:
     void adjustPositionAllDimensions(std::vector<double> change);
     void setNumberOfDimensions(int numberOfDimensions);
     void setNewPosition(double change, int dimension);
+    void setNewPositionAllDimensions(std::vector<double> change);
     std::vector<double>& getPosition() { return m_position; }
     std::vector<double>& getNewPosition() {return m_newPosition; }
 

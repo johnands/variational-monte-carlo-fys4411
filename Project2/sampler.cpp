@@ -29,7 +29,7 @@ void Sampler::setNumberOfMetropolisSteps(int steps) {
 
 void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile, bool writePositionsToFile) {
     // Make sure the sampling variable(s) are initialized at the first step.
-    if (m_stepNumber == 0) {
+    if (m_firstStep) {
         m_energy = 0;
         m_cumulativeEnergy = 0;
         m_cumulativeEnergySquared = 0;
@@ -39,23 +39,23 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile, bool writePosi
             m_cumulativeWaveFunctionDerivative[i] = 0;
             m_cumulativeWaveFunctionEnergy[i] = 0;
         }
+        m_firstStep = false;
     }
 
     double localEnergy = m_system->getHamiltonian()->
                          computeLocalEnergy(m_system->getParticles());
 
-    double waveFunction = m_system->getWaveFunction()->evaluate(m_system->getParticles());
-
-    std::vector<double> waveFunctionDerivative =
-            m_system->getWaveFunction()->computeParametersGradient(m_system->getParticles());
+    if (m_system->getOptimizeParameters()) {
+        std::vector<double> waveFunctionDerivative =
+                m_system->getWaveFunction()->computeParametersGradient(m_system->getParticles());
+        for (int i=0; i < m_numberOfParameters; i++) {
+            m_cumulativeWaveFunctionDerivative[i] += waveFunctionDerivative[i];
+            m_cumulativeWaveFunctionEnergy[i] += waveFunctionDerivative[i] * localEnergy;
+        }
+    }
 
     m_cumulativeEnergy  += localEnergy;
     m_cumulativeEnergySquared += localEnergy*localEnergy;
-
-    for (int i=0; i < m_numberOfParameters; i++) {
-        m_cumulativeWaveFunctionDerivative[i] += waveFunctionDerivative[i];
-        m_cumulativeWaveFunctionEnergy[i] += waveFunctionDerivative[i] * localEnergy;
-    }
 
     // store energies or positions
     if (writeEnergiesToFile) { writeToFile(localEnergy); }

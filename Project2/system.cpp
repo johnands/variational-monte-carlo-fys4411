@@ -29,7 +29,7 @@ bool System::metropolisStepSlater() {
 
     // this are the same for Slater
     if (ratio >= Random::nextDouble()) {
-        m_waveFunction->updateRowSlater(particle);
+        m_waveFunction->updateRowSlater(m_particles, particle);
         m_particles[particle]->adjustPosition(change, dimension);
         return true;
     }
@@ -39,6 +39,48 @@ bool System::metropolisStepSlater() {
 }
 
 bool System::metropolisStepSlaterImportance() {
+
+    int particle = Random::nextInt(m_numberOfParticles);    // choose random particle
+
+    // compute proposed change
+    vector<double> plusChange = driftForce(particle);
+
+    // compute proposed change
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        plusChange[dim] = 0.5*plusChange[dim]*m_timeStep + Random::nextGaussian(0.0, sqrt(m_timeStep));
+    }
+
+    // compute negative of proposed change
+    vector<double> minusChange;
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        minusChange.push_back(-plusChange[dim]);
+    }
+
+    // store new proposed position
+    m_particles[particle]->setNewPositionAllDimensions(plusChange);
+
+    // compute ratio (excluding Green's functions)
+    double ratio = m_waveFunction->computeRatio(m_particles, particle);
+
+    // get old position
+    vector<double> oldPosition = m_particles[particle]->getPosition();
+
+    // get new position
+    vector<double> newPosition = m_particles[particle]->getNewPosition();
+
+    double GreensOld = evaluateGreensFunction(particle, newPosition, oldPosition);
+    double GreensNew = evaluateGreensFunction(particle, oldPosition, newPosition);
+
+    ratio *= GreensNew / GreensOld;
+
+    if (ratio >= Random::nextDouble()) {
+        m_waveFunction->updateRowSlater(m_particles, particle);
+        m_particles[particle]->adjustPositionAllDimensions(plusChange);
+        return true;
+    }
+    else {
+        return false;
+    }
 
 }
 
@@ -177,8 +219,15 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceS
 
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep;
-        if (useImportanceSampling) { acceptedStep = metropolisStepImportance(); }
-        else                       { acceptedStep = metropolisStep(); }
+
+        if (getUseSlater()) {
+            if (useImportanceSampling) { acceptedStep = metropolisStepSlaterImportance(); }
+            else                       { acceptedStep = metropolisStepSlater(); }
+        }
+        else {
+            if (useImportanceSampling) { acceptedStep = metropolisStepImportance(); }
+            else                       { acceptedStep = metropolisStep(); }
+        }
 
         // compute acceptance rate
         if (acceptedStep) {
@@ -225,6 +274,14 @@ void System::setEquilibrationFraction(double equilibrationFraction) {
 
 void System::setTimeStep(double timeStep) {
     m_timeStep = timeStep;
+}
+
+void System::setUseSlater(bool useSlater) {
+    m_useSlater = useSlater;
+}
+
+void System::setOptimizeParameters(bool optimizeParameters) {
+    m_optimizeParameters = optimizeParameters;
 }
 
 void System::setHamiltonian(Hamiltonian* hamiltonian) {

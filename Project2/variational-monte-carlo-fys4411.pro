@@ -20,7 +20,7 @@ SOURCES += main.cpp \
     WaveFunctions/quantumdottwoelectrons.cpp \
     Hamiltonians/harmonicoscillatorquantumdot2.cpp \
     WaveFunctions/manybodyquantumdot.cpp \
-    singleparticlewavefunctions.cpp
+    Hamiltonians/homanybodyquantumdot.cpp
 
 HEADERS += \
     system.h \
@@ -39,8 +39,7 @@ HEADERS += \
     WaveFunctions/quantumdottwoelectrons.h \
     Hamiltonians/harmonicoscillatorquantumdot2.h \
     WaveFunctions/manybodyquantumdot.h \
-    slater.h \
-    singleparticlewavefunctions.h
+    Hamiltonians/homanybodyquantumdot.h
 
 LIBS += -larmadillo -lblas -llapack
 

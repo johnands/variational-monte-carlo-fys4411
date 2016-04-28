@@ -26,6 +26,13 @@ void Particle::setNewPosition(double change, int dimension) {
     m_newPosition.at(dimension) += change;
 }
 
+void Particle::setNewPositionAllDimensions(std::vector<double> change) {
+    m_newPosition = m_position;
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        m_newPosition.at(dim) += change.at(dim);
+    }
+}
+
 void Particle::setNumberOfDimensions(int numberOfDimensions) {
     m_numberOfDimensions = numberOfDimensions;
 }

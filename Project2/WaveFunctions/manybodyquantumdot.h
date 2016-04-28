@@ -15,9 +15,9 @@ public:
     double singleParticleWFLaplacian(int nx, int ny, double x, double y);
     double hermitePolynomials(int energyLevel, double position);
     double hermitePolynomialsDerivative1(int energyLevel, double position);
-    double hermitepolynomialsDerivative2(int energyLevel, double position);
-    void updateRowSlater(int i);
-    void updateRowSlaterInverse(int i);
+    double hermitePolynomialsDerivative2(int energyLevel, double position);
+    void updateRowSlater(std::vector<class Particle*> particles, int i);
+    void updateSlaterInverse(std::vector<class Particle*> particles, int i);
     double computeRatio(std::vector<class Particle*> particles, int particle);
 
 private:
@@ -27,11 +27,12 @@ private:
     int m_numberOfParticles;
     int m_numberOfParticlesHalf;
     double m_ratio;
+    int m_i;
     arma::mat m_quantumNumbers;
-    arma::mat m_slaterSpinUpOld;
-    arma::mat m_slaterSpinDownOld;
-    arma::mat m_slaterSpinUpNew;
-    arma::mat m_slaterSpinDownNew;
+    arma::mat m_slaterSpinUp;
+    arma::mat m_slaterSpinDown;
     arma::mat m_slaterSpinUpInverse;
     arma::mat m_slaterSpinDownInverse;
+    double m_laplacianUp = 0;
+    double m_laplacianDown = 0;
 };

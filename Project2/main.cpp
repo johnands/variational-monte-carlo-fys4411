@@ -10,6 +10,7 @@
 #include "Hamiltonians/harmonicoscillator.h"
 #include "Hamiltonians/harmonicoscillatorinteracting.h"
 #include "Hamiltonians/harmonicoscillatorquantumdot2.h"
+#include "Hamiltonians/homanybodyquantumdot.h"
 #include "InitialStates/initialstate.h"
 #include "InitialStates/randomuniform.h"
 #include "steepestdescent.h"
@@ -21,7 +22,7 @@ int main() {
 
     int numberOfDimensions  = 2;
     int numberOfParticles   = 6;
-    int numberOfSteps       = (int) 1e6;
+    int numberOfSteps       = (int) 1e4;
     double omega            = 0.5;          // oscillator frequency
     double alpha            = 0.94550;      // variational parameter 1
     double beta             = 0.509;        // variational parameter 2
@@ -33,7 +34,7 @@ int main() {
     double gamma            = 2.82843;      // trap potential strength z-direction
 
     bool useNumerical       = false;        // compute kinetic energy numerically
-    bool useImportanceSampling = true;
+    bool useImportanceSampling = false;
     bool writeEnergiesToFile = false;
     bool writePositionsToFile = false;
 
@@ -42,8 +43,8 @@ int main() {
 
     //system->setHamiltonian              (new HarmonicOscillator(system, omega, useNumerical));
     //system->setHamiltonian              (new HarmonicOscillatorInteracting(system, omega, a, gamma, useNumerical));
-    system->setHamiltonian              (new HarmonicOscillatorQuantumDot2(system, omega, useNumerical));
-    //system->setHamiltonian              ();
+    //system->setHamiltonian              (new HarmonicOscillatorQuantumDot2(system, omega, useNumerical));
+    system->setHamiltonian              (new HOManyBodyQuantumDot(system, omega, useNumerical));
 
     //system->setWaveFunction             (new SimpleGaussian(system, alpha));
     //system->setWaveFunction             (new InteractingGaussian(system, alpha, beta, a));
@@ -53,13 +54,15 @@ int main() {
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
     system->setTimeStep                 (timeStep);
-    //system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile, writePositionsToFile);
+    system->setUseSlater                (true);
+    system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile, writePositionsToFile);
 
     // optimize alpha
     /*double initialAlpha = 0.6;
     double initialBeta = 0.6;
     std::vector<double> parameters(2);
     parameters[0] = initialAlpha; parameters[1] = initialBeta;
+    system->setOptimizeParameters(true);
     double stepLengthOptimize = 0.01;
     SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize);
     sd->optimize(parameters);*/

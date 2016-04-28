@@ -13,6 +13,8 @@ public:
     virtual double computeLaplacian(std::vector<class Particle*> particles) = 0;
     virtual std::vector<double> computeGradient(std::vector<class Particle*> particles) = 0;
     virtual std::vector<double> computeParametersGradient(std::vector<class Particle*> particles) = 0;
+    virtual double computeRatio(std::vector<class Particle*> particles, int particle) {}
+    virtual void updateRowSlater(std::vector<class Particle*> particles, int i) {}
 
 protected:
     int     m_numberOfParameters = 0;
