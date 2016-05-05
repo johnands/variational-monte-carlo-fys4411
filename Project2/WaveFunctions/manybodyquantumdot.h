@@ -4,7 +4,7 @@
 
 class ManyBodyQuantumDot : public WaveFunction {
 public:
-    ManyBodyQuantumDot(class System* system, double alpha, double beta, double omega, double a);
+    ManyBodyQuantumDot(class System* system, double alpha, double beta, double omega);
     double evaluate(std::vector<class Particle*> particles);
     double computeLaplacian(std::vector<class Particle*> particles);
     std::vector<double> computeGradient(std::vector<class Particle*> particles);
@@ -19,11 +19,13 @@ public:
     void updateRowSlater(std::vector<class Particle*> particles, int i);
     void updateSlaterInverse(std::vector<class Particle*> particles, int i);
     double computeRatio(std::vector<class Particle*> particles, int particle);
+    std::vector<double> gradientSlater(std::vector<class Particle*> particles);
+    std::vector<double> gradientJastrow(std::vector<class Particle*> particles);
 
 private:
     double m_omega;
     double m_omegaSqrt;
-    double m_a;
+    arma::mat m_a;
     int m_numberOfParticles;
     int m_numberOfParticlesHalf;
     double m_ratio;
@@ -35,4 +37,8 @@ private:
     arma::mat m_slaterSpinDownInverse;
     double m_laplacianUp = 0;
     double m_laplacianDown = 0;
+    std::vector<double> m_gradientUp = std::vector<double>();
+    std::vector<double> m_gradientDown = std::vector<double>();
+    bool m_firstStepLaplacian = true;
+    bool m_firstStepGradient = true;
 };
