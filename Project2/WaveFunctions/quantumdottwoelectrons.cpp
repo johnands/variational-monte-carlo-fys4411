@@ -59,7 +59,7 @@ double QuantumDotTwoElectrons::computeLaplacian(std::vector<Particle *> particle
     return term1 + term2 + term3;
 }
 
-std::vector<double> QuantumDotTwoElectrons::computeGradient(std::vector<Particle *> particles) {
+std::vector<double> QuantumDotTwoElectrons::computeGradient(std::vector<Particle *> particles, int particle) {
     // calculate gradient of trial wavefunction divided by trial wavefunction
     // used to calculate drift velocity / quantum force
 

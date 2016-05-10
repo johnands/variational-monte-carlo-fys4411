@@ -44,7 +44,7 @@ double SimpleGaussian::computeLaplacian(std::vector<Particle*> particles) {
     return doubleDerivative*2*alpha;
 }
 
-std::vector<double> SimpleGaussian::computeGradient(std::vector<Particle*> particles) {
+std::vector<double> SimpleGaussian::computeGradient(std::vector<Particle*> particles, int particle) {
     // calculate gradient of trial wavefunction divided by trial wavefunction
     // used to calculate drift velocity / quantum force
 

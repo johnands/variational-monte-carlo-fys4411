@@ -34,7 +34,7 @@ int main() {
     double gamma            = 2.82843;      // trap potential strength z-direction
 
     bool useNumerical       = false;        // compute kinetic energy numerically
-    bool useImportanceSampling = true;
+    bool useImportanceSampling = false;
     bool writeEnergiesToFile = false;
     bool writePositionsToFile = false;
 

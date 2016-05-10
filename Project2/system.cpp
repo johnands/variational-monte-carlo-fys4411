@@ -143,11 +143,10 @@ bool System::metropolisStepImportance() {
 vector<double> System::driftForce(int particle) {
     // return a 3d "drift-vector" for the chosen particle
 
-    vector<double> driftVector;
-    for (int j=0; j < m_numberOfDimensions; j++) {
-        driftVector.push_back(2*m_waveFunction->computeGradient(m_particles)[particle*m_numberOfDimensions + j]);
+    vector<double> driftForce(m_numberOfDimensions);
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        driftForce[dim] = 2*m_waveFunction->computeGradient(m_particles, particle)[dim];
     }
-    return driftVector;
 }
 
 double System::evaluateGreensFunction(int particle, vector<double> newPosition, vector<double> oldPosition) {

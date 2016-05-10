@@ -109,7 +109,7 @@ double InteractingGaussian::computeLaplacian(std::vector<Particle*> particles) {
     return term1 + 2*term2 + term3 + term4;
 }
 
-std::vector<double> InteractingGaussian::computeGradient(std::vector<Particle*> particles) {
+std::vector<double> InteractingGaussian::computeGradient(std::vector<Particle*> particles, int particle) {
 
 }
 

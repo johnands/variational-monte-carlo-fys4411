@@ -328,6 +328,7 @@ double ManyBodyQuantumDot::evaluate(std::vector<Particle*> particles) {
 double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
     // must calculate laplacian for both spin up and spin down first step
     // after that I only need to calculate one of them, they must therefore be stored
+    // this function calculates total laplacian, i.e. w.r.t. all particles
 
     if (m_firstStepLaplacian) {
         // calculate both spin up and down if first step
@@ -374,113 +375,110 @@ double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
                 int ny = m_quantumNumbers(j,1);
                 double x = particles[i]->getPosition()[0];
                 double y = particles[i]->getPosition()[1];
-                m_laplacianDown += singleParticleWFLaplacian(nx, ny, x, y) * m_slaterSpinDownInverse(j,i);
+                m_laplacianDown += singleParticleWFLaplacian(nx, ny, x, y) *
+                                   m_slaterSpinDownInverse(j,i);
             }
         }
     }
 
-    // compute jastrow factor
+    // Laplacian jastrow
     double jastrowLaplacian = 0;
     double beta = m_parameters[1];
-    for (int k=0; k < m_numberOfParticles; k++) {
+    for (int i=0; i < m_numberOfParticles; i++) {
+        std::vector<double> gradJastrow = gradientJastrow(particles, i);
+        jastrowLaplacian += gradJastrow[0];
+        jastrowLaplacian += gradJastrow[1];
 
-        double x_k = particles[k]->getPosition()[0];
-        double y_k = particles[k]->getPosition()[1];
+        double x_i = particles[i]->getPosition()[0];
+        double y_i = particles[i]->getPosition()[1];
 
-        for (int j=0; j < m_numberOfParticles; j++) {
+        for (int k=0; k < m_numberOfParticles; k++) {
 
-            if (j != k) {
-                double x_j = particles[j]->getPosition()[0];
-                double y_j = particles[j]->getPosition()[1];
+            if (k != i) {
+                double x_k = particles[k]->getPosition()[0];
+                double y_k = particles[k]->getPosition()[1];
+                double r_ki = sqrt( (x_k - x_i)*(x_k - x_i) + (y_k - y_i)*(y_k - y_i) );
 
-                double r_kj = sqrt( (x_k - x_j)*(x_k - x_j) + (y_k - y_j)*(y_k - y_j) );
-                double factor1 = 1.0 / (1 + beta*r_kj);
-
-                jastrowLaplacian += (2*m_a(k,j)*factor1*factor1 / r_kj) -
-                                     2*m_a(k,j)*beta*factor1*factor1*factor1;
-
-                for (int i=0; i < m_numberOfParticles; i++) {
-
-                    if (i != k) {
-                        double x_i = particles[i]->getPosition()[0];
-                        double y_i = particles[i]->getPosition()[1];
-
-                        double r_ki = sqrt( (x_k - x_i)*(x_k - x_i) + (y_k - y_i)*(y_k - y_i) );
-                        double dot_prod = (x_k - x_i)*(x_k - x_j) + (y_k - y_i)*(y_k - y_j);
-                        double factor2 = 1.0 / (1 + beta*r_ki);
-
-                        jastrowLaplacian += (dot_prod*m_a(k,i)*m_a(k,i)*factor1*factor1*factor2*factor2)
-                                            / (r_kj*r_ki);
-                    }
-                }
+                double factor = 1.0 / (1 + beta*r_ki);
+                jastrowLaplacian += m_a(k,i)*factor*factor / r_ki -
+                                    2*m_a(k,i)*beta*factor*factor*factor;
             }
         }
     }
 
-    std::vector<double> gradSlater = gradientSlater(particles);
-    std::vector<double> gradJastrow = gradientJastrow(particles);
+    // cross term
+    double crossTerm = 0;
+    for (int i=0; i < m_numberOfParticles; i++) {
+        std::vector<double> gradSlater = gradientSlater(particles, i);
+        std::vector<double> gradJastrow = gradientJastrow(particles, i);
+        crossTerm += gradSlater[0]*gradJastrow[0];
+        crossTerm += gradSlater[1]*gradJastrow[1];
+    }
 
-    return m_laplacianUp + m_laplacianDown + jastrowLaplacian +
-           2 * ( gradSlater[0]*gradJastrow[0] + gradSlater[1]*gradJastrow[1] );
+    return m_laplacianUp + m_laplacianDown + jastrowLaplacian + 2*crossTerm;
 }
 
-std::vector<double> ManyBodyQuantumDot::gradientSlater(std::vector<Particle *> particles) {
-    // return gradient ratio of spin up + spin down
+std::vector<double> ManyBodyQuantumDot::gradientSlater(std::vector<Particle *> particles, int i) {
+    // calculates gradient of spin up/spin down slater w.r.t. one particle only,
+    // but for both dimensions
+    // i is the particle index that we calculate gradient for
 
     std::vector<double> gradient(2);
 
     if (m_firstStepGradient) {
+        // need to calculate both spin up and down first step
+        // make vectors and fill with zeros
         m_gradientUp.resize(2); m_gradientDown.resize(2);
-        m_gradientUp[0] = 0; m_gradientUp[1] = 0;
+        m_gradientUp[0] = 0; m_gradientDown[1] = 0;
         m_gradientDown[0] = 0; m_gradientDown[1] = 0;
 
-        for (int i=0; i < m_numberOfParticlesHalf; i++) {
-            for (int j=0; j < m_numberOfParticlesHalf; j++) {
-                int nx = m_quantumNumbers(j,0);
-                int ny = m_quantumNumbers(j,1);
-                double xUp = particles[i]->getPosition()[0];
-                double yUp = particles[i]->getPosition()[1];
-                double xDown = particles[i+m_numberOfParticlesHalf]->getPosition()[0];
-                double yDown = particles[i+m_numberOfParticlesHalf]->getPosition()[1];
-                std::vector<double> gradUp = singleParticleWFGradient(nx, ny, xUp, yUp);
-                std::vector<double> gradDown = singleParticleWFGradient(nx, ny, xDown, yDown);
-                m_gradientUp[0] += gradUp[0] * m_slaterSpinUpInverse(j,i);
-                m_gradientUp[1] += gradUp[1] * m_slaterSpinUpInverse(j,i);
-                m_gradientDown[0] += gradDown[0] * m_slaterSpinDownInverse(j,i);
-                m_gradientDown[1] += gradDown[1] * m_slaterSpinDownInverse(j,i);
+        // calculate gradients for both spin up and spin down
+        // gradient w.r.t. each particle is a dot product between the gradient of
+        // the single-particle wave functions evaluated for particle i and the
+        // i-th column of the inverse Slater matrix
+        for (int j=0; j < m_numberOfParticlesHalf; j++) {
+            int nx = m_quantumNumbers(j,0);
+            int ny = m_quantumNumbers(j,1);
+            double x = particles[i]->getPosition()[0];
+            double y = particles[i]->getPosition()[1];
+            std::vector<double> grad = singleParticleWFGradient(nx, ny, x, y);
+
+            if (i < m_numberOfParticlesHalf) {
+                m_gradientUp[0] += grad[0] * m_slaterSpinUpInverse(j,i);
+                m_gradientUp[1] += grad[1] * m_slaterSpinUpInverse(j,i);
+            }
+            else {
+                m_gradientDown[0] += grad[0] * m_slaterSpinDownInverse(j,i-m_numberOfParticlesHalf);
+                m_gradientDown[1] += grad[1] * m_slaterSpinDownInverse(j,i-m_numberOfParticlesHalf);
             }
         }
         m_firstStepGradient = false;
     }
 
     // spin-up slater
-    if (m_i < m_numberOfParticlesHalf) {
+    if (i < m_numberOfParticlesHalf) {
         m_gradientUp[0] = 0; m_gradientUp[1] = 0;
-        for (int i=0; i < m_numberOfParticlesHalf; i++) {
-            for (int j=0; j < m_numberOfParticlesHalf; j++) {
-                int nx = m_quantumNumbers(j,0);
-                int ny = m_quantumNumbers(j,1);
-                double x = particles[i]->getPosition()[0];
-                double y = particles[i]->getPosition()[1];
-                std::vector<double> grad = singleParticleWFGradient(nx, ny, x, y);
-                m_gradientUp[0] += grad[0] * m_slaterSpinUpInverse(j,i);
-                m_gradientUp[1] += grad[1] * m_slaterSpinUpInverse(j,i);
-            }
+        for (int j=0; j < m_numberOfParticlesHalf; j++) {
+            int nx = m_quantumNumbers(j,0);
+            int ny = m_quantumNumbers(j,1);
+            double x = particles[i]->getPosition()[0];
+            double y = particles[i]->getPosition()[1];
+            std::vector<double> grad = singleParticleWFGradient(nx, ny, x, y);
+            m_gradientUp[0] += grad[0] * m_slaterSpinUpInverse(j,i);
+            m_gradientUp[1] += grad[1] * m_slaterSpinUpInverse(j,i);
         }
     }
     // spin-down slater
     else {
         m_gradientDown[0] = 0; m_gradientDown[1] = 0;
-        for (int i=0; i < m_numberOfParticlesHalf; i++) {
-            for (int j=0; j < m_numberOfParticlesHalf; j++) {
-                int nx = m_quantumNumbers(j,0);
-                int ny = m_quantumNumbers(j,1);
-                double x = particles[i]->getPosition()[0];
-                double y = particles[i]->getPosition()[1];
-                std::vector<double> grad = singleParticleWFGradient(nx, ny, x, y);
-                m_gradientDown[0] += grad[0] * m_slaterSpinDownInverse(j,i);
-                m_gradientDown[1] += grad[1] * m_slaterSpinDownInverse(j,i);
-            }
+        for (int j=0; j < m_numberOfParticlesHalf; j++) {
+            int nx = m_quantumNumbers(j,0);
+            int ny = m_quantumNumbers(j,1);
+            double x = particles[i]->getPosition()[0];
+            double y = particles[i]->getPosition()[1];
+            std::vector<double> grad = singleParticleWFGradient(nx, ny, x, y);
+            m_gradientDown[0] += grad[0] * m_slaterSpinDownInverse(j,i-m_numberOfParticlesHalf);
+            m_gradientDown[1] += grad[1] * m_slaterSpinDownInverse(j,i-m_numberOfParticlesHalf);
         }
     }
 
@@ -490,43 +488,45 @@ std::vector<double> ManyBodyQuantumDot::gradientSlater(std::vector<Particle *> p
     return gradient;
 }
 
-std::vector<double> ManyBodyQuantumDot::gradientJastrow(std::vector<Particle *> particles) {
+std::vector<double> ManyBodyQuantumDot::gradientJastrow(std::vector<Particle *> particles, int i) {
+    // compute graident jastrow ratio w.r.t. to particle number i
 
     // compute jastrow factor
     std::vector<double> ratioJastrow(2);
     ratioJastrow[0] = 0; ratioJastrow[1] = 0;
     double beta = m_parameters[1];
-    for (int i=0; i < m_numberOfParticles; i++) {
-        double x_i = particles[i]->getPosition()[0];
-        double y_i = particles[i]->getPosition()[1];
+    double x_i = particles[i]->getPosition()[0];
+    double y_i = particles[i]->getPosition()[1];
 
-        for (int j=0; j < m_numberOfParticles; j++) {
-            if (j != i) {
-                double x_j = particles[j]->getPosition()[0];
-                double y_j = particles[j]->getPosition()[1];
-                double r_ij = sqrt( (x_i - x_j)*(x_i - x_j) + (y_i - y_j)*(y_i - y_j) );
-                double factor = 1.0 / ( r_ij*(1 + beta*r_ij)*(1 + beta*r_ij) );
+    for (int j=0; j < m_numberOfParticles; j++) {
+        if (j != i) {
+            double x_j = particles[j]->getPosition()[0];
+            double y_j = particles[j]->getPosition()[1];
+            double r_ij = sqrt( (x_i - x_j)*(x_i - x_j) + (y_i - y_j)*(y_i - y_j) );
+            double factor = 1.0 / ( r_ij*(1 + beta*r_ij)*(1 + beta*r_ij) );
 
-                ratioJastrow[0] += (x_i - x_j)*m_a(i,j)*factor;
-                ratioJastrow[1] += (y_i - y_j)*m_a(i,j)*factor;
-            }
+            ratioJastrow[0] += (x_i - x_j)*m_a(i,j)*factor;
+            ratioJastrow[1] += (y_i - y_j)*m_a(i,j)*factor;
         }
     }
 
     return ratioJastrow;
 }
 
-std::vector<double> ManyBodyQuantumDot::computeGradient(std::vector<Particle *> particles) {
-    // calculate gradient of trial wavefunction divided by trial wavefunction
-    // used to calculate drift velocity / quantum force
+std::vector<double> ManyBodyQuantumDot::computeGradient(std::vector<Particle *> particles, int i) {
+    // this function is used in importance sampling to calculate the drift force
+    // returns a two-dimensional vector that is the gradient of the trial wave function w.r.t to particle i
+    // divided by the trial wave function according to formula 16.10
+
+    m_i = i;        // store for later use
 
     std::vector<double> gradient(2);
 
-    std::vector<double> ratioSlater = gradientSlater(particles);
-    std::vector<double> ratioJastrow = gradientJastrow(particles);
+    std::vector<double> gradSlater = gradientSlater(particles, i);
+    std::vector<double> gradJastrow = gradientJastrow(particles, i);
 
-    gradient[0] = ratioSlater[0] + ratioJastrow[0];
-    gradient[1] = ratioSlater[1] + ratioJastrow[1];
+    gradient[0] = gradSlater[0] + gradJastrow[0];
+    gradient[1] = gradSlater[1] + gradJastrow[1];
 
     return gradient;
 }
