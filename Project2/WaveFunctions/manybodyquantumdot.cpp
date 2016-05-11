@@ -101,27 +101,30 @@ void ManyBodyQuantumDot::setUpSlater() {
     m_a = arma::zeros<arma::mat>(m_numberOfParticles, m_numberOfParticles);
 
     // a = 1 for parallel spins, a = 1/3 for antiparallel spins
-    for (int i=0; i < m_numberOfParticles; i++) {
-        for (int j=0; j < m_numberOfParticles; j++) {
-            if (i < m_numberOfParticlesHalf) {
-                if (j < m_numberOfParticlesHalf) {
-                    m_a(i,j) = 1.0/3;
+    if (m_system->getUseJastrow()) {
+        for (int i=0; i < m_numberOfParticles; i++) {
+            for (int j=0; j < m_numberOfParticles; j++) {
+                if (i < m_numberOfParticlesHalf) {
+                    if (j < m_numberOfParticlesHalf) {
+                        m_a(i,j) = 1.0/3;
+                    }
+                    else {
+                        m_a(i,j) = 1;
+                    }
                 }
                 else {
-                    m_a(i,j) = 1;
-                }
-            }
-            else {
-                if (j < m_numberOfParticlesHalf) {
-                    m_a(i,j) = 1;
-                }
-                else {
-                    m_a(i,j) = 1.0/3;
+                    if (j < m_numberOfParticlesHalf) {
+                        m_a(i,j) = 1;
+                    }
+                    else {
+                        m_a(i,j) = 1.0/3;
+                    }
                 }
             }
         }
-
     }
+
+    cout << m_a << endl;
 
     // fill the matrix elements, which are the one-particle harm. osc. wavefunctions
     m_slaterSpinUp = arma::zeros<arma::mat>(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
@@ -140,8 +143,16 @@ void ManyBodyQuantumDot::setUpSlater() {
         }
     }
 
-    m_slaterSpinUpInverse = arma::inv(m_slaterSpinUp);
-    m_slaterSpinDownInverse = arma::inv(m_slaterSpinDown);
+    //m_slaterSpinUpInverse = arma::inv(m_slaterSpinUp);
+    //m_slaterSpinDownInverse = arma::inv(m_slaterSpinDown);
+    m_slaterSpinUpInverse = m_slaterSpinUp.i();
+    m_slaterSpinDownInverse = m_slaterSpinDown.i();
+
+    cout << m_slaterSpinUp << endl;
+    cout << m_slaterSpinDown << endl;
+
+    cout << m_slaterSpinUpInverse << endl;
+    cout << m_slaterSpinDownInverse << endl;
 }
 
 double ManyBodyQuantumDot::singleParticleWaveFunctions(int nx, int ny, double x, double y) {
@@ -183,7 +194,7 @@ double ManyBodyQuantumDot::hermitePolynomials(int energyLevel, double position) 
     }
 
     else if (energyLevel == 2) {
-        return 4*m_omega*position*position;
+        return 4*m_omega*position*position - 2;
     }
 
     else if (energyLevel == 3) {
@@ -203,15 +214,15 @@ double ManyBodyQuantumDot::hermitePolynomialsDerivative1(int energyLevel, double
     }
 
     else if (energyLevel == 1) {
-        return 2;
+        return 2*m_omegaSqrt;
     }
 
     else if (energyLevel == 2) {
-        return 8*m_omegaSqrt*position;
+        return 8*m_omega*position;
     }
 
     else if (energyLevel == 3) {
-        return 24*m_omega*position*position - 12;
+        return 24*m_omega*m_omegaSqrt*position*position - 12*m_omegaSqrt;
     }
 
     else {
@@ -231,11 +242,11 @@ double ManyBodyQuantumDot::hermitePolynomialsDerivative2(int energyLevel, double
     }
 
     else if (energyLevel == 2) {
-        return 8;
+        return 8*m_omega;
     }
 
     else if (energyLevel == 3) {
-        return 48*m_omegaSqrt*position;
+        return 48*m_omegaSqrt*m_omega*position;
     }
 
     else {

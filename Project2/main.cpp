@@ -39,6 +39,7 @@ int main() {
     bool writePositionsToFile = false;
 
     System* system = new System();   
+    system->setUseJastrow               (false);
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
 
     //system->setHamiltonian              (new HarmonicOscillator(system, omega, useNumerical));

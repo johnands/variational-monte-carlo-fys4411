@@ -17,6 +17,7 @@ public:
     void setEquilibrationFraction   (double equilibrationFraction);
     void setTimeStep                (double timeStep);
     void setUseSlater               (bool useSlater);
+    void setUseJastrow              (bool useJastrow);
     void setOptimizeParameters      (bool optimizeParameters);
 
     void setHamiltonian             (class Hamiltonian* hamiltonian);
@@ -35,6 +36,7 @@ public:
     int getNumberOfAcceptedSteps()      { return m_numberOfAcceptedSteps; }
     double getTimeStep()                { return m_timeStep; }
     bool getUseSlater()                 { return m_useSlater; }
+    bool getUseJastrow()                { return m_useJastrow; }
     bool getOptimizeParameters()        { return m_optimizeParameters; }
 
 private:
@@ -47,6 +49,7 @@ private:
     int                             m_numberOfAcceptedSteps = 0;
     bool                            m_samplerSetup = false;
     bool                            m_useSlater = false;
+    bool                            m_useJastrow = true;
     bool                            m_optimizeParameters = false;
 
 

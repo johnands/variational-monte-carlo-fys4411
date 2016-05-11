@@ -147,6 +147,8 @@ vector<double> System::driftForce(int particle) {
     for (int dim=0; dim < m_numberOfDimensions; dim++) {
         driftForce[dim] = 2*m_waveFunction->computeGradient(m_particles, particle)[dim];
     }
+
+    return driftForce;
 }
 
 double System::evaluateGreensFunction(int particle, vector<double> newPosition, vector<double> oldPosition) {
@@ -277,6 +279,10 @@ void System::setTimeStep(double timeStep) {
 
 void System::setUseSlater(bool useSlater) {
     m_useSlater = useSlater;
+}
+
+void System::setUseJastrow(bool useJastrow) {
+    m_useJastrow = useJastrow;
 }
 
 void System::setOptimizeParameters(bool optimizeParameters) {
