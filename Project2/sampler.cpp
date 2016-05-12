@@ -39,26 +39,32 @@ void Sampler::sample(bool acceptedStep, bool writeEnergiesToFile, bool writePosi
             m_cumulativeWaveFunctionDerivative[i] = 0;
             m_cumulativeWaveFunctionEnergy[i] = 0;
         }
+
+        m_localEnergy = m_system->getHamiltonian()->
+                        computeLocalEnergy(m_system->getParticles());
         m_firstStep = false;
     }
 
-    double localEnergy = m_system->getHamiltonian()->
-                         computeLocalEnergy(m_system->getParticles());
+    // energy is the same if step was not accepted
+    if (acceptedStep) {
+        m_localEnergy = m_system->getHamiltonian()->
+                        computeLocalEnergy(m_system->getParticles());
+    }
 
     if (m_system->getOptimizeParameters()) {
         std::vector<double> waveFunctionDerivative =
                 m_system->getWaveFunction()->computeParametersGradient(m_system->getParticles());
         for (int i=0; i < m_numberOfParameters; i++) {
             m_cumulativeWaveFunctionDerivative[i] += waveFunctionDerivative[i];
-            m_cumulativeWaveFunctionEnergy[i] += waveFunctionDerivative[i] * localEnergy;
+            m_cumulativeWaveFunctionEnergy[i] += waveFunctionDerivative[i] * m_localEnergy;
         }
     }
 
-    m_cumulativeEnergy  += localEnergy;
-    m_cumulativeEnergySquared += localEnergy*localEnergy;
+    m_cumulativeEnergy  += m_localEnergy;
+    m_cumulativeEnergySquared += m_localEnergy*m_localEnergy;
 
     // store energies or positions
-    if (writeEnergiesToFile) { writeToFile(localEnergy); }
+    if (writeEnergiesToFile) { writeToFile(m_localEnergy); }
     if (writePositionsToFile) { writeToFile(); }
 
     m_stepNumber++;

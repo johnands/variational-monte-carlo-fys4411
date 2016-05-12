@@ -38,6 +38,8 @@ double ManyBodyQuantumDot::computeRatio(std::vector<Particle *> particles, int i
     double xNew = particles[i]->getNewPosition()[0];
     double yNew = particles[i]->getNewPosition()[1];
 
+    //cout << "new in ratio " << xNew << endl;
+
     // spin-up slater
     if (i < m_numberOfParticlesHalf) {
         for (int j=0; j < m_numberOfParticlesHalf; j++) {
@@ -76,6 +78,8 @@ double ManyBodyQuantumDot::computeRatio(std::vector<Particle *> particles, int i
         }
     }
     double ratioJastrow = exp(exponent);
+    //cout << "Slater " << ratioSD << endl;
+    //cout << "Jastrow " << ratioJastrow << endl;
 
     m_ratio = ratioSD*ratioJastrow;
     return m_ratio;
@@ -148,11 +152,11 @@ void ManyBodyQuantumDot::setUpSlater() {
     m_slaterSpinUpInverse = m_slaterSpinUp.i();
     m_slaterSpinDownInverse = m_slaterSpinDown.i();
 
-    cout << m_slaterSpinUp << endl;
-    cout << m_slaterSpinDown << endl;
+    /*cout << "Initial Slater Up: " << m_slaterSpinUp << endl;
+    cout << "Initial Slater Down: " << m_slaterSpinDown << endl;
 
-    cout << m_slaterSpinUpInverse << endl;
-    cout << m_slaterSpinDownInverse << endl;
+    cout << "Initial Slater Up Inverse: " << m_slaterSpinUpInverse << endl;
+    cout << "Initial Slater Down Inverse: " << m_slaterSpinDownInverse << endl;*/
 }
 
 double ManyBodyQuantumDot::singleParticleWaveFunctions(int nx, int ny, double x, double y) {
@@ -259,7 +263,7 @@ void ManyBodyQuantumDot::updateRowSlater(std::vector<Particle*> particles, int i
     // update row corresponding to particle i in Slater matrix
 
     // get new position of particle i
-    double xNew = particles[i]->getNewPosition()[0];
+    /*double xNew = particles[i]->getNewPosition()[0];
     double yNew = particles[i]->getNewPosition()[1];
 
     // update either spin-up matrix or spin-down matrix
@@ -277,63 +281,113 @@ void ManyBodyQuantumDot::updateRowSlater(std::vector<Particle*> particles, int i
             int ny = m_quantumNumbers(j,1);
             m_slaterSpinDown(i-m_numberOfParticlesHalf,j) = singleParticleWaveFunctions(nx, ny, xNew, yNew);
         }
-    }
-    updateSlaterInverse(particles, i);
+    }*/
+    //updateSlaterInverse(particles, i);
 }
 
 void ManyBodyQuantumDot::updateSlaterInverse(std::vector<Particle*> particles, int i) {
     // update row corresponding to particle i in inverse Slater matrix
 
     // get new position of particle i
-    //double xNew = particles[i]->getNewPosition()[0];
-    //double yNew = particles[i]->getNewPosition()[1];
+    double xNew = particles[i]->getNewPosition()[0];
+    double yNew = particles[i]->getNewPosition()[1];
 
-    // compute Sj for all columns except column i
-    std::vector<double> S(m_numberOfParticlesHalf);
-    std::fill(S.begin(), S.end(), 0);
+    // spin-up
     if (i < m_numberOfParticlesHalf) {
+        arma::mat slaterUpInverseOld = m_slaterSpinUpInverse;
         for (int j=0; j < m_numberOfParticlesHalf; j++) {
             if (j != i) {
+                double sum = 0;
                 for (int l=0; l < m_numberOfParticlesHalf; l++) {
-                    S[j] += m_slaterSpinUp(i,l)*m_slaterSpinUpInverse(l,j);
+                    int nx = m_quantumNumbers(l,0);
+                    int ny = m_quantumNumbers(l,1);
+                    sum += singleParticleWaveFunctions(nx, ny, xNew, yNew) *
+                            slaterUpInverseOld(l,j);
                 }
                 for (int k=0; k < m_numberOfParticlesHalf; k++) {
-                    m_slaterSpinUpInverse(k,j) = m_slaterSpinUpInverse(k,j) -
-                                                 S[j]*m_slaterSpinUpInverse(k,i) / m_ratio;
+                    m_slaterSpinUpInverse(k,j) = slaterUpInverseOld(k,j) -
+                                                 sum * ( slaterUpInverseOld(k,i) / m_ratio );
                 }
             }
             else {
                 for (int k=0; k < m_numberOfParticlesHalf; k++) {
-                    m_slaterSpinUpInverse(k,i) = m_slaterSpinUpInverse(k,i) / m_ratio;
+                    m_slaterSpinUpInverse(k,i) = slaterUpInverseOld(k,i) / m_ratio;
                 }
             }
         }
     }
+    // spin-down
     else {
+        int iDown = i - m_numberOfParticlesHalf;
+        arma::mat slaterDownInverseOld = m_slaterSpinDownInverse;
         for (int j=0; j < m_numberOfParticlesHalf; j++) {
-            // need to adjust i. for N = 6, i=4 is equal to i-3=1 in spin down matrix
-            int iDown = i - m_numberOfParticlesHalf;
+            // need to adjust i. for N = 6, i=4 is equal to i-3=1 in spin down matrix         
             if (j != i) {
+                double sum = 0;
                 for (int l=0; l < m_numberOfParticlesHalf; l++) {
-                    S[j] += m_slaterSpinDown(iDown,l)*m_slaterSpinDownInverse(l,j);
+                    int nx = m_quantumNumbers(l,0);
+                    int ny = m_quantumNumbers(l,1);
+                    sum += singleParticleWaveFunctions(nx, ny, xNew, yNew) *
+                           slaterDownInverseOld(l,j);
                 }
                 for (int k=0; k < m_numberOfParticlesHalf; k++) {
-                    m_slaterSpinDownInverse(k,j) = m_slaterSpinDownInverse(k,j) -
-                                                 S[j]*m_slaterSpinDownInverse(k,iDown)
-                                                 / m_ratio;
+                    m_slaterSpinDownInverse(k,j) = slaterDownInverseOld(k,j) -
+                                                 sum * ( slaterDownInverseOld(k,iDown) / m_ratio );
                 }
             }
             else {
                 for (int k=0; k < m_numberOfParticlesHalf; k++) {
-                    m_slaterSpinDownInverse(k,iDown) = m_slaterSpinDownInverse(k,iDown) / m_ratio;
+                    m_slaterSpinDownInverse(k,iDown) = slaterDownInverseOld(k,iDown) / m_ratio;
                 }
             }
         }
     }
+
+    //cout << "Inverse: " << m_slaterSpinUpInverse << endl;
 }
 
 double ManyBodyQuantumDot::evaluate(std::vector<Particle*> particles) {
+    // compute the actual determinants to do numerical differentiation
 
+    arma::mat slaterUp = arma::zeros<arma::mat>(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
+    arma::mat slaterDown = arma::zeros<arma::mat>(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
+
+    // slater part
+    for (int i=0; i < m_numberOfParticlesHalf; i++) {
+        for (int j=0; j < m_numberOfParticlesHalf; j++) {
+            int nx = m_quantumNumbers(j,0);
+            int ny = m_quantumNumbers(j,1);
+            double xUp = m_system->getParticles()[i]->getPosition()[0];
+            double yUp = m_system->getParticles()[i]->getPosition()[1];
+            double xDown = m_system->getParticles()[i+m_numberOfParticlesHalf]->getPosition()[0];
+            double yDown = m_system->getParticles()[i+m_numberOfParticlesHalf]->getPosition()[1];
+            slaterUp(i,j) = singleParticleWaveFunctions(nx, ny, xUp, yUp);
+            slaterDown(i,j) = singleParticleWaveFunctions(nx, ny, xDown, yDown);
+        }
+    }
+
+    // correlation part
+    double exponent = 0;
+    double beta = m_parameters[1];
+    for (int i=0; i < m_numberOfParticles; i++) {
+        for (int j=i+1; j < m_numberOfParticles; j++) {
+            double r_ij = 0;
+            for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
+                r_ij += (particles[i]->getPosition()[dim] - particles[j]->getPosition()[dim]) *
+                        (particles[i]->getPosition()[dim] - particles[j]->getPosition()[dim]);
+            }
+            r_ij = sqrt(r_ij);
+            exponent += ( m_a(i,j)*r_ij ) / ( 1 + beta*r_ij );
+        }
+    }
+    double jastrow = exp(exponent);
+
+    double determinantSlaterUp = arma::det(slaterUp);
+    double determinantSlaterDown = arma::det(slaterDown);
+
+    //cout << "Evaluate: " << slaterUp.i() << endl;
+
+    return determinantSlaterUp*determinantSlaterDown*jastrow;
 }
 
 double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
@@ -411,7 +465,7 @@ double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
                 double r_ki = sqrt( (x_k - x_i)*(x_k - x_i) + (y_k - y_i)*(y_k - y_i) );
 
                 double factor = 1.0 / (1 + beta*r_ki);
-                jastrowLaplacian += m_a(k,i)*factor*factor / r_ki -
+                jastrowLaplacian += ( (m_a(k,i)*factor*factor) / r_ki ) -
                                     2*m_a(k,i)*beta*factor*factor*factor;
             }
         }
@@ -425,6 +479,8 @@ double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
         crossTerm += gradSlater[0]*gradJastrow[0];
         crossTerm += gradSlater[1]*gradJastrow[1];
     }
+    cout << m_laplacianUp + m_laplacianDown + jastrowLaplacian + 2*crossTerm << endl;
+    //cout << m_laplacianUp << endl;
 
     return m_laplacianUp + m_laplacianDown + jastrowLaplacian + 2*crossTerm;
 }

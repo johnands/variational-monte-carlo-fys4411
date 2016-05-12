@@ -21,6 +21,7 @@ private:
     int     m_numberOfMetropolisSteps = 0;
     int     m_numberOfParameters = 0;
     int     m_stepNumber = 0;
+    double  m_localEnergy = 0;
     double  m_energy = 0;
     double  m_standardDeviation = 0;
     std::vector<double>  m_waveFunctionDerivative = std::vector<double>();

@@ -22,15 +22,25 @@ bool System::metropolisStepSlater() {
     int dimension = Random::nextInt(m_numberOfDimensions);      // choose random dimension
     double change = (Random::nextDouble()*2-1)*m_stepLength;    // propose change of particle's position
 
+    //cout << "old " << m_particles[particle]->getPosition()[dimension] << endl;
+
     // store new proposed position
     m_particles[particle]->setNewPosition(change, dimension);
+
+    //cout << "new " << m_particles[particle]->getNewPosition()[dimension] << endl;
+    //cout << "old 2 " << m_particles[particle]->getPosition()[dimension] << endl;
 
     double ratio = m_waveFunction->computeRatio(m_particles, particle);
 
     // this are the same for Slater
-    if (ratio >= Random::nextDouble()) {
-        m_waveFunction->updateRowSlater(m_particles, particle);
+    if (ratio*ratio >= Random::nextDouble()) {
+        m_waveFunction->updateSlaterInverse(m_particles, particle);
         m_particles[particle]->adjustPosition(change, dimension);
+
+        //double inverse = m_waveFunction->evaluate(m_particles);
+        //cout << "evaluate: " << inverse << endl;
+        //cout << endl;
+
         return true;
     }
     else {
@@ -74,7 +84,7 @@ bool System::metropolisStepSlaterImportance() {
     ratio *= GreensNew / GreensOld;
 
     if (ratio >= Random::nextDouble()) {
-        m_waveFunction->updateRowSlater(m_particles, particle);
+        m_waveFunction->updateSlaterInverse(m_particles, particle);
         m_particles[particle]->adjustPositionAllDimensions(plusChange);
         return true;
     }
