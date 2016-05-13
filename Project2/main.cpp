@@ -22,18 +22,18 @@ int main() {
 
     int numberOfDimensions  = 2;
     int numberOfParticles   = 2;
-    int numberOfSteps       = (int) 1e5;
+    int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // oscillator frequency
     double alpha            = 1.0;          // variational parameter 1
     double beta             = 0.5;        // variational parameter 2
-    double stepLength       = 2.0;          // metropolis step length
+    double stepLength       = 1.2;          // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
     double timeStep         = 0.005;        // importance sampling
     double a                = 0.0043;       // hard sphere radius
     double a2               = 0;          // two-body quantum dot (depends on spin)
     double gamma            = 2.82843;      // trap potential strength z-direction
 
-    bool useNumerical           = true;    // compute kinetic energy numerically
+    bool useNumerical           = false;    // compute kinetic energy numerically
     bool useImportanceSampling  = false;
     bool writeEnergiesToFile    = false;
     bool writePositionsToFile   = false;
@@ -44,18 +44,18 @@ int main() {
 
     //system->setHamiltonian              (new HarmonicOscillator(system, omega, useNumerical));
     //system->setHamiltonian              (new HarmonicOscillatorInteracting(system, omega, a, gamma, useNumerical));
-    system->setHamiltonian              (new HarmonicOscillatorQuantumDot2(system, omega, useNumerical));
-    //system->setHamiltonian              (new HOManyBodyQuantumDot(system, omega, useNumerical));
+    //system->setHamiltonian              (new HarmonicOscillatorQuantumDot2(system, omega, useNumerical));
+    system->setHamiltonian              (new HOManyBodyQuantumDot(system, omega, useNumerical));
 
     //system->setWaveFunction             (new SimpleGaussian(system, alpha));
     //system->setWaveFunction             (new InteractingGaussian(system, alpha, beta, a));
-    system->setWaveFunction             (new QuantumDotTwoElectrons(system, alpha, beta, omega, a2));
-    //system->setWaveFunction             (new ManyBodyQuantumDot(system, alpha, beta, omega));
+    //system->setWaveFunction             (new QuantumDotTwoElectrons(system, alpha, beta, omega, a2));
+    system->setWaveFunction             (new ManyBodyQuantumDot(system, alpha, beta, omega));
 
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
     system->setTimeStep                 (timeStep);
-    system->setUseSlater                (false);
+    system->setUseSlater                (true);
     system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile, writePositionsToFile);
 
     // optimize alpha

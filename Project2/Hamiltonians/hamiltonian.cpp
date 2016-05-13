@@ -40,6 +40,6 @@ double Hamiltonian::computeKineticEnergy(std::vector<Particle*> particles) {
             laplacian += (plusStep - 2*zeroStep + minusStep) / (zeroStep*step*step);
         }
     }
-    std::cout << laplacian << std::endl;
+    //std::cout << laplacian << std::endl;
     return -0.5*laplacian;   
 }

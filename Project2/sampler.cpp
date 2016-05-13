@@ -92,7 +92,7 @@ void Sampler::printOutputToTerminal() {
         cout << " Parameter " << i+1 << " : " << pa.at(i) << endl;
     }
     cout << endl;
-    cout << "  -- Reults -- " << endl;
+    cout << "  -- Results -- " << endl;
     cout << " Energy : " << std::setprecision(10) << m_energy << endl;
     cout << " Standard deviation : " << std::setprecision(10) << m_standardDeviation << endl;
     cout << " Acceptance rate : " << as / (double) ms*(1 - ef) << endl;
