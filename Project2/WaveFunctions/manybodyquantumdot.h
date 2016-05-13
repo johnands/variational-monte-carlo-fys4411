@@ -16,7 +16,6 @@ public:
     double hermitePolynomials(int energyLevel, double position);
     double hermitePolynomialsDerivative1(int energyLevel, double position);
     double hermitePolynomialsDerivative2(int energyLevel, double position);
-    void updateRowSlater(std::vector<class Particle*> particles, int i);
     void updateSlaterInverse(std::vector<class Particle*> particles, int i);
     double computeRatio(std::vector<class Particle*> particles, int particle);
     std::vector<double> gradientSlater(std::vector<class Particle*> particles, int i);
@@ -29,6 +28,7 @@ private:
     int m_numberOfParticles;
     int m_numberOfParticlesHalf;
     double m_ratio;
+    double m_ratioSD;
     int m_i;
     arma::mat m_quantumNumbers;
     arma::mat m_slaterSpinUp;

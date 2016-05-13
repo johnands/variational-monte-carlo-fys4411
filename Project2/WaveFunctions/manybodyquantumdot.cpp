@@ -30,7 +30,7 @@ ManyBodyQuantumDot::ManyBodyQuantumDot(System* system, double alpha, double beta
 double ManyBodyQuantumDot::computeRatio(std::vector<Particle *> particles, int i) {
     // compute ratio used in Metropolis algorithm
 
-    // store particle number for later use in Gradient and Laplacian
+    // store particle number for later use in Laplacian
     m_i = i;
 
     double ratioSD = 0;
@@ -86,6 +86,7 @@ double ManyBodyQuantumDot::computeRatio(std::vector<Particle *> particles, int i
     //cout << "Slater " << ratioSD << endl;
     //cout << "Jastrow " << ratioJastrow << endl;
 
+    m_ratioSD = ratioSD;
     m_ratio = ratioSD*ratioJastrow;
     return m_ratio;
 }
@@ -152,8 +153,6 @@ void ManyBodyQuantumDot::setUpSlater() {
         }
     }
 
-    //m_slaterSpinUpInverse = arma::inv(m_slaterSpinUp);
-    //m_slaterSpinDownInverse = arma::inv(m_slaterSpinDown);
     m_slaterSpinUpInverse = m_slaterSpinUp.i();
     m_slaterSpinDownInverse = m_slaterSpinDown.i();
     //cout << m_slaterSpinUpInverse(0,0) << endl;
@@ -228,14 +227,17 @@ double ManyBodyQuantumDot::hermitePolynomialsDerivative1(int energyLevel, double
 
     else if (energyLevel == 1) {
         return 2*m_omegaSqrt;
+        //return 2;
     }
 
     else if (energyLevel == 2) {
         return 8*m_omega*position;
+        //return 8*m_omegaSqrt*position;
     }
 
     else if (energyLevel == 3) {
         return 24*m_omega*m_omegaSqrt*position*position - 12*m_omegaSqrt;
+        //return 24*m_omega*position*position - 12;
     }
 
     else {
@@ -256,20 +258,18 @@ double ManyBodyQuantumDot::hermitePolynomialsDerivative2(int energyLevel, double
 
     else if (energyLevel == 2) {
         return 8*m_omega;
+        //return 8;
     }
 
     else if (energyLevel == 3) {
         return 48*m_omegaSqrt*m_omega*position;
+        //return 48*m_omegaSqrt*position;
     }
 
     else {
         cout << "Energy level should not exceed n = 3" << endl;
         exit(0);
     }
-}
-
-void ManyBodyQuantumDot::updateRowSlater(std::vector<Particle*> particles, int i) {
-
 }
 
 void ManyBodyQuantumDot::updateSlaterInverse(std::vector<Particle*> particles, int i) {
@@ -293,12 +293,12 @@ void ManyBodyQuantumDot::updateSlaterInverse(std::vector<Particle*> particles, i
                 }
                 for (int k=0; k < m_numberOfParticlesHalf; k++) {
                     m_slaterSpinUpInverse(k,j) = slaterUpInverseOld(k,j) -
-                                                 sum * ( slaterUpInverseOld(k,i) / m_ratio );
+                                                 sum * ( slaterUpInverseOld(k,i) / m_ratioSD );
                 }
             }
             else {
                 for (int k=0; k < m_numberOfParticlesHalf; k++) {
-                    m_slaterSpinUpInverse(k,i) = slaterUpInverseOld(k,i) / m_ratio;
+                    m_slaterSpinUpInverse(k,i) = slaterUpInverseOld(k,i) / m_ratioSD;
                 }
             }
         }
@@ -319,12 +319,12 @@ void ManyBodyQuantumDot::updateSlaterInverse(std::vector<Particle*> particles, i
                 }
                 for (int k=0; k < m_numberOfParticlesHalf; k++) {
                     m_slaterSpinDownInverse(k,j) = slaterDownInverseOld(k,j) -
-                                                 sum * ( slaterDownInverseOld(k,iDown) / m_ratio );
+                                                 sum * ( slaterDownInverseOld(k,iDown) / m_ratioSD );
                 }
             }
             else {
                 for (int k=0; k < m_numberOfParticlesHalf; k++) {
-                    m_slaterSpinDownInverse(k,iDown) = slaterDownInverseOld(k,iDown) / m_ratio;
+                    m_slaterSpinDownInverse(k,iDown) = slaterDownInverseOld(k,iDown) / m_ratioSD;
                 }
             }
         }
@@ -404,7 +404,6 @@ double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
     // spin-up slater
     if (m_i < m_numberOfParticlesHalf) {
         m_laplacianUp = 0;
-        // find laplacian for all particles
         for (int i=0; i < m_numberOfParticlesHalf; i++) {
             for (int j=0; j < m_numberOfParticlesHalf; j++) {
                 int nx = m_quantumNumbers(j,0);
@@ -563,8 +562,8 @@ std::vector<double> ManyBodyQuantumDot::gradientJastrow(std::vector<Particle *> 
             double r_ij = sqrt( (x_i - x_j)*(x_i - x_j) + (y_i - y_j)*(y_i - y_j) );
             double factor = 1.0 / ( r_ij*(1 + beta*r_ij)*(1 + beta*r_ij) );
 
-            ratioJastrow[0] += (x_j - x_i)*m_a(i,j)*factor;
-            ratioJastrow[1] += (y_j - y_i)*m_a(i,j)*factor;
+            ratioJastrow[0] += (x_i - x_j)*m_a(i,j)*factor;
+            ratioJastrow[1] += (y_i - y_j)*m_a(i,j)*factor;
         }
     }
 
@@ -576,7 +575,7 @@ std::vector<double> ManyBodyQuantumDot::computeGradient(std::vector<Particle *> 
     // returns a two-dimensional vector that is the gradient of the trial wave function w.r.t to particle i
     // divided by the trial wave function according to formula 16.10
 
-    m_i = i;        // store for later use
+    //m_i = i;        // store for later use
 
     std::vector<double> gradient(2);
 

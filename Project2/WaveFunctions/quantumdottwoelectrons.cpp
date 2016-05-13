@@ -58,7 +58,7 @@ double QuantumDotTwoElectrons::computeLaplacian(std::vector<Particle *> particle
     double term1 = alpha*m_omega*(alpha*m_omega*(r1_2 + r2_2) - 4);
     double term2 = -2*m_a*alpha*m_omega*r12*K;
     double term3 = 2*m_a*K*(m_a*K + 1.0/r12 - 2*beta*sqrt(K));
-    cout << term1 + term2 + term3 << endl;
+    //cout << term1 + term2 + term3 << endl;
 
     return term1 + term2 + term3;
 }

@@ -26,7 +26,7 @@ bool System::metropolisStepSlater() {
     m_particles[particle]->setNewPosition(change, dimension);
 
     double ratio = m_waveFunction->computeRatio(m_particles, particle);
-    //cout << setprecision(10) << ratio << endl;
+    //cout << setprecision(10) << ratio*ratio << endl;
 
     // this are the same for Slater
     if (ratio*ratio >= Random::nextDouble()) {
@@ -76,7 +76,7 @@ bool System::metropolisStepSlaterImportance() {
     double GreensOld = evaluateGreensFunction(particle, newPosition, oldPosition);
     double GreensNew = evaluateGreensFunction(particle, oldPosition, newPosition);
 
-    ratio *= GreensNew / GreensOld;
+    ratio *= ratio * ( GreensNew / GreensOld);
 
     if (ratio >= Random::nextDouble()) {
         m_waveFunction->updateSlaterInverse(m_particles, particle);
@@ -86,7 +86,35 @@ bool System::metropolisStepSlaterImportance() {
     else {
         return false;
     }
+}
 
+vector<double> System::driftForce(int particle) {
+    // return a 3d "drift-vector" for the chosen particle
+
+    vector<double> driftForce(m_numberOfDimensions);
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        driftForce[dim] = 2*m_waveFunction->computeGradient(m_particles, particle)[dim];
+    }
+
+    return driftForce;
+}
+
+double System::evaluateGreensFunction(int particle, vector<double> newPosition, vector<double> oldPosition) {
+
+    vector<double> greensVector;
+
+    // make vector that needs to be dotted
+    for (int j=0; j < m_numberOfDimensions; j++) {
+        greensVector.push_back(newPosition[j] - oldPosition[j] - 0.5*m_timeStep*driftForce(particle)[j]);
+    }
+
+    double greensFunction = 0;
+    // find length squared of vector
+    for (int j=0; j < m_numberOfDimensions; j++) {
+        greensFunction += greensVector[j]*greensVector[j];
+    }
+    greensFunction /= 2*m_timeStep;
+    return exp(-greensFunction);
 }
 
 bool System::metropolisStepImportance() {
@@ -145,35 +173,6 @@ bool System::metropolisStepImportance() {
     }
 }
 
-vector<double> System::driftForce(int particle) {
-    // return a 3d "drift-vector" for the chosen particle
-
-    vector<double> driftForce(m_numberOfDimensions);
-    for (int dim=0; dim < m_numberOfDimensions; dim++) {
-        driftForce[dim] = 2*m_waveFunction->computeGradient(m_particles, particle)[dim];
-    }
-
-    return driftForce;
-}
-
-double System::evaluateGreensFunction(int particle, vector<double> newPosition, vector<double> oldPosition) {
-
-    vector<double> greensVector;
-
-    // make vector that needs to be dotted
-    for (int j=0; j < m_numberOfDimensions; j++) {
-        greensVector.push_back(newPosition[j] - oldPosition[j] - 0.5*m_timeStep*driftForce(particle)[j]);
-    }
-
-    double greensFunction = 0;
-    // find length squared of vector
-    for (int j=0; j < m_numberOfDimensions; j++) {
-        greensFunction += greensVector[j]*greensVector[j];
-    }
-    greensFunction /= 2*m_timeStep;
-    return exp(-greensFunction);
-}
-
 bool System::metropolisStep() {
     /* Perform the actual Metropolis step: Choose a particle at random and
      * change its position by a random amount, and check if the step is
@@ -195,6 +194,7 @@ bool System::metropolisStep() {
 
     // accept/reject new position using Metropolis algorithm
     double ratio = pow(waveFuncNew, 2) / pow(waveFuncOld, 2);
+    cout << ratio << endl;
 
     if (ratio >= Random::nextDouble()) {
         return true;

@@ -138,7 +138,8 @@ void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities
 
     m_energy                    = m_cumulativeEnergy / (double) m_stepNumber;
-    m_standardDeviation         = sqrt(m_cumulativeEnergySquared / (double) m_stepNumber - m_energy*m_energy);
+    double averageSquared       = m_cumulativeEnergySquared / (double) m_stepNumber;
+    m_standardDeviation         = sqrt(averageSquared - m_energy*m_energy) / (double) m_stepNumber;
     for (int i=0; i < m_numberOfParameters; i++) {
         m_waveFunctionDerivative[i]    = m_cumulativeWaveFunctionDerivative[i] / (double) m_stepNumber;
         m_waveFunctionEnergy[i]        = m_cumulativeWaveFunctionEnergy[i] / (double) m_stepNumber;

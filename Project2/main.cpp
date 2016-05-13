@@ -25,8 +25,8 @@ int main() {
     int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // oscillator frequency
     double alpha            = 1.0;          // variational parameter 1
-    double beta             = 0.5;        // variational parameter 2
-    double stepLength       = 1.2;          // metropolis step length
+    double beta             = 0.3;        // variational parameter 2
+    double stepLength       = 1.0;          // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
     double timeStep         = 0.005;        // importance sampling
     double a                = 0.0043;       // hard sphere radius
