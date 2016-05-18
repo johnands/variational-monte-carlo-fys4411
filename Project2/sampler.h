@@ -6,7 +6,7 @@ class Sampler {
 public:
     Sampler(class System* system);
     void setNumberOfMetropolisSteps(int steps);
-    void sample(bool acceptedStep, bool writeEnergiesToFile, bool writePositionsToFile);
+    void sample(bool acceptedStep);
     void printOutputToTerminal();
     void writeToFile(double localEnergy);
     void writeToFile();
@@ -24,6 +24,7 @@ private:
     double  m_localEnergy = 0;
     double  m_energy = 0;
     double  m_standardDeviation = 0;
+    std::vector<double>  m_parametersGradient = std::vector<double>();
     std::vector<double>  m_waveFunctionDerivative = std::vector<double>();
     std::vector<double>  m_waveFunctionEnergy = std::vector<double>();
     double  m_cumulativeEnergy = 0;

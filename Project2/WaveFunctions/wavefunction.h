@@ -8,7 +8,7 @@ public:
     //std::vector<double> computeGradient(std::vector<class Particle*> particles);
     int     getNumberOfParameters() { return m_numberOfParameters; }
     std::vector<double> getParameters() { return m_parameters; }
-    void setParameters(std::vector<double> parameters);
+    virtual void setParameters(std::vector<double> parameters) = 0;
     virtual double evaluate(std::vector<class Particle*> particles) = 0;
     virtual double computeLaplacian(std::vector<class Particle*> particles) = 0;
     virtual std::vector<double> computeGradient(std::vector<class Particle*> particles, int particle) = 0;

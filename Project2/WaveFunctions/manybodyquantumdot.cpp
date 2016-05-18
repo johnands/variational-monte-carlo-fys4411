@@ -19,9 +19,12 @@ ManyBodyQuantumDot::ManyBodyQuantumDot(System* system, double alpha, double beta
     m_parameters.reserve(2);
     m_parameters.push_back(alpha);
     m_parameters.push_back(beta);
-    m_omega = omega;
-    m_omegaSqrt = sqrt(omega);
-    m_numberOfParticles = m_system->getNumberOfParticles();
+    m_omega                 = omega;
+    m_omegaSqrt             = sqrt(omega);
+    m_omegaAlpha            = omega*alpha;
+    m_omegaAlphaSqrt        = sqrt(m_omegaAlpha);
+    m_alphaSqrt             = sqrt(alpha);
+    m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfParticlesHalf = m_numberOfParticles / 2;
     m_gradientUp.resize(2); m_gradientDown.resize(2);
     setUpSlater();
@@ -168,17 +171,17 @@ double ManyBodyQuantumDot::singleParticleWaveFunctions(int nx, int ny, double x,
     // evaluate single particle wave functions
 
     return hermitePolynomials(nx, x)*hermitePolynomials(ny, y) *
-           exp(-0.5*m_omega*(x*x + y*y));
+           exp(-0.5*m_omegaAlpha*(x*x + y*y));
 }
 
 std::vector<double> ManyBodyQuantumDot::singleParticleWFGradient(int nx, int ny, double x, double y) {
 
     std::vector<double> gradient(2);
     double r2 = x*x + y*y;
-    gradient[0] =  exp(-0.5*m_omega*r2) * hermitePolynomials(ny, y) *
-                   ( hermitePolynomialsDerivative1(nx, x) - hermitePolynomials(nx, x)*m_omega*x);
-    gradient[1] =  exp(-0.5*m_omega*r2) * hermitePolynomials(nx, x) *
-                   ( hermitePolynomialsDerivative1(ny, y) - hermitePolynomials(ny, y)*m_omega*y);
+    gradient[0] =  exp(-0.5*m_omegaAlpha*r2) * hermitePolynomials(ny, y) *
+                   ( hermitePolynomialsDerivative1(nx, x) - hermitePolynomials(nx, x)*m_omegaAlpha*x);
+    gradient[1] =  exp(-0.5*m_omegaAlpha*r2) * hermitePolynomials(nx, x) *
+                   ( hermitePolynomialsDerivative1(ny, y) - hermitePolynomials(ny, y)*m_omegaAlpha*y);
 
     return gradient;
 }
@@ -186,14 +189,24 @@ std::vector<double> ManyBodyQuantumDot::singleParticleWFGradient(int nx, int ny,
 double ManyBodyQuantumDot::singleParticleWFLaplacian(int nx, int ny, double x, double y) {
 
     double r2 = x*x + y*y;
-    return exp(-0.5*m_omega*r2) *
-           ( - 2*m_omega*x*hermitePolynomials(ny, y)*hermitePolynomialsDerivative1(nx, x)
-             - 2*m_omega*y*hermitePolynomials(nx, x)*hermitePolynomialsDerivative1(ny, y)
-             + m_omega*hermitePolynomials(nx, x)*hermitePolynomials(ny, y) * (m_omega*r2 - 2)
+    return exp(-0.5*m_omegaAlpha*r2) *
+           ( - 2*m_omegaAlpha*x*hermitePolynomials(ny, y)*hermitePolynomialsDerivative1(nx, x)
+             - 2*m_omegaAlpha*y*hermitePolynomials(nx, x)*hermitePolynomialsDerivative1(ny, y)
+             + m_omegaAlpha*hermitePolynomials(nx, x)*hermitePolynomials(ny, y) * (m_omegaAlpha*r2 - 2)
              + hermitePolynomials(ny, y)*hermitePolynomialsDerivative2(nx, x)
              + hermitePolynomials(nx, x)*hermitePolynomialsDerivative2(ny, y) );
 }
 
+double ManyBodyQuantumDot::singleParticleWFParameters(int nx, int ny, double x, double y) {
+
+    double r2 = x*x + y*y;
+    double hermiteX = hermitePolynomials(nx, x);
+    double hermiteY = hermitePolynomials(ny, y);
+    return exp(-0.5*m_omegaAlpha*r2) *
+           ( - 0.5*m_omega*r2*hermiteX*hermiteY
+             + hermitePolynomialsParametersDerivative(nx, x)*hermiteY
+             + hermiteX*hermitePolynomialsParametersDerivative(ny, y) );
+}
 
 double ManyBodyQuantumDot::hermitePolynomials(int energyLevel, double position) {
 
@@ -202,15 +215,15 @@ double ManyBodyQuantumDot::hermitePolynomials(int energyLevel, double position) 
     }
 
     else if (energyLevel == 1) {
-        return 2*m_omegaSqrt*position;
+        return 2*m_omegaAlphaSqrt*position;
     }
 
     else if (energyLevel == 2) {
-        return 4*m_omega*position*position - 2;
+        return 4*m_omegaAlpha*position*position - 2;
     }
 
     else if (energyLevel == 3) {
-        return 8*m_omega*m_omegaSqrt*position*position*position - 12*m_omegaSqrt*position;
+        return 8*m_omegaAlpha*m_omegaAlphaSqrt*position*position*position - 12*m_omegaAlphaSqrt*position;
     }
 
     else {
@@ -226,17 +239,17 @@ double ManyBodyQuantumDot::hermitePolynomialsDerivative1(int energyLevel, double
     }
 
     else if (energyLevel == 1) {
-        return 2*m_omegaSqrt;
+        return 2*m_omegaAlphaSqrt;
         //return 2;
     }
 
     else if (energyLevel == 2) {
-        return 8*m_omega*position;
+        return 8*m_omegaAlpha*position;
         //return 8*m_omegaSqrt*position;
     }
 
     else if (energyLevel == 3) {
-        return 24*m_omega*m_omegaSqrt*position*position - 12*m_omegaSqrt;
+        return 24*m_omegaAlpha*m_omegaAlphaSqrt*position*position - 12*m_omegaAlphaSqrt;
         //return 24*m_omega*position*position - 12;
     }
 
@@ -257,13 +270,38 @@ double ManyBodyQuantumDot::hermitePolynomialsDerivative2(int energyLevel, double
     }
 
     else if (energyLevel == 2) {
-        return 8*m_omega;
+        return 8*m_omegaAlpha;
         //return 8;
     }
 
     else if (energyLevel == 3) {
-        return 48*m_omegaSqrt*m_omega*position;
+        return 48*m_omegaAlphaSqrt*m_omegaAlpha*position;
         //return 48*m_omegaSqrt*position;
+    }
+
+    else {
+        cout << "Energy level should not exceed n = 3" << endl;
+        exit(0);
+    }
+}
+
+double ManyBodyQuantumDot::hermitePolynomialsParametersDerivative(int energyLevel, double position) {
+
+    if (energyLevel == 0) {
+        return 0;
+    }
+
+    else if (energyLevel == 1) {
+        return m_omegaSqrt*position / m_alphaSqrt;
+    }
+
+    else if (energyLevel == 2) {
+        return 4*m_omega*position*position;
+    }
+
+    else if (energyLevel == 3) {
+        return 12*m_omegaAlphaSqrt*m_omega*position*position*position -
+               6*m_omegaSqrt*position / m_alphaSqrt;
     }
 
     else {
@@ -585,6 +623,9 @@ std::vector<double> ManyBodyQuantumDot::computeGradient(std::vector<Particle *> 
     gradient[0] = gradSlater[0] + gradJastrow[0];
     gradient[1] = gradSlater[1] + gradJastrow[1];
 
+    //gradient[0] = (gradSlater[0] + gradJastrow[0])/m_ratioSD;
+    //gradient[1] = (gradSlater[1] + gradJastrow[1])/m_ratioSD;
+
     return gradient;
 }
 
@@ -594,5 +635,59 @@ std::vector<double> ManyBodyQuantumDot::computeParametersGradient(std::vector<Pa
     // calculate gradient of wave function w.r.t. the variational parameters
     // divided by the wave function
 
+    std::vector<double> gradient(2);
 
+    // slater part
+    // compute trace of product of inverse Slater matrix and Slater matrix differentiated w.r.t.
+    // the variational parameters
+    double slaterUp = 0;
+    double slaterDown = 0;
+    for (int i=0; i < m_numberOfParticlesHalf; i++) {
+        for (int j=0; j < m_numberOfParticlesHalf; j++) {
+            int nx = m_quantumNumbers(j,0);
+            int ny = m_quantumNumbers(j,1);
+            double xUp = particles[i]->getPosition()[0];
+            double yUp = particles[i]->getPosition()[1];
+            double xDown = particles[i+m_numberOfParticlesHalf]->getPosition()[0];
+            double yDown = particles[i+m_numberOfParticlesHalf]->getPosition()[1];
+            // singleParticleWFLaplacian returns the full Laplacian of the specific
+            // single-particle wave function
+            slaterUp   += singleParticleWFParameters(nx, ny, xUp, yUp)     * m_slaterSpinUpInverse(j,i);
+            slaterDown += singleParticleWFParameters(nx, ny, xDown, yDown) * m_slaterSpinDownInverse(j,i);
+        }
+    }
+
+    // jastrow
+    double jastrow = 0;
+    double beta = m_parameters[1];
+    for (int i=0; i < m_numberOfParticles; i++) {
+        double x_i = particles[i]->getPosition()[0];
+        double y_i = particles[i]->getPosition()[1];
+
+        for (int j=i+1; j < m_numberOfParticles; j++) {
+            double x_j = particles[j]->getPosition()[0];
+            double y_j = particles[j]->getPosition()[1];
+
+            double r_ij = sqrt( (x_i - x_j)*(x_i - x_j) + (y_i - y_j)*(y_i - y_j) );
+            double factor = 1.0 / (1 + beta*r_ij);
+
+            jastrow -= m_a(i,j)*r_ij*r_ij*factor*factor;
+        }
+    }
+
+    gradient[0] = slaterUp + slaterDown;
+    gradient[1] = jastrow;
+
+    return gradient;
+
+}
+
+void ManyBodyQuantumDot::setParameters(std::vector<double> parameters) {
+    // overloading setParameters in WaveFunction
+
+    m_parameters = parameters;
+    double alpha = parameters[0];
+    m_omegaAlpha            = m_omega*alpha;
+    m_omegaAlphaSqrt        = sqrt(m_omegaAlpha);
+    m_alphaSqrt             = sqrt(alpha);
 }

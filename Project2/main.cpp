@@ -26,17 +26,14 @@ int main() {
     double omega            = 1.0;          // oscillator frequency
     double alpha            = 1.0;          // variational parameter 1
     double beta             = 0.3;        // variational parameter 2
-    double stepLength       = 1.0;          // metropolis step length
+    double stepLength       = 1.6;          // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
     double timeStep         = 0.005;        // importance sampling
     double a                = 0.0043;       // hard sphere radius
-    double a2               = 0;          // two-body quantum dot (depends on spin)
+    double a2               = 1;          // two-body quantum dot (depends on spin)
     double gamma            = 2.82843;      // trap potential strength z-direction
 
     bool useNumerical           = false;    // compute kinetic energy numerically
-    bool useImportanceSampling  = false;
-    bool writeEnergiesToFile    = false;
-    bool writePositionsToFile   = false;
 
     System* system = new System();   
     system->setUseJastrow               (true);
@@ -55,18 +52,23 @@ int main() {
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
     system->setTimeStep                 (timeStep);
-    system->setUseSlater                (true);
-    system->runMetropolisSteps          (numberOfSteps, useImportanceSampling, writeEnergiesToFile, writePositionsToFile);
 
-    // optimize alpha
-    /*double initialAlpha = 0.5;
-    double initialBeta = 0.6;
+    system->setUseImportanceSampling    (false);
+    system->setWriteEnergiesToFile      (false);
+    system->setWritePositionsToFile     (false);
+    system->setUseSlater                (true);
+
+    //system->runMetropolisSteps          (numberOfSteps);
+
+    // optimize
+    double initialAlpha = 0.5;
+    double initialBeta = 0.5;
     std::vector<double> parameters(2);
     parameters[0] = initialAlpha; parameters[1] = initialBeta;
     system->setOptimizeParameters(true);
-    double stepLengthOptimize = 0.1;
+    double stepLengthOptimize = 0.5;
     SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize);
-    sd->optimize(parameters);*/
+    sd->optimize(parameters);
 
     return 0;
 }

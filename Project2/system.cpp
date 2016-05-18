@@ -49,16 +49,8 @@ bool System::metropolisStepSlaterImportance() {
 
     // compute proposed change
     vector<double> plusChange = driftForce(particle);
-
-    // compute proposed change
     for (int dim=0; dim < m_numberOfDimensions; dim++) {
         plusChange[dim] = 0.5*plusChange[dim]*m_timeStep + Random::nextGaussian(0.0, sqrt(m_timeStep));
-    }
-
-    // compute negative of proposed change
-    vector<double> minusChange;
-    for (int dim=0; dim < m_numberOfDimensions; dim++) {
-        minusChange.push_back(-plusChange[dim]);
     }
 
     // store new proposed position
@@ -73,6 +65,7 @@ bool System::metropolisStepSlaterImportance() {
     // get new position
     vector<double> newPosition = m_particles[particle]->getNewPosition();
 
+    // evaluate Greens' function with new and old position
     double GreensOld = evaluateGreensFunction(particle, newPosition, oldPosition);
     double GreensNew = evaluateGreensFunction(particle, oldPosition, newPosition);
 
@@ -89,29 +82,31 @@ bool System::metropolisStepSlaterImportance() {
 }
 
 vector<double> System::driftForce(int particle) {
-    // return a 3d "drift-vector" for the chosen particle
+    // return a d-dimensional "drift vector" for the chosen particle
 
-    vector<double> driftForce(m_numberOfDimensions);
+    vector<double> quantumForce = m_waveFunction->computeGradient(m_particles, particle);
+
     for (int dim=0; dim < m_numberOfDimensions; dim++) {
-        driftForce[dim] = 2*m_waveFunction->computeGradient(m_particles, particle)[dim];
+        quantumForce[dim] *= 2;
     }
 
-    return driftForce;
+    return quantumForce;
 }
 
 double System::evaluateGreensFunction(int particle, vector<double> newPosition, vector<double> oldPosition) {
 
     vector<double> greensVector;
+    vector<double> quantumForce = driftForce(particle);
 
     // make vector that needs to be dotted
-    for (int j=0; j < m_numberOfDimensions; j++) {
-        greensVector.push_back(newPosition[j] - oldPosition[j] - 0.5*m_timeStep*driftForce(particle)[j]);
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        greensVector.push_back(newPosition[dim] - oldPosition[dim] - 0.5*m_timeStep*quantumForce[dim]);
     }
 
     double greensFunction = 0;
     // find length squared of vector
-    for (int j=0; j < m_numberOfDimensions; j++) {
-        greensFunction += greensVector[j]*greensVector[j];
+    for (int dim=0; dim < m_numberOfDimensions; dim++) {
+        greensFunction += greensVector[dim]*greensVector[dim];
     }
     greensFunction /= 2*m_timeStep;
     return exp(-greensFunction);
@@ -194,7 +189,6 @@ bool System::metropolisStep() {
 
     // accept/reject new position using Metropolis algorithm
     double ratio = pow(waveFuncNew, 2) / pow(waveFuncOld, 2);
-    cout << ratio << endl;
 
     if (ratio >= Random::nextDouble()) {
         return true;
@@ -206,8 +200,7 @@ bool System::metropolisStep() {
     }
 }
 
-void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceSampling,
-                                bool writeEnergiesToFile, bool writePositionsToFile)
+void System::runMetropolisSteps(int numberOfMetropolisSteps)
 {
     m_numberOfAcceptedSteps = 0;
     if (m_samplerSetup == false) {
@@ -227,12 +220,12 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceS
         bool acceptedStep;
 
         if (getUseSlater()) {
-            if (useImportanceSampling) { acceptedStep = metropolisStepSlaterImportance(); }
-            else                       { acceptedStep = metropolisStepSlater(); }
+            if (getUseImportanceSampling()) { acceptedStep = metropolisStepSlaterImportance(); }
+            else                            { acceptedStep = metropolisStepSlater(); }
         }
         else {
-            if (useImportanceSampling) { acceptedStep = metropolisStepImportance(); }
-            else                       { acceptedStep = metropolisStep(); }
+            if (getUseImportanceSampling()) { acceptedStep = metropolisStepImportance(); }
+            else                            { acceptedStep = metropolisStep(); }
         }
 
         // compute acceptance rate
@@ -242,7 +235,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, bool useImportanceS
 
         // euqilibrate
         if (i > numberOfMetropolisSteps*m_equilibrationFraction) {
-            m_sampler->sample(acceptedStep, writeEnergiesToFile, writePositionsToFile);
+            m_sampler->sample(acceptedStep);
         }
 
         // print progression to terminal
@@ -276,6 +269,18 @@ void System::setStepLength(double stepLength) {
 void System::setEquilibrationFraction(double equilibrationFraction) {
     assert(equilibrationFraction >= 0);
     m_equilibrationFraction = equilibrationFraction;
+}
+
+void System::setUseImportanceSampling(bool useImportanceSampling) {
+    m_useImportanceSampling = useImportanceSampling;
+}
+
+void System::setWriteEnergiesToFile(bool writeEnergiesToFile) {
+    m_writeEnergiesToFile = writeEnergiesToFile;
+}
+
+void System::setWritePositionsToFile(bool writePositionsToFile) {
+    m_writePositionsToFile = writePositionsToFile;
 }
 
 void System::setTimeStep(double timeStep) {

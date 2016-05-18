@@ -13,17 +13,23 @@ public:
     double singleParticleWaveFunctions(int nx, int ny, double x, double y);
     std::vector<double> singleParticleWFGradient(int nx, int ny, double x, double y);
     double singleParticleWFLaplacian(int nx, int ny, double x, double y);
+    double singleParticleWFParameters(int nx, int ny, double x, double y);
     double hermitePolynomials(int energyLevel, double position);
     double hermitePolynomialsDerivative1(int energyLevel, double position);
     double hermitePolynomialsDerivative2(int energyLevel, double position);
+    double hermitePolynomialsParametersDerivative(int energylevel, double position);
     void updateSlaterInverse(std::vector<class Particle*> particles, int i);
     double computeRatio(std::vector<class Particle*> particles, int particle);
     std::vector<double> gradientSlater(std::vector<class Particle*> particles, int i);
     std::vector<double> gradientJastrow(std::vector<class Particle*> particles, int i);
+    void setParameters(std::vector<double> parameters);
 
 private:
     double m_omega;
     double m_omegaSqrt;
+    double m_omegaAlpha;
+    double m_omegaAlphaSqrt;
+    double m_alphaSqrt;
     arma::mat m_a;
     int m_numberOfParticles;
     int m_numberOfParticlesHalf;
@@ -41,4 +47,5 @@ private:
     std::vector<double> m_gradientDown = std::vector<double>();
     bool m_firstStepLaplacian = true;
     bool m_firstStepGradient = true;
+    double m_oldInverse = 0;
 };

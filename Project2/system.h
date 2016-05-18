@@ -9,13 +9,15 @@ public:
     bool metropolisStepSlaterImportance ();
     std::vector<double> driftForce  (int particle);
     double evaluateGreensFunction   (int particle, std::vector<double> oldPosition, std::vector<double> newPosition);
-    void runMetropolisSteps         (int numberOfMetropolisSteps, bool useImportanceSampling,
-                                     bool writeEnergiesToFile, bool writePositionsToFile);
+    void runMetropolisSteps         (int numberOfMetropolisSteps);
     void setNumberOfParticles       (int numberOfParticles);
     void setNumberOfDimensions      (int numberOfDimensions);
     void setStepLength              (double stepLength);
     void setEquilibrationFraction   (double equilibrationFraction);
     void setTimeStep                (double timeStep);
+    void setUseImportanceSampling   (bool useImportanceSampling);
+    void setWriteEnergiesToFile     (bool writeEnergiesToFile);
+    void setWritePositionsToFile    (bool writePositionsToFile);
     void setUseSlater               (bool useSlater);
     void setUseJastrow              (bool useJastrow);
     void setOptimizeParameters      (bool optimizeParameters);
@@ -35,6 +37,9 @@ public:
     double getEquilibrationFraction()   { return m_equilibrationFraction; }
     int getNumberOfAcceptedSteps()      { return m_numberOfAcceptedSteps; }
     double getTimeStep()                { return m_timeStep; }
+    bool getUseImportanceSampling()     { return m_useImportanceSampling; }
+    bool getWriteEnergiesToFile()       { return m_writeEnergiesToFile; }
+    bool getWritePositionsToFile()      { return m_writePositionsToFile; }
     bool getUseSlater()                 { return m_useSlater; }
     bool getUseJastrow()                { return m_useJastrow; }
     bool getOptimizeParameters()        { return m_optimizeParameters; }
@@ -47,6 +52,9 @@ private:
     double                          m_stepLength = 0.1;
     double                          m_timeStep = 0.01;
     int                             m_numberOfAcceptedSteps = 0;
+    bool                            m_useImportanceSampling = false;
+    bool                            m_writeEnergiesToFile = false;
+    bool                            m_writePositionsToFile = false;
     bool                            m_samplerSetup = false;
     bool                            m_useSlater = false;
     bool                            m_useJastrow = true;
