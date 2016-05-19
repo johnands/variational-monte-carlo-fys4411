@@ -6,8 +6,10 @@
 #include "../particle.h"
 #include "../WaveFunctions/wavefunction.h"
 
-HarmonicOscillatorInteracting::HarmonicOscillatorInteracting(class System* system, double omega, double a, double gamma, bool useNumerical) :
-        Hamiltonian(system, useNumerical) {
+HarmonicOscillatorInteracting::HarmonicOscillatorInteracting(class System* system, double omega, double a,
+                                                             double gamma, bool useNumerical,
+                                                             bool useInteraction) :
+        Hamiltonian(system, useNumerical, useInteraction) {
     m_omega = omega;
     m_gamma = gamma;
     m_a     = a;

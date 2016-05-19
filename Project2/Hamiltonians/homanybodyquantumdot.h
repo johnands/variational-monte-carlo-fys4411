@@ -4,7 +4,7 @@
 
 class HOManyBodyQuantumDot : public Hamiltonian {
 public:
-    HOManyBodyQuantumDot(class System* system, double omega, bool useNumerical);
+    HOManyBodyQuantumDot(class System* system, double omega, bool useNumerical, bool useInteraction);
     double computeAnalyticalKineticEnergy(std::vector<class Particle*> particles);
     double computePotentialEnergy(std::vector<class Particle*> particles);
 

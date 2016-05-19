@@ -34,7 +34,7 @@ private:
     int m_numberOfParticles;
     int m_numberOfParticlesHalf;
     double m_ratio;
-    double m_ratioSD;
+    double m_ratioSD = 1;
     int m_i;
     arma::mat m_quantumNumbers;
     arma::mat m_slaterSpinUp;

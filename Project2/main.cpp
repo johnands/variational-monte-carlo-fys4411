@@ -24,8 +24,8 @@ int main() {
     int numberOfParticles   = 2;
     int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // oscillator frequency
-    double alpha            = 1.0;          // variational parameter 1
-    double beta             = 0.3;        // variational parameter 2
+    double alpha            = 0.98456;          // variational parameter 1
+    double beta             = 0.40691;        // variational parameter 2
     double stepLength       = 1.6;          // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
     double timeStep         = 0.005;        // importance sampling
@@ -34,6 +34,7 @@ int main() {
     double gamma            = 2.82843;      // trap potential strength z-direction
 
     bool useNumerical           = false;    // compute kinetic energy numerically
+    bool useInteraction         = true;    // if false: only harmonic oscillator
 
     System* system = new System();   
     system->setUseJastrow               (true);
@@ -41,8 +42,8 @@ int main() {
 
     //system->setHamiltonian              (new HarmonicOscillator(system, omega, useNumerical));
     //system->setHamiltonian              (new HarmonicOscillatorInteracting(system, omega, a, gamma, useNumerical));
-    //system->setHamiltonian              (new HarmonicOscillatorQuantumDot2(system, omega, useNumerical));
-    system->setHamiltonian              (new HOManyBodyQuantumDot(system, omega, useNumerical));
+    //system->setHamiltonian              (new HarmonicOscillatorQuantumDot2(system, omega, useNumerical, useInteraction));
+    system->setHamiltonian              (new HOManyBodyQuantumDot(system, omega, useNumerical, useInteraction));
 
     //system->setWaveFunction             (new SimpleGaussian(system, alpha));
     //system->setWaveFunction             (new InteractingGaussian(system, alpha, beta, a));
@@ -58,17 +59,17 @@ int main() {
     system->setWritePositionsToFile     (false);
     system->setUseSlater                (true);
 
-    //system->runMetropolisSteps          (numberOfSteps);
+    system->runMetropolisSteps          (numberOfSteps);
 
     // optimize
-    double initialAlpha = 0.5;
+    /*double initialAlpha = 0.5;
     double initialBeta = 0.5;
     std::vector<double> parameters(2);
     parameters[0] = initialAlpha; parameters[1] = initialBeta;
     system->setOptimizeParameters(true);
     double stepLengthOptimize = 0.5;
     SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize);
-    sd->optimize(parameters);
+    sd->optimize(parameters);*/
 
     return 0;
 }

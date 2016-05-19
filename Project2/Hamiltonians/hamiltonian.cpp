@@ -4,9 +4,10 @@
 #include "../WaveFunctions/wavefunction.h"
 #include <iostream>
 
-Hamiltonian::Hamiltonian(System* system, bool useNumerical) {
+Hamiltonian::Hamiltonian(System* system, bool useNumerical, bool useInteraction) {
     m_system = system;
     m_useNumerical = useNumerical;
+    m_useInteraction = useInteraction;
 }
 
 double Hamiltonian::computeLocalEnergy(std::vector<Particle*> particles) {

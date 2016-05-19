@@ -8,7 +8,8 @@ public:
     bool metropolisStepSlater           ();
     bool metropolisStepSlaterImportance ();
     std::vector<double> driftForce  (int particle);
-    double evaluateGreensFunction   (int particle, std::vector<double> oldPosition, std::vector<double> newPosition);
+    double evaluateGreensFunction   (int particle, std::vector<double> oldPosition,
+                                     std::vector<double> newPosition, std::vector<double> quantumForce);
     void runMetropolisSteps         (int numberOfMetropolisSteps);
     void setNumberOfParticles       (int numberOfParticles);
     void setNumberOfDimensions      (int numberOfDimensions);
@@ -59,7 +60,6 @@ private:
     bool                            m_useSlater = false;
     bool                            m_useJastrow = true;
     bool                            m_optimizeParameters = false;
-
 
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;

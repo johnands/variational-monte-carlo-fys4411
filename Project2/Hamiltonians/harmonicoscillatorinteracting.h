@@ -4,7 +4,8 @@
 
 class HarmonicOscillatorInteracting : public Hamiltonian {
 public:
-    HarmonicOscillatorInteracting(class System* system, double omega, double a, double gamma, bool useNumerical);
+    HarmonicOscillatorInteracting(class System* system, double omega, double a, double gamma,
+                                  bool useNumerical, bool useInteraction);
     double computeAnalyticalKineticEnergy(std::vector<class Particle*> particles);
     double computePotentialEnergy(std::vector<class Particle*> particles);
 

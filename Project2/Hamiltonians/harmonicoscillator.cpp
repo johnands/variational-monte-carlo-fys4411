@@ -9,8 +9,8 @@
 using std::cout;
 using std::endl;
 
-HarmonicOscillator::HarmonicOscillator(System* system, double omega, bool useNumerical) :
-    Hamiltonian(system, useNumerical) {
+HarmonicOscillator::HarmonicOscillator(System* system, double omega, bool useNumerical, bool useInteraction) :
+    Hamiltonian(system, useNumerical, useInteraction) {
     assert(omega > 0);
     m_omega  = omega;
 }

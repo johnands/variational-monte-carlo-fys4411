@@ -6,8 +6,9 @@
 #include "../particle.h"
 #include "../WaveFunctions/wavefunction.h"
 
-HOManyBodyQuantumDot::HOManyBodyQuantumDot(class System* system, double omega, bool useNumerical) :
-        Hamiltonian(system, useNumerical) {
+HOManyBodyQuantumDot::HOManyBodyQuantumDot(class System* system, double omega, bool useNumerical,
+                                           bool useInteraction) :
+        Hamiltonian(system, useNumerical, useInteraction) {
     assert(m_system->getNumberOfDimensions() == 2);
     m_omega = omega;
 }
@@ -43,5 +44,10 @@ double HOManyBodyQuantumDot::computePotentialEnergy(std::vector<Particle*> parti
 
     singleParticle *= 0.5*m_omega*m_omega;
 
-    return singleParticle + interacting;
+    if (m_useInteraction) {
+        return singleParticle + interacting;
+    }
+    else {
+        return singleParticle;
+    }
 }

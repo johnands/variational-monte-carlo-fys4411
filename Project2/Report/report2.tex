@@ -58,7 +58,7 @@
 \textsc{\Large FYS4411}\\[0.5cm]
 \textsc{\Large Spring 2016}\\[1.5cm]
 \rule{\linewidth}{0.5mm} \\[0.4cm]
-{ \huge \bfseries Variational Monte Carlo studies of bosonic systems}\\[0.10cm]
+{ \huge \bfseries Variational Monte Carlo studies of electronic systems}\\[0.10cm]
 \rule{\linewidth}{0.5mm} \\[1.5cm]
 
 % Av hvem?
@@ -82,16 +82,12 @@
 %\begin{multicols*}{2}
 
 \begin{abstract}
-The aim of this project is to use the Variational Monte Carlo (VMC) method to evaluate the 
-ground state energy of a trapped, hard sphere Bose gas for different numbers of particles
-both with and without interaction. Statistical error analysis is done using the blocking method 
-and the one-body density is computed. 
+The aim of this project is to use the Variational Monte Carlo (VMC) method to evaluate the
+ground state energy, onebody densities, expectation values of the kinetic and potential energies
+and single-particle energies of quantum dots with $N=2$, $N=6$, $N=12$ and $N=20$ electrons,
+i.e. closed-shell systems. A performance analysis of the code is also made.
 
-We found that the exact ground state energies were reproduced for non-interacting bosons
-when the trial wavefuntion was equal to the exact wavefunction of this system.
-The energies for the interacting system had a small error, but the results were in good
-accordance with \cite{ref1}. Using closed-form expressions for the trial wavefuctions etc. was vital 
-for saving CPU time. 
+***Main findings*** 
 
 
 \end{abstract}
@@ -100,80 +96,79 @@ for saving CPU time.
 
 
 \section{Introduction}
-Demonstrations of Bose-Einstein condensation (BEC) in gases of alkali atoms confined in magnetic traps has gained
-a lot of interest in the scientific community in recent years. Of interest is for instance the fraction of condensed atoms, 
-the nature of the condensate and the excitations above the condensate. \\
+\noindent Quantum dots are nano-scale semiconductor devices that contain strongly confined electrons. 
+They exhibit discrete quantum levels due to their small size, including shell structures and magic
+numbers for the ground states, as in atoms and nuclei. The electronic properties of these materials 
+can be tuned by applying external fields, and are thus of interest in many research applications such as
+transistors, solar cells, LEDs etc. Studies of quantum dots containing several electrons require
+reliable many-body methods that also incorporate uncertainty quantifications.\\
 
-\noindent An important feature of the trapped alkali systems is that they are dilute, i.e. the effective atom size
-is small compared to both the trap size and the inter-atomic spacing. In this situation the physics is
-dominated by two-body collisions, well discribed in terms of the $s$-wave scattering length $a$ of the atoms.
-The condition for diluteness is defined by the gas parameter $x(\mathbf{r}) = n(\mathbf{r})a^3$, where $n(\mathbf{r})$
-is the local density of the system. The theoretical framework of the Gross-Pitaevski equation is valid for $x_{av} \leq 10^{-3}$,
-but recent experiments have shown that the gas parameter may exceed this value due to the presence of so-called Feshbach resonance.
-Therefore, other methods like the VMC method may be needed. \\
+\noindent In this project we compute the ground state energy for $N=2$, $N=6$, $N=12$ and $N=20$ electrons
+confined in a two-dimensional harmonic oscillator trap with different oscillator frequencies $\omega$. 
+For the two-body case we find the energy both with and without the use of Slater determinants for 
+benchmarking purposes. The one-body density is computed for all $N$, both with and without correlations. 
+For $N=2$ we also compute the mean distance between the electrons and the expectation values of the potential
+and kinetic energies. We perform a timing analysis by comparing a serial and parallel code both with 
+and without vectorization.\\
 
-\noindent In this project we evaluate the ground state energy of a trapped BEC by simulating different numbers of bosons
-in a harmonic oscillator potential in one, two and three dimensions. The energy is obtained using the VMC method, both with 
-and without importance sampling. We study both interacting and non-interacting bosons, called system 1
-and system 2 respectively. The method of blocking is utilized to do statistical analysis on
-the numerical data. We optimize the variational parameter $\alpha$ using the steepest descent method. The one-body 
-density in the interacting and non-interacting case is also computed.
+\noindent ***structure of report***y
 
 
 
 \section{Theory}
-The trap we use is a spherical (S) or an elliptical (E) harmonic trap in one, two and three dimensions, with the latter given by
+\subsection{Physical system}
+We consider a system of electrons confined in a pure two-dimensional 
+isotropic harmonic oscillator potential, with an idealized  total Hamiltonian given by 
 \begin{equation}
- V_{ext}({\bf r}) = 
- \Bigg\{
-\begin{array}{ll}
-	 \frac{1}{2}m\omega_{ho}^2r^2 & (S)\\
- \strut
-	 \frac{1}{2}m[\omega_{ho}^2(x^2+y^2) + \omega_z^2z^2] & (E)
- \label{trap_eqn}
-\end{array}
+\label{finalH}
+H=\sum_{i=1}^{N} \left(  -\frac{1}{2} \nabla_i^2 + \frac{1}{2} \omega^2r_i^2  \right)+\sum_{i<j}\frac{1}{r_{ij}},
 \end{equation}
-where $\omega_{ho}$ and $\omega_z$ defines the trap potential strength in the $xy$-plane and $z$-direction respectively.
-The two-body Hamiltonian is
- \begin{equation}
-     H = \sum_i^N \left(
-	 \frac{-\hbar^2}{2m}
-	 { \bigtriangledown }_{i}^2 +
-	 V_{ext}({\bf{r}}_i)\right)  +
-	 \sum_{i<j}^{N} V_{int}({\bf{r}}_i,{\bf{r}}_j),
- \end{equation}
- and we represent the inter-boson interaction by a pairwise, repulsive potential
- \begin{equation}
- V_{int}(|{\bf r}_i-{\bf r}_j|) =  \Bigg\{
- \begin{array}{ll}
-	 \infty & {|{\bf r}_i-{\bf r}_j|} \leq {a}\\
-	 0 & {|{\bf r}_i-{\bf r}_j|} > {a}
- \end{array}
- \end{equation}
- where ${a}$ is the so-called hard-core diameter of the bosons.
- 
- Our trial wave function for the ground state with N atoms is given by
-  \begin{equation}
- \Psi_T({\bf R})=\Psi_T({\bf r}_1, {\bf r}_2, \dots {\bf r}_N,\alpha,\beta)=\prod_i g(\alpha,\beta,{\bf r}_i)\prod_{i<j}f(a,|{\bf r}_i-{\bf r}_j|),
- \label{trialwf}
- \end{equation}
- where $\alpha$ and $\beta$ are variational parameters.
- The single-particle wave function is proportional to the harmonic
- oscillator function for the ground state, i.e.,
- \begin{equation}
-    g(\alpha,\beta,{\bf r}_i)= \exp{[-\alpha(x_i^2+y_i^2+\beta z_i^2)]}.
- \end{equation}
- The correlation wave
- function is
- \begin{equation}
-    f(a,|{\bf r}_i-{\bf r}_j|)=\Bigg\{
- \begin{array}{ll}
-	 0 & {|{\bf r}_i-{\bf r}_j|} \leq {a}\\
-	 (1-\frac{a}{|{\bf r}_i-{\bf r}_j|}) & {|{\bf r}_i-{\bf r}_j|} > {a}.
- \end{array}
- \end{equation}
- System 1 is non-interacting bosons ($a=0$) in a spherical harmonic oscillator ($\beta=1$). 
- System 2 is interacting bosons ($a \geq 0$) in an elliptical harmonic oscillator ($\beta \neq 1$).
+where natural units ($\hbar=c=e=m_e=1$) are used and all energies are in so-called atomic units a.u. We will study systems of many electrons $N$ as functions of the oscillator frequency  $\omega$ using the above Hamiltonian.  The Hamiltonian includes a standard harmonic oscillator part
+\begin{equation}
+H_0=\sum_{i=1}^{N} \left(  -\frac{1}{2} \nabla_i^2 + \frac{1}{2} \omega^2r_i^2  \right),
+\label{OneBodyHamiltonian}
+\end{equation}
+and the repulsive interaction between two electrons given by 
+\begin{equation}
+H_1=\sum_{i<j}\frac{1}{r_{ij}},
+\end{equation}
+with the distance between electrons given by $r_{ij}=\vert {\bf r}_1-{\bf r}_2\vert$. We define the 
+modulus of the positions of the electrons (for a given electron $i$) as $r_i = \sqrt{r_{i_x}^2+r_{i_y}^2}$.\\
+
+
+\subsection{Trial wavefunction}
+We study a system of electrons, which are fermions that obey the Pauli exclusion principle.
+This means that we have to approximate the exact wave function for the system with a trial
+wave function that is antisymmetric. Our antisymmetric ansatz is a product of a Slater determinant $|D|$
+and a correlation term,
+\begin{equation}
+   \psi_{T}({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha, \beta) = 
+   |D({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha)|
+   \prod_{i<j}^{N}\exp{\left(\frac{a r_{ij}}{(1+\beta r_{ij})}\right)}, 
+   \label{TrialWF}
+\end{equation}
+where $\alpha$ and $\beta$ are the variational parameters.
+The Slater matrix $D$ is defined as
+\begin{equation}
+ d_{ij} = \phi_j({\bf r}_i)
+\end{equation}
+where $\phi_j({\bf r}_i)$ are single-particle wave functions, i.e. eigenfunctions of the one-body 
+Hamiltonian \eqref{OneBodyHamiltonian}. The rows correspond to the position of a given particle, 
+while the columns stand for the various quantum numbers.
+The single-particle wave functions in a two-dimensional harmonic oscillator are
+\begin{equation}
+ \phi_{n_x,n_y}(x,y) = A H_{n_x}(\sqrt{\omega}x)H_{n_y}(\sqrt{\omega}y)\exp{[-\alpha\omega(x^2+y^2)/2]}.
+\end{equation}
+The functions $H_{n_x}(\sqrt{\omega}x)$ are so-called Hermite polynomials (given in appendix), while
+$A$ is a normalization constant. 
+For two particles, the trial wave function \eqref{TrialWF} reduces to
+\begin{equation}
+   \psi_{T}({\bf r}_1,{\bf r}_2, \alpha, \beta) = 
+   C\exp{\left(-\alpha\omega(r_1^2+r_2^2)/2\right)}
+   \exp{\left(\frac{ar_{12}}{(1+\beta r_{12})}\right)}, 
+\label{trialWF2}
+\end{equation}
+
  
 
 
@@ -230,7 +225,7 @@ our results with \cite{ref1} (for $d=3$),
 \section{Methods}
 
 We use the \textit{Variational Monte Carlo} (VMC) method in this project to obtain the ground state energy
-for our bosonic system. VMC applies the \textit{variational principle} from quantum mechanics
+for our fermonic system. VMC applies the \textit{variational principle} from quantum mechanics
 \begin{equation}
  E_0 \leq \frac{\langle \Psi_T | H | \Psi_T \rangle}{\langle \Psi_T | \Psi_T \rangle}
 \end{equation}
@@ -1172,122 +1167,7 @@ Dividing by the wavefunction and multiplying with 2
 \end{equation}
 
 
-\subsubsection{Analytic energy for interacting system}
-
-We rewrite \eqref{trialwf},
-\begin{equation}
- \Psi_T(\alpha, \beta, {\bf R}) = \prod_i g(\alpha,\beta,{\bf r}_i)\textrm{exp} \left(
- \sum_{i<j}u(r_{ij}) \right)
- \label{wfinteracting}
-\end{equation}
-where $r_{ij} = |{\bf r}_i - {\bf r}_j|$ and $u(r_{ij}) = \textrm{ln}f(r_{ij})$.  We also set
-\begin{equation}
- g(\alpha, \beta, {\bf r}_i) = \textrm{exp}\bigr(-\alpha(x_i^2 + y_i^2 + \beta z_i^2\bigr) = \phi({\bf r}_i)
-\end{equation}
-so that our trial wave function can be written
-\begin{equation}
- \Psi_T({\bf R}) = \prod_i \phi({\bf r}_i) \textrm{exp} \left(
- \sum_{i<j}u(r_{ij}) \right)
- \label{wfinteracting2}
-\end{equation}
-We need the Laplacian of this wave function to compute kinetic energy analytically.
-We start with finding the gradient,
-\begin{align}
- \nabla_k \prod_i \phi({\bf r}_i) &= \prod_{i\neq k} \phi({\bf r}_i) \nabla_k \phi({\bf r}_k) \\
-                                  &= \nabla_k\phi({\bf r}_k) \prod_{i\neq k}\phi({\bf r}_i)
-\end{align}
-and 
-\begin{align}
- \nabla_k \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right) &=
- \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right) \nabla_k \sum_{i<j}u(r_{ij}) \\ &= 
- \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right)  \sum_{j\neq k}\nabla_k u( r_{kj})
-\end{align}
-where the last equality follows because all terms that lack $k$ as index in the sum $\sum_{i<j}u(r_{ij})$ 
-will diseappear when differentiating. The first compononet of the $k$-th gradient of $u(r_{kj})$ is
-\begin{align}
- \frac{\partial u(r_{kj})}{\partial x_k} &= \frac{\partial r_{kj}}{\partial x_k} 
- \frac{\partial u(r_{kj})}{\partial r_{kj}} \\
- &= \frac{(x_k - x_j)}{r_{kj}}u^\prime(r_{kj})
-\end{align}
-where we have defined
-\begin{equation}
- u^\prime(r_{kj}) = \frac{\partial u(r_{kj})}{\partial r_{kj}}
-\end{equation}
-thus
-\begin{equation}
- \nabla_k u(r_{kj}) = \frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj})
-\end{equation}
-Using the product rule, the total gradient equals
-\begin{equation}
- \nabla_k \Psi_T({\bf R}) = \nabla_k\phi({\bf r}_k) \left[\prod_{i\neq k}\phi({\bf r}_i) \right] \textrm{exp}
-                           \left( \sum_{i<j}u(r_{ij}) \right) + \prod_i\phi({\bf r}_i)
-                           \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right)  
-                           \sum_{j\neq k}\frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj})
- \label{wfgradient}
-\end{equation}
-Differentiating the first term of this expression and dividing with $\Psi_T({\bf R})$,
-\begin{equation}
-  \frac{\nabla^2_k\phi({\bf r}_k)}{\phi({\bf r}_k)} + 
-  \frac{\nabla_k\phi({\bf r}_k)}{\phi({\bf r}_k)} 
-  \left( \sum_{j\neq k}\frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj}) \right)
-\end{equation}
-Differentiating the three factors in the second term of \eqref{wfgradient},
-\begin{align}
- &\nabla_k\phi({\bf r}_k) \left[\prod_{i\neq k}\phi({\bf r}_i) \right]
- \textrm{exp} \left( \sum_{i<j}u(r_{ij}) \right)  
- \sum_{j\neq k}\nabla_k u(r_{kj}) \quad + \\ 
- &\prod_i\phi({\bf r}_i)\textrm{exp}  \left( \sum_{i<j}u(r_{ij}) \right) \left[
- \sum_{i\neq k}\nabla_k u(r_{ki}) \sum_{j\neq k}\nabla_k u(r_{kj}) + \sum_{j\neq k}\nabla^2_k u(r_{kj}) \right]
-\end{align}
-The first term in the square brackets results in
-\begin{equation}
- \sum_{i,j\neq k} (\frac{({\bf r}_k - {\bf r}_i)({\bf r}_k - {\bf r}_j)}{r_{ki}r_{kj}} u^\prime(r_{ki})u^\prime(r_{kj})
-\end{equation}
-To compute the second term in square brackets we define
-\begin{equation}
- M = \nabla_k u(r_{kj}) = \frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj})
-\end{equation}
-Then
-\begin{align}
- \nabla_k^2 u(r_{kj}) = \frac{\partial M}{\partial r_{kj}} 
- &= \frac{\partial}{\partial r_{kj}}\left[\frac{({\bf r}_k - {\bf r}_j)}{r_{kj}}\right]u^\prime(r_{kj}) + 
- \frac{({\bf r}_k - {\bf r}_j)}{r_{kj}}u^{\prime\prime}(r_{kj}) \\
- &= \frac{({\bf r}_k - {\bf r}_j)({\bf r}_k - {\bf r}_j)}{r_{kj}^2} \left(u^{\prime\prime}(r_{kj}) + 
- \frac{2}{r_{kj}} u^\prime(r_{kj})\right) \\
- &= u^{\prime\prime}(r_{kj}) + \frac{2}{r_{kj}} u^\prime(r_{kj}) \\
-\end{align}
-The analytic expression for the Laplacian of the trial wavefunction is thus
-\begin{align}
- \frac{1}{\Psi_T({\bf R})}\nabla^2_k\Psi_T({\bf R}) &= 
- \frac{\nabla^2_k\phi({\bf r}_k)}{\phi({\bf r}_k)} + \frac{\nabla_k\phi({\bf r}_k)}{\phi({\bf r}_k)} 
- \sum_{j\neq k}\frac{({\bf r}_k - {\bf r}_j)}{r_{kj}} u^\prime(r_{kj}) \quad + \\
- &\sum_{i,j\neq k} (\frac{({\bf r}_k - {\bf r}_i)({\bf r}_k - {\bf r}_j)}{r_{ki}r_{kj}} u^\prime(r_{ki})u^\prime(r_{kj})
- + \sum_{j\neq k}\left( u^{\prime\prime}(r_{kj}) + \frac{2}{r_{kj}} u^\prime(r_{kj}) \right)
- \label{analytickin}
-\end{align}
-We need the first and second derivative of $u(r_{kj}) = \textrm{ln} f(r_{kj}) = \textrm{ln} (1-a/r_{kj})$.
-\begin{equation}
- u^\prime(r_{kj}) = \frac{1}{1-a/r_{kj}} 
- \frac{a}{r^2_{kj}} = \frac{a}{r_{kj}(r_{kj} - a)}
-\end{equation}
-and
-\begin{equation}
- u^{\prime\prime}(r_{kj}) = \frac{a(a - 2r_{kj})}{r_{kj}^2 ( r_{kj} - a)^2}
-\end{equation}
-We now have everything we need to obtain the full expression, except the gradient and Laplacian of
-$\phi({\bf r})$, which is
-\begin{align}
- \frac{\nabla^2_k\phi({\bf r}_k)}{\phi({\bf r}_k)} &= 2a(2ax_k^2 - 1) + 2a(2ay_k^2 - 1) + 2a(2a\beta^2z_k^2 - \beta) \\
- &= 2a(2a(x_k^2 + y_k^2 + \beta z_k^2) - 2 - \beta)
-\end{align}
-and
-\begin{equation}
- \frac{\nabla_k\phi({\bf r}_k)}{\phi({\bf r}_k)}  = 
- -2a(x, y, \beta z)
-\end{equation}
-
-
-\subsubsection{Analytic energy for two-body quantum dot}
+\subsection{Analytic energy for two-body quantum dot}
 
 \begin{align}
  \Psi_T({\bf r_1}, {\bf r_2}) &= \textrm{exp}(-\alpha \omega(r_1^2 + r_2^2)/2)

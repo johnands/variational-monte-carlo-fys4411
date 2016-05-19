@@ -69,7 +69,38 @@ double ManyBodyQuantumDot::computeRatio(std::vector<Particle *> particles, int i
     double exponent1 = 0;
     double exponent2 = 0;
     double beta = m_parameters[1];
-    for (int j=0; j < m_numberOfParticles; j++) {
+    for (int j=0; j < i; j++) {
+        double r_jiNew = 0;
+        double r_jiOld = 0;
+        for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
+            r_jiNew += (particles[j]->getPosition()[dim] - particles[i]->getNewPosition()[dim]) *
+                       (particles[j]->getPosition()[dim] - particles[i]->getNewPosition()[dim]);
+            r_jiOld += (particles[j]->getPosition()[dim] - particles[i]->getPosition()[dim]) *
+                       (particles[j]->getPosition()[dim] - particles[i]->getPosition()[dim]);
+        }
+        r_jiNew = sqrt(r_jiNew);
+        r_jiOld = sqrt(r_jiOld);
+        exponent1 += ( m_a(i,j)*r_jiNew ) / ( 1 + beta*r_jiNew );
+        exponent2 += ( m_a(i,j)*r_jiOld ) / ( 1 + beta*r_jiOld );
+
+    }
+    for (int j=i+1; j < m_numberOfParticles; j++) {
+        double r_jiNew = 0;
+        double r_jiOld = 0;
+        for (int dim=0; dim < m_system->getNumberOfDimensions(); dim++) {
+            r_jiNew += (particles[j]->getPosition()[dim] - particles[i]->getNewPosition()[dim]) *
+                       (particles[j]->getPosition()[dim] - particles[i]->getNewPosition()[dim]);
+            r_jiOld += (particles[j]->getPosition()[dim] - particles[i]->getPosition()[dim]) *
+                       (particles[j]->getPosition()[dim] - particles[i]->getPosition()[dim]);
+        }
+        r_jiNew = sqrt(r_jiNew);
+        r_jiOld = sqrt(r_jiOld);
+        exponent1 += ( m_a(i,j)*r_jiNew ) / ( 1 + beta*r_jiNew );
+        exponent2 += ( m_a(i,j)*r_jiOld ) / ( 1 + beta*r_jiOld );
+
+    }
+
+    /*for (int j=0; j < m_numberOfParticles; j++) {
         if (j != i) {
             double r_jiNew = 0;
             double r_jiOld = 0;
@@ -84,7 +115,7 @@ double ManyBodyQuantumDot::computeRatio(std::vector<Particle *> particles, int i
             exponent1 += ( m_a(i,j)*r_jiNew ) / ( 1 + beta*r_jiNew );
             exponent2 += ( m_a(i,j)*r_jiOld ) / ( 1 + beta*r_jiOld );
         }
-    }
+    }*/
     double ratioJastrow = exp(exponent1 - exponent2);
     //cout << "Slater " << ratioSD << endl;
     //cout << "Jastrow " << ratioJastrow << endl;
@@ -479,7 +510,26 @@ double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
         double x_i = particles[i]->getPosition()[0];
         double y_i = particles[i]->getPosition()[1];
 
-        for (int k=0; k < m_numberOfParticles; k++) {
+        for (int k=0; k < i; k++) {
+            double x_k = particles[k]->getPosition()[0];
+            double y_k = particles[k]->getPosition()[1];
+            double r_ki = sqrt( (x_k - x_i)*(x_k - x_i) + (y_k - y_i)*(y_k - y_i) );
+
+            double factor = 1.0 / (1 + beta*r_ki);
+            jastrowLaplacian += ( (m_a(k,i)*factor*factor) / r_ki ) -
+                                2*m_a(k,i)*beta*factor*factor*factor;
+        }
+        for (int k=i+1; k < m_numberOfParticles; k++) {
+            double x_k = particles[k]->getPosition()[0];
+            double y_k = particles[k]->getPosition()[1];
+            double r_ki = sqrt( (x_k - x_i)*(x_k - x_i) + (y_k - y_i)*(y_k - y_i) );
+
+            double factor = 1.0 / (1 + beta*r_ki);
+            jastrowLaplacian += ( (m_a(k,i)*factor*factor) / r_ki ) -
+                                2*m_a(k,i)*beta*factor*factor*factor;
+        }
+
+        /*for (int k=0; k < m_numberOfParticles; k++) {
 
             if (k != i) {
                 double x_k = particles[k]->getPosition()[0];
@@ -490,7 +540,7 @@ double ManyBodyQuantumDot::computeLaplacian(std::vector<Particle *> particles) {
                 jastrowLaplacian += ( (m_a(k,i)*factor*factor) / r_ki ) -
                                     2*m_a(k,i)*beta*factor*factor*factor;
             }
-        }
+        }*/
     }
 
     // cross term
@@ -593,7 +643,26 @@ std::vector<double> ManyBodyQuantumDot::gradientJastrow(std::vector<Particle *> 
     double x_i = particles[i]->getPosition()[0];
     double y_i = particles[i]->getPosition()[1];
 
-    for (int j=0; j < m_numberOfParticles; j++) {
+    for (int j=0; j < i; j++) {
+        double x_j = particles[j]->getPosition()[0];
+        double y_j = particles[j]->getPosition()[1];
+        double r_ij = sqrt( (x_i - x_j)*(x_i - x_j) + (y_i - y_j)*(y_i - y_j) );
+        double factor = 1.0 / ( r_ij*(1 + beta*r_ij)*(1 + beta*r_ij) );
+
+        ratioJastrow[0] += (x_i - x_j)*m_a(i,j)*factor;
+        ratioJastrow[1] += (y_i - y_j)*m_a(i,j)*factor;
+    }
+    for (int j=i+1; j < m_numberOfParticles; j++) {
+        double x_j = particles[j]->getPosition()[0];
+        double y_j = particles[j]->getPosition()[1];
+        double r_ij = sqrt( (x_i - x_j)*(x_i - x_j) + (y_i - y_j)*(y_i - y_j) );
+        double factor = 1.0 / ( r_ij*(1 + beta*r_ij)*(1 + beta*r_ij) );
+
+        ratioJastrow[0] += (x_i - x_j)*m_a(i,j)*factor;
+        ratioJastrow[1] += (y_i - y_j)*m_a(i,j)*factor;
+    }
+
+    /*for (int j=0; j < m_numberOfParticles; j++) {
         if (j != i) {
             double x_j = particles[j]->getPosition()[0];
             double y_j = particles[j]->getPosition()[1];
@@ -603,7 +672,7 @@ std::vector<double> ManyBodyQuantumDot::gradientJastrow(std::vector<Particle *> 
             ratioJastrow[0] += (x_i - x_j)*m_a(i,j)*factor;
             ratioJastrow[1] += (y_i - y_j)*m_a(i,j)*factor;
         }
-    }
+    }*/
 
     return ratioJastrow;
 }
@@ -620,11 +689,12 @@ std::vector<double> ManyBodyQuantumDot::computeGradient(std::vector<Particle *> 
     std::vector<double> gradSlater = gradientSlater(particles, i);
     std::vector<double> gradJastrow = gradientJastrow(particles, i);
 
-    gradient[0] = gradSlater[0] + gradJastrow[0];
-    gradient[1] = gradSlater[1] + gradJastrow[1];
+    //gradient[0] = gradSlater[0] + gradJastrow[0];
+    //gradient[1] = gradSlater[1] + gradJastrow[1];
+    //cout << m_ratioSD << endl;
 
-    //gradient[0] = (gradSlater[0] + gradJastrow[0])/m_ratioSD;
-    //gradient[1] = (gradSlater[1] + gradJastrow[1])/m_ratioSD;
+    gradient[0] = (gradSlater[0] + gradJastrow[0])/m_ratioSD;
+    gradient[1] = (gradSlater[1] + gradJastrow[1])/m_ratioSD;
 
     return gradient;
 }
