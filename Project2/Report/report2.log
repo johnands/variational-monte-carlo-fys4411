@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.6.9)  19 MAY 2016 19:57
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.6.9)  25 MAY 2016 15:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -818,226 +818,238 @@ Underfull \hbox (badness 10000) in paragraph at lines 99--105
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 106--113
+Underfull \hbox (badness 10000) in paragraph at lines 106--116
 
  []
 
 [1]
-Underfull \hbox (badness 10000) in paragraph at lines 134--137
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 188--193
+Underfull \hbox (badness 10000) in paragraph at lines 137--140
 
  []
 
 [2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 285--288
+Underfull \hbox (badness 10000) in paragraph at lines 282--285
 
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 342--342
-[][][][][][][] 
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 342--342
-[][][][][][][] 
  []
 
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 372--375
-
+Overfull \hbox (6.0pt too wide) in paragraph at lines 348--348
+[][][][][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 412--414
+Overfull \hbox (6.0pt too wide) in paragraph at lines 348--348
+[][][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 378--381
 
  []
 
 [5]
-Overfull \hbox (16.69345pt too wide) in paragraph at lines 423--426
+Underfull \hbox (badness 10000) in paragraph at lines 419--421
+
+ []
+
+
+Overfull \hbox (16.69345pt too wide) in paragraph at lines 430--433
 \T1/cmr/m/n/10 which in turn means that our brute force Metropo-lis ac-cep-t/re
 -ject ra-tio [] is re-placed by the so-called []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 485--488
+Underfull \hbox (badness 10000) in paragraph at lines 443--452
 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 491--491
+Underfull \hbox (badness 10000) in paragraph at lines 484--489
+
+ []
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 574--577
+
+ []
+
+[7]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 580--580
 [][][][][][][] 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 491--491
+Overfull \hbox (6.0pt too wide) in paragraph at lines 580--580
 [][][][][][][] 
- []
-
-[6] [7]
-Underfull \hbox (badness 10000) in paragraph at lines 608--610
-
  []
 
 [8]
-Underfull \hbox (badness 10000) in paragraph at lines 659--660
+Underfull \hbox (badness 10000) in paragraph at lines 697--699
 
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 695--695
-[][][][][][][] 
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 695--695
-[][][][][][][] 
  []
 
 [9]
-Overfull \hbox (2.22168pt too wide) in paragraph at lines 711--778
-[]$[]$ $[]$ 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 779--782
+Underfull \hbox (badness 10000) in paragraph at lines 748--749
 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 794--794
+Overfull \hbox (6.0pt too wide) in paragraph at lines 784--784
 [][][][][][][] 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 794--794
+Overfull \hbox (6.0pt too wide) in paragraph at lines 784--784
 [][][][][][][] 
  []
 
 
-Overfull \hbox (2.22168pt too wide) in paragraph at lines 804--872
-[]$[]$ $[]$ 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 873--882
-
- []
+LaTeX Warning: Reference `exactwf' on page 10 undefined on input line 796.
 
 [10]
-Overfull \hbox (2.22168pt too wide) in paragraph at lines 886--918
+Overfull \hbox (2.22168pt too wide) in paragraph at lines 800--867
 []$[]$ $[]$ 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 919--923
+Underfull \hbox (badness 10000) in paragraph at lines 868--871
 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 933--933
+Overfull \hbox (6.0pt too wide) in paragraph at lines 883--883
 [][][][][][][] 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 933--933
+Overfull \hbox (6.0pt too wide) in paragraph at lines 883--883
 [][][][][][][] 
  []
 
-<error_10.pdf, id=63, 1734.48pt x 876.27374pt>
+
+Overfull \hbox (2.22168pt too wide) in paragraph at lines 893--961
+[]$[]$ $[]$ 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 962--971
+
+ []
+
+[11]
+Overfull \hbox (2.22168pt too wide) in paragraph at lines 975--1007
+[]$[]$ $[]$ 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1008--1012
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 1022--1022
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 1022--1022
+[][][][][][][] 
+ []
+
+
+LaTeX Warning: Reference `tab:benchmarks' on page 12 undefined on input line 10
+52.
+
+<error_10.pdf, id=67, 1734.48pt x 876.27374pt>
 File: error_10.pdf Graphic file (type pdf)
  <use error_10.pdf>
-Package pdftex.def Info: error_10.pdf used on input line 975.
+Package pdftex.def Info: error_10.pdf used on input line 1064.
 (pdftex.def)             Requested size: 455.24408pt x 229.99187pt.
- [11]
-<error_50.pdf, id=67, 1734.48pt x 876.27374pt>
+ [12]
+<error_50.pdf, id=72, 1734.48pt x 876.27374pt>
 File: error_50.pdf Graphic file (type pdf)
  <use error_50.pdf>
-Package pdftex.def Info: error_50.pdf used on input line 982.
+Package pdftex.def Info: error_50.pdf used on input line 1071.
 (pdftex.def)             Requested size: 455.24408pt x 229.99187pt.
 
-<error_100.pdf, id=68, 1734.48pt x 876.27374pt>
+<error_100.pdf, id=73, 1734.48pt x 876.27374pt>
 File: error_100.pdf Graphic file (type pdf)
  <use error_100.pdf>
-Package pdftex.def Info: error_100.pdf used on input line 989.
+Package pdftex.def Info: error_100.pdf used on input line 1078.
 (pdftex.def)             Requested size: 455.24408pt x 229.99187pt.
- [12 <./error_10.pdf> <./error_50.pdf
+ [13 <./error_10.pdf> <./error_50.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ./error_50.pdf): PDF inclusion: multipl
 e pdfs with page group included in a single page
 >]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 1018--1018
+Overfull \hbox (6.0pt too wide) in paragraph at lines 1107--1107
 [][][][][][][] 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 1018--1018
+Overfull \hbox (6.0pt too wide) in paragraph at lines 1107--1107
 [][][][][][][] 
  []
 
-<radialDistSystem1.pdf, id=122, 1734.48pt x 876.27374pt>
+<radialDistSystem1.pdf, id=126, 1734.48pt x 876.27374pt>
 File: radialDistSystem1.pdf Graphic file (type pdf)
 
 <use radialDistSystem1.pdf>
-Package pdftex.def Info: radialDistSystem1.pdf used on input line 1033.
+Package pdftex.def Info: radialDistSystem1.pdf used on input line 1122.
 (pdftex.def)             Requested size: 569.05511pt x 287.4865pt.
 
-Overfull \hbox (56.90549pt too wide) in paragraph at lines 1033--1034
+Overfull \hbox (56.90549pt too wide) in paragraph at lines 1122--1123
  [] 
  []
 
-[13 <./error_100.pdf>]
-<radialDistSystem2.pdf, id=151, 1734.48pt x 876.27374pt>
+[14 <./error_100.pdf>]
+<radialDistSystem2.pdf, id=155, 1734.48pt x 876.27374pt>
 File: radialDistSystem2.pdf Graphic file (type pdf)
 
 <use radialDistSystem2.pdf>
-Package pdftex.def Info: radialDistSystem2.pdf used on input line 1040.
+Package pdftex.def Info: radialDistSystem2.pdf used on input line 1129.
 (pdftex.def)             Requested size: 569.05511pt x 287.4865pt.
 
-Overfull \hbox (56.90549pt too wide) in paragraph at lines 1040--1041
+Overfull \hbox (56.90549pt too wide) in paragraph at lines 1129--1130
  [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1044--1046
+Underfull \hbox (badness 10000) in paragraph at lines 1133--1135
 
  []
 
-<radialDist1YZ.pdf, id=152, 398.48875pt x 317.185pt>
+<radialDist1YZ.pdf, id=156, 398.48875pt x 317.185pt>
 File: radialDist1YZ.pdf Graphic file (type pdf)
  <use radialDist1YZ.pdf>
-Package pdftex.def Info: radialDist1YZ.pdf used on input line 1050.
+Package pdftex.def Info: radialDist1YZ.pdf used on input line 1139.
 (pdftex.def)             Requested size: 398.33858pt x 317.07771pt.
 
-[14 <./radialDistSystem1.pdf> <./radialDistSystem2.pdf
+[15 <./radialDistSystem1.pdf> <./radialDistSystem2.pdf
 
 pdfTeX warning: /usr/bin/pdflatex (file ./radialDistSystem2.pdf): PDF inclusion
 : multiple pdfs with page group included in a single page
->] <radialDist2YZ.pdf, id=253, 402.50375pt x 317.185pt>
+>] <radialDist2YZ.pdf, id=257, 402.50375pt x 317.185pt>
 File: radialDist2YZ.pdf Graphic file (type pdf)
 
 <use radialDist2YZ.pdf>
-Package pdftex.def Info: radialDist2YZ.pdf used on input line 1057.
+Package pdftex.def Info: radialDist2YZ.pdf used on input line 1146.
 (pdftex.def)             Requested size: 398.33858pt x 313.90279pt.
 
 
-LaTeX Warning: Reference `trap_eqn' on page 15 undefined on input line 1064.
+LaTeX Warning: Reference `trap_eqn' on page 16 undefined on input line 1153.
 
-[15 <./radialDist1YZ.pdf> <./radialDist2YZ.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 1097--1101
-
- []
-
-[16]
-Underfull \hbox (badness 10000) in paragraph at lines 1152--1153
+[16 <./radialDist1YZ.pdf> <./radialDist2YZ.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 1186--1190
 
  []
 
-[17] [18] (./report2.aux)
+[17]
+Underfull \hbox (badness 10000) in paragraph at lines 1241--1242
+
+ []
+
+[18] [19] (./report2.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -1046,16 +1058,16 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7613 strings out of 495028
- 103486 string characters out of 6181498
- 287506 words of memory out of 5000000
- 10649 multiletter control sequences out of 15000+600000
+ 7616 strings out of 495028
+ 103532 string characters out of 6181498
+ 284508 words of memory out of 5000000
+ 10652 multiletter control sequences out of 15000+600000
  22815 words of font info for 59 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 42i,16n,44p,300b,1552s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,16n,44p,318b,1550s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk> </home/
-fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> </home/fenics/.te
-xmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk> </home/fenics/.texmf-var/fo
+fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk> </home/fenics/.te
+xmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> </home/fenics/.texmf-var/fo
 nts/pk/ljfour/jknappen/ec/ecbx1200.600pk> </home/fenics/.texmf-var/fonts/pk/ljf
 our/jknappen/ec/ecrm1000.600pk> </home/fenics/.texmf-var/fonts/pk/ljfour/jknapp
 en/ec/ecbx1000.600pk> </home/fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx
@@ -1071,17 +1083,18 @@ sfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
 mi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb
 ></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/
 share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
-nts/symbols/msbm10.pfb>
-Output written on report2.pdf (19 pages, 774684 bytes).
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/font
+s/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/symbols/msbm10.pfb>
+Output written on report2.pdf (20 pages, 792002 bytes).
 PDF statistics:
- 687 PDF objects out of 1000 (max. 8388607)
- 193 compressed objects within 2 object streams
+ 707 PDF objects out of 1000 (max. 8388607)
+ 198 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  36 words of extra memory for PDF output out of 10000 (max. 10000000)
 

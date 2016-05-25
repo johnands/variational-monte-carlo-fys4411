@@ -103,12 +103,15 @@ can be tuned by applying external fields, and are thus of interest in many resea
 transistors, solar cells, LEDs etc. Studies of quantum dots containing several electrons require
 reliable many-body methods that also incorporate uncertainty quantifications.\\
 
-\noindent In this project we compute the ground state energy for $N=2$, $N=6$, $N=12$ and $N=20$ electrons
-confined in a two-dimensional harmonic oscillator trap with different oscillator frequencies $\omega$. 
+\noindent In this project we compute the ground state energy for
+$N=2$, $N=6$, $N=12$ and $N=20$ electrons
+confined in a two-dimensional harmonic oscillator trap with different oscillator frequencies $\omega$.
+These values of $N$ are magic numbers for the system.
 For the two-body case we find the energy both with and without the use of Slater determinants for 
-benchmarking purposes. The one-body density is computed for all $N$, both with and without correlations. 
+benchmarking purposes. The one-body density is computed for all $N$, both with and without correlations
+in the trial wave function. 
 For $N=2$ we also compute the mean distance between the electrons and the expectation values of the potential
-and kinetic energies. We perform a timing analysis by comparing a serial and parallel code both with 
+and kinetic energies. We also perform a timing analysis by comparing a serial and parallel code both with 
 and without vectorization.\\
 
 \noindent ***structure of report***y
@@ -120,7 +123,7 @@ and without vectorization.\\
 We consider a system of electrons confined in a pure two-dimensional 
 isotropic harmonic oscillator potential, with an idealized  total Hamiltonian given by 
 \begin{equation}
-\label{finalH}
+\label{fullHamiltonian}
 H=\sum_{i=1}^{N} \left(  -\frac{1}{2} \nabla_i^2 + \frac{1}{2} \omega^2r_i^2  \right)+\sum_{i<j}\frac{1}{r_{ij}},
 \end{equation}
 where natural units ($\hbar=c=e=m_e=1$) are used and all energies are in so-called atomic units a.u. We will study systems of many electrons $N$ as functions of the oscillator frequency  $\omega$ using the above Hamiltonian.  The Hamiltonian includes a standard harmonic oscillator part
@@ -151,6 +154,7 @@ where $\alpha$ and $\beta$ are the variational parameters.
 The Slater matrix $D$ is defined as
 \begin{equation}
  d_{ij} = \phi_j({\bf r}_i)
+ \label{slaterMatrix}
 \end{equation}
 where $\phi_j({\bf r}_i)$ are single-particle wave functions, i.e. eigenfunctions of the one-body 
 Hamiltonian \eqref{OneBodyHamiltonian}. The rows correspond to the position of a given particle, 
@@ -174,53 +178,46 @@ For two particles, the trial wave function \eqref{TrialWF} reduces to
 
 \subsection{Benchmarks}
 We need to compare our results to exact theoretical closed-form expressions or other research to validate our code. 
-$N$ particles in a harmonic oscillator potential withouth interaction
+$N$ fermions in a harmonic oscillator potential withouth interaction
 is a well known problem in quantum mechanics. 
-The exact ground state energy and wavefunction for this system is (in natural units),
+The exact ground state energy for one electron in two dimensions is (in atomic units),
 \begin{equation}
- E = \frac{\omega dN}{2}
+ \varepsilon_{n_x,n_y} = \omega(n_x + n_y + 1)
  \label{exactenergy}
 \end{equation}
-and
-\begin{equation}
- \Psi = \prod_{i=1}^N \textrm{exp}\left(-\frac{1}{2}r_i^2 \right)
- \label{exactwf}
-\end{equation}
-where $d$ is the number of spatial dimensions for each particle.
-Comparing \eqref{wfsystem1} and \eqref{exactwf}, we see that $\alpha = 0.5$ 
-yields $\Psi_T = \Psi$. Setting $\alpha = 0.5$ in our code should therefore reproduce the exact energies
-given by \eqref{exactenergy}. \\
-
-\noindent For system 2 there is no exact, analytical answer. Instead, we benchmark
-our results with \cite{ref1} (for $d=3$),
-\begin{table}[H]
-  \centering
-  \begin{tabular}{ | c | r | r | r | }
-    \hline
-    $\alpha$& $N=10$& $N=50$& $N=100$ \\*
-    \hline
-    0.2& 34.9& 175& 353 \\*
-    \hline
-    0.3& 24.7& 138& 278 \\*
-    \hline
-    0.4& 24.2& 125& 253 \\*
-    \hline
-    0.5& 24.2& 122& 247 \\*
-    \hline
-    0.6& 24.6& 125& 252 \\*
-    \hline
-    0.7& 25.5& 129& 263 \\*
-    \hline
-  \end{tabular}
-  \caption{Benchmarks for system 2}
-  \label{tab:benchmarks}
+Each energy state $(n_x,n_y)$ can be occupied by a maximum of two electrons, one with spin up 
+and one with spin down. This gives the following shell structure (with $n=n_x+n_y$),
+\begin{itemize}
+ \item \centering $n=3$\quad $(3,0)\quad (2,1)\quad (1,2)\quad (0,3)$
+ \item \centering $n=2$\quad $(2,0)\quad (1,1)\quad (0,2)$
+ \item \centering $n=1$\quad $(1,0)\quad (0,1)$
+ \item \centering $n=0$\quad $(0,0)$
+\end{itemize}
+We see that for $N = {2, 6, 12, 20}$, all the states up to shell $0, 1, 2, 3$ are filled respectively. 
+These values of $N$ are thus magic numbers.
+From \eqref{exactenergy} we obtain the following energies,
+\begin{table}[!htb] 
+  \begin{center}
+    \begin{tabular*}{4cm}{c @{\extracolsep{\fill}} c}
+      \toprule
+      $N$ & $E$ \\ 
+      \hline
+      2  & $2\omega$ \\
+      6  & $10\omega$ \\ 
+      12 & $28\omega$ \\ 
+      20 & $60\omega$ \\ 
+      \bottomrule
+      \end{tabular*} 
+    \end{center}
+      \caption {Exact ground state energies $E$ in atomic units for $N$ electrons in a pure two-dimensional 
+                harmonic oscillator with oscillator frequency $\omega$.
+                The values of $N$ are magic numbers for the system.} 
+  \label{tab:HOEnergies} 
 \end{table}
 
-
-
-
-
-
+\noindent For the full Hamiltonian \eqref{fullHamiltonian} there are only analytic solutions
+for two electrons. According to \cite{ref1}, the ground state energy for two electrons
+with $\omega = 1$ is $E = 3 \, a.u.$. For $N = 6,12,20$ we benchmark our results with \cite{ref2}. ????
 
 \section{Methods}
 
@@ -289,11 +286,19 @@ distribution regardless of what we begin with. \\
 \noindent The particles undergo a random walk under the guidance of the Metropolis algorithm. 
 Defining the PDF 
 \begin{equation}
- P({\bf R}) = \frac{|\Psi_T({\bf R})|^2}{\int |\Psi_T({\bf R})|^2 d{\bf R}}
+ P({\bf R}, \boldsymbol{\alpha}) = \frac{|\Psi_T({\bf R},\boldsymbol{\alpha})
+ |^2}{\int |\Psi_T({\bf R}, \boldsymbol{\alpha})|^2 d{\bf R}}
 \end{equation}
-and the local energy \eqref{localenergy}, the integral \eqref{multidim} can be rewritten as
+and the local energy,
 \begin{equation}
- \langle E_L \rangle = \int P({\bf R}) E_L({\bf R}) d{\bf R}
+    E_L({\bf R, \boldsymbol{\alpha}})=\frac{1}{\Psi_T({\bf R, \boldsymbol{\alpha}})}H
+    \Psi_T({\bf R}, \boldsymbol{\alpha}),
+    \label{localenergy}
+ \end{equation}
+the integral \eqref{multidim} can be rewritten as
+\begin{equation}
+ \langle E_L \rangle = \int P({\bf R}, \boldsymbol{\alpha}) E_L({\bf R}, \boldsymbol{\alpha}) d{\bf R}
+ \label{localEnergyExp}
 \end{equation}
 and we see that our problem amounts to finding the expectation value of the local energy $E_L$ on the PDF $P$.
 Using Monte Carlo integration, we approximate this integral as
@@ -301,7 +306,8 @@ Using Monte Carlo integration, we approximate this integral as
  \langle E_L \rangle \approx \frac{1}{N} \sum_{i=1}^N P({\bf R}_i, \boldsymbol{\alpha}) E_L({\bf R}_i, \boldsymbol{\alpha})
 \end{equation}
 where $N$ is the number of Monte Carlo cycles and ${\bf R}_i$ is the position of the particles at step $i$. 
-The integral $\int |\Psi_T({\bf R})|^2 d{\bf R}$ is very difficult to compute, but the Metropolis algorithm only needs
+The integral $\int |\Psi_T({\bf R}, \boldsymbol{\alpha})|^2 d{\bf R}$ is in general very difficult to compute, 
+but the Metropolis algorithm only needs
 a \textit{ratio} of probabilities to decide if a move is accepted or not. This can be seen if we rewrite 
 \eqref{detailedbalance} as
 \begin{equation}
@@ -409,6 +415,7 @@ The drift vector should have the form ${\bf F} = g({\bf x}) \frac{\partial P}{\p
 \eqref{stationaryFokker} yields 
 \begin{equation}
  {\bf F} = 2 \frac{1}{\Psi_T} \nabla \Psi_T
+ \label{quantumForce}
 \end{equation}
 which is known as the \textit{quantum force}. \\
 
@@ -431,26 +438,108 @@ The Metropolis Hastings algorithm is the same as the brute force method, now wit
 \eqref{metropolisHastings} and trial positions
 calculated according to \eqref{LangevinSolution}.
 
+\subsection{Optimization of Slater determinant}
+
+The trial wave function \eqref{TrialWF} plays a central role in our VMC simulation.
+It is needed in the Metropolis algorithm and in the evaluation of the quantum force \eqref{quantumForce}.
+Moreover, all observables like the local energy \eqref{localenergy} is computed w.r.t. it. 
+The most time-consuming part of the evaluation of the wave function is the computation of the Slater determinant. 
+Computing a determinant of an $ N \times N$ matrix by standard Gaussian elimination is of the order of
+$\mathcal{O}(N^3)$ calculations. As there are $N \cdot d$ independent coordinates we need to 
+evaluate $Nd$ Slater determinants for the gradient (quantum force and kinetic energy) and $Nd$ for 
+the Laplacian (kinetic energy). Therefore, it is imperative to find alternative ways of computing
+the quantities related to the trial wave function to improve performance. \\
+
+\noindent It turns out that the solution is an algorithm that requires to keep track of the \textit{inverse}
+of the Slater matrix \eqref{slaterMatrix}. The inverse of $D$ can be expressed in terms of its cofactors $C_{ij}$ and its
+determinant $|D|$,
+\begin{equation}
+ d_{ij}^{-1} = \frac{C_{ji}}{|D|}
+\end{equation}
+where $C_{ji}$ is the transposed cofactor matrix. 
+The Slater part $R_{SD}$ of the ratio \eqref{ratio2} can thus be written,
+\begin{equation}
+ R_{SD} = \frac{|D({\bf R}^{\textrm{new}})|}{|D({\bf R}^{\textrm{old}})|}
+  = \frac{\sum_{j=1}^N d_{ij}({\bf R}^{\textrm{new}}) C_{ij}({\bf R}^{\textrm{new}})}
+  {\sum_{j=1}^N d_{ij}({\bf R}^{\textrm{old}}) C_{ij}({\bf R}^{\textrm{old}})}
+\end{equation}
+When moving \textit{one} particle for each Monte Carlo cycle, ${\bf R}^{\textrm{new}}$ differs from 
+${\bf R}^{\textrm{old}}$ by the position of only one, say the $i$-th particle. This means that
+only the $i$-th row of $D({\bf R}^{\textrm{new}})$
+and $D({\bf R}^{\textrm{old}})$ will be different. Taking into account that the $i$-th row of a cofactor matrix
+$C$ is independent of the entries of the $i$-th row of its corresponding matrix $D$, we have that
+\begin{equation}
+ C_{ij}({\bf R}^{\textrm{new}}) = C_{ij}({\bf R}^{\textrm{old}}) \quad j \in \{1,\dots,N\}
+\end{equation}
+and
+\begin{equation}
+ R_{SD} = \frac{\sum_{j=1}^N d_{ij}({\bf R}^{\textrm{new}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})}
+  {\sum_{j=1}^N d_{ij}({\bf R}^{\textrm{old}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})}
+\end{equation}
+By definition, the denominator of this expression is unity, thus we obtain for the ratio,
+\begin{equation}
+ R_{SD} = \sum_{j=1}^N d_{ij}({\bf R}^{\textrm{new}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+        = \sum_{j=1}^N \phi_j({\bf R}_i^{\textrm{new}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+        \label{slaterRatio}
+\end{equation}
+where the last equality follows from the definition of the Slater matrix \eqref{slaterMatrix}. 
+This operation is simply a dot product of a vector of single-particle wave functions evaluated
+at the new position with the $i$-th column of the inverse matrix $D^{-1}$ evaluated at the original position,
+and has a time scaling of $\mathcal{O}(N)$.\\
+
+\noindent The operation \eqref{slaterRatio} demands that we maintain the inverse matrix $D^{-1}$ for each
+MC cycle. Getting the inverse of an $N\times N$-matrix på Gaussian elimination has a complexicty of order
+$\mathcal{O}(N^3)$ operations, which we cannot afford. An alternative way of updating the inverse
+of a matrix when only a row/column is changed was suggested by Sherman and Morris (REFERENCE?). 
+This algorithm has a time scaling
+of $\mathcal{O}(N^2)$ and is as follows:
+\begin{itemize}
+ \item Update all but the $i$-th column of $D^{-1}$. For each column $j\neq i$,
+ calculate the quantity 
+ $$S_j = \sum_{l=1}^N d_{il} ({\bf R}^{\textrm{new}}) d_{lj}^{-1} ({\bf R}^{\textrm{old}})$$
+ \item The new elements of the $j$-th column of $D^{-1}$ is then given by: 
+ $$d_{kj}^{-1}({\bf R}^{\textrm{new}}) = d_{kj}^{-1}({\bf R}^{\textrm{old}}) - \frac{S_j}{R_{SD}}
+ d_{ki}^{-1}({\bf R}^{\textrm{old}}) \quad k = \{1,\dots,N\}, \quad j \neq i$$
+ \item Finally the $i$-th column of $D^{-1}$ is updated simply as follows:
+ $$d_{ki}^{-1}({\bf R}^{\textrm{new}}) = \frac{1}{R_{SD}} d_{ki}^{-1}({\bf R}^{\textrm{old}}) \quad
+ k = \{1,\dots,N\}$$
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
 \subsection{Steepest descent method}
 
 We turn now to the problem of finding the variational parameters that minimizes the expectation value
-of the local energy $\langle E_L({\bf R}, \alpha) \rangle$. This project considers a trial wavefunction with only one 
-variational parameter $\alpha$.
+of the local energy $\langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$. This project considers a trial wavefunction
+with two variational parameters $\alpha$ and  $\beta$. 
 There are many optimization algorithms to choose from, we have chosen the Steepest 
 descent method due to its simplicity. This method finds a local minimum of a function by taking steps proportional 
 to the negative gradient of the function at a given point, i.e. where the function has the steepest descent.
 The algorithm is as follows:
 \begin{itemize}
- \item Choose an initial $\alpha_0$ and step length $\gamma_0$.
- \item For $i \geq 0$: Compute $\alpha_{i+1} = \alpha_i - \gamma_i \frac{d \langle E_L({\bf R}, \alpha) \rangle}{d\alpha}$
+ \item Choose an initial set of parameters $\boldsymbol{\alpha}_0$ and step length $\gamma_0$.
+ \item For $i \geq 0$: Compute $\boldsymbol{\alpha}_{i+1} = \boldsymbol{\alpha}_i - \gamma_i 
+ \nabla_{\boldsymbol{\alpha}} \langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$
  \item Continue until a maximum number of steps are performed or 
- $|\frac{d \langle E_L({\bf R}, \alpha) \rangle}{d\alpha}|$ is 
+ $|\nabla_{\boldsymbol{\alpha}} \langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle|$ is
        less than some tolerance
 \end{itemize}
-We should get $\langle E_L({\bf R}, \alpha_i) \rangle \geq \langle E_L({\bf R}, \alpha_{i+1}) \rangle \geq \dots$.
-If this is not the case, we reject the new step and decrease the step size by a factor of 2 to obtain a more
+We should get $\langle E_L({\bf R}, \boldsymbol{\alpha}_i) \rangle \geq \langle E_L({\bf R}, 
+\boldsymbol{\alpha}_{i+1}) \rangle \geq \dots$.
+If this is not the case, we reject the new step and decrease the step size to obtain a more
 accurate value. 
-$\langle E_L({\bf R}, \alpha) \rangle$ is as we have seen a multidimensional integral, and the derivative w.r.t. $\alpha$
+$\langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$ is as we have seen a multidimensional integral \eqref{localEnergyExp}, 
+and the gradient w.r.t. $\boldsymbol{\alpha}$
 is not easily computed. Let us define
 \begin{equation}
  \bar{E}_\alpha = \frac{d \langle E_L(\alpha) \rangle}{d\alpha}
@@ -1093,7 +1182,7 @@ symmetry requirements. Further optimization of the code can be done, especially 
 The quantity we are aiming to compute is the expectiation value of the so-called local energy
  \begin{equation}
     E_L({\bf R})=\frac{1}{\Psi_T({\bf R})}H\Psi_T({\bf R}),
-    \label{localenergy}
+    \label{localenergy2}
  \end{equation}
 We can find closed-form expressions for the local energy with our specific Hamiltonian $H$ and trial wavefunction $\Psi_T$.
 Computing the local energy involves a second derivative of $\Psi_T$, which can be expensive to compute numerically. 
@@ -1270,10 +1359,22 @@ The analytic expression for the local energy is thus
 
 \begin{thebibliography}{9}
 
+%\bibitem{ref1}
+%  J. K. Nilsen, J. Mur-Petit, M. Guilleumas, M. Hjorth-Jensen and A. Polls, 
+% \textit{Vortices in atomic Bose-Einstein condensates in the large-gas-parameter region}, 
+%  Phys. Rev. A {\bf 71}, 053610 (2005).
+
 \bibitem{ref1}
-  J. K. Nilsen, J. Mur-Petit, M. Guilleumas, M. Hjorth-Jensen and A. Polls, 
-  \textit{Vortices in atomic Bose-Einstein condensates in the large-gas-parameter region}, 
-  Phys. Rev. A {\bf 71}, 053610 (2005).
+ M. Taut, 
+ \textit{Two electrons in an external oscillator potential: Particular analytic solutions
+ of a Coulomb interaction problem}
+ Phys. Rev. A {\bf 48}, 3561 - 3566 (1993).
+ 
+ \bibitem{ref2}
+ M. .L. Pedersen, G. Hagen, M. Hjorth-Jensen, S. Kvaal, and F. Pederiva, 
+ \textit{Ab inito computation of the energies of circular quantum dots}
+ Phys. Rev. B {\bf 84}, 115302 (2011)
+
 
 \end{thebibliography}
 

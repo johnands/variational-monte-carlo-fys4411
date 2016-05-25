@@ -8,8 +8,8 @@ public:
     bool metropolisStepSlater           ();
     bool metropolisStepSlaterImportance ();
     std::vector<double> driftForce  (int particle);
-    double evaluateGreensFunction   (int particle, std::vector<double> oldPosition,
-                                     std::vector<double> newPosition, std::vector<double> quantumForce);
+    double evaluateGreensFunction   (std::vector<double> newPosition,
+                                     std::vector<double> oldPosition, std::vector<double> quantumForce);
     void runMetropolisSteps         (int numberOfMetropolisSteps);
     void setNumberOfParticles       (int numberOfParticles);
     void setNumberOfDimensions      (int numberOfDimensions);
@@ -22,6 +22,9 @@ public:
     void setUseSlater               (bool useSlater);
     void setUseJastrow              (bool useJastrow);
     void setOptimizeParameters      (bool optimizeParameters);
+    void setParallel                (bool parallel);
+    void setRank                    (int rank);
+    void setSize                    (int size);
 
     void setHamiltonian             (class Hamiltonian* hamiltonian);
     void setWaveFunction            (class WaveFunction* waveFunction);
@@ -44,6 +47,9 @@ public:
     bool getUseSlater()                 { return m_useSlater; }
     bool getUseJastrow()                { return m_useJastrow; }
     bool getOptimizeParameters()        { return m_optimizeParameters; }
+    bool getParallel()                  { return m_parallel; }
+    int getRank()                       { return m_rank; }
+    int getSize()                       { return m_size; }
 
 private:
     int                             m_numberOfParticles = 0;
@@ -60,6 +66,10 @@ private:
     bool                            m_useSlater = false;
     bool                            m_useJastrow = true;
     bool                            m_optimizeParameters = false;
+    bool                            m_parallel = false;
+
+    int                             m_rank;
+    int                             m_size;
 
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;

@@ -67,12 +67,29 @@ std::vector<double> QuantumDotTwoElectrons::computeGradient(std::vector<Particle
     // calculate gradient of trial wavefunction divided by trial wavefunction
     // used to calculate drift velocity / quantum force
 
-    std::vector<double> gradient(4);
+    //std::vector<double> gradient(4);
 
     double alpha = m_parameters[0];
     double beta = m_parameters[1];
 
-    double x1 = particles[0]->getPosition()[0];
+    std::vector<double> gradient(2);
+
+    double x_i = particles[particle]->getPosition()[0];
+    double y_i = particles[particle]->getPosition()[1];
+
+    double x_j, y_j;
+    if (particle > 0) {
+        x_j = particles[particle-1]->getPosition()[0];
+        y_j = particles[particle-1]->getPosition()[1];
+    }
+    else {
+        x_j = particles[particle+1]->getPosition()[0];
+        y_j = particles[particle+1]->getPosition()[1];
+    }
+
+    double rij = sqrt((x_i - x_j)*(x_i - x_j) + (y_i - y_j)*(y_i - y_j));
+
+    /*double x1 = particles[0]->getPosition()[0];
     double y1 = particles[0]->getPosition()[1];
     double x2 = particles[1]->getPosition()[0];
     double y2 = particles[1]->getPosition()[1];
@@ -88,7 +105,13 @@ std::vector<double> QuantumDotTwoElectrons::computeGradient(std::vector<Particle
     gradient[0] = K1*x1 + K2*dx;
     gradient[1] = K1*y1 + K2*dy;
     gradient[2] = K1*x2 - K2*dx;
-    gradient[3] = K1*y2 - K2*dy;
+    gradient[3] = K1*y2 - K2*dy;*/
+
+    double K1 = -alpha*m_omega;
+    double K2 = m_a / (rij*(1 + beta*rij)*(1 + beta*rij));
+
+    gradient[0] = K1*x_i + K2*(x_i-x_j);
+    gradient[1] = K1*y_i + K2*(y_i-y_j);
 
     return gradient;
 }

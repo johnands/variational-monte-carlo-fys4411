@@ -29,12 +29,12 @@ private:
     double m_omegaSqrt;
     double m_omegaAlpha;
     double m_omegaAlphaSqrt;
-    double m_alphaSqrt;
+    double m_alphaSqrtInv;
     arma::mat m_a;
     int m_numberOfParticles;
     int m_numberOfParticlesHalf;
     double m_ratio;
-    double m_ratioSD = 1;
+    double m_ratioSD;
     int m_i;
     arma::mat m_quantumNumbers;
     arma::mat m_slaterSpinUp;
@@ -46,6 +46,6 @@ private:
     std::vector<double> m_gradientUp = std::vector<double>();
     std::vector<double> m_gradientDown = std::vector<double>();
     bool m_firstStepLaplacian = true;
-    bool m_firstStepGradient = true;
+    bool m_quantumForceOld = true;
     double m_oldInverse = 0;
 };

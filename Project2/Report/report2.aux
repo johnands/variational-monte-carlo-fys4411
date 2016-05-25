@@ -4,25 +4,28 @@
 \@writefile{lof}{\select@language{english}}
 \@writefile{lot}{\select@language{english}}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
-\citation{ref1}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Theory}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Physical system}{2}}
-\newlabel{finalH}{{1}{2}}
+\newlabel{fullHamiltonian}{{1}{2}}
 \newlabel{OneBodyHamiltonian}{{2}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Trial wavefunction}{2}}
 \newlabel{TrialWF}{{4}{2}}
+\newlabel{slaterMatrix}{{5}{2}}
 \newlabel{trialWF2}{{7}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Benchmarks}{2}}
 \newlabel{exactenergy}{{8}{2}}
-\newlabel{exactwf}{{9}{2}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Benchmarks for system 2\relax }}{3}}
+\citation{ref1}
+\citation{ref2}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Exact ground state energies $E$ in atomic units for $N$ electrons in a pure two-dimensional harmonic oscillator with oscillator frequency $\omega $. The values of $N$ are magic numbers for the system.\relax }}{3}}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{tab:benchmarks}{{1}{3}}
+\newlabel{tab:HOEnergies}{{1}{3}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Methods}{3}}
-\newlabel{multidim}{{11}{3}}
+\newlabel{multidim}{{10}{3}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Monte Carlo integration}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Metropolis algorithm}{3}}
-\newlabel{detailedbalance}{{15}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Metropolis algorithm}{4}}
+\newlabel{detailedbalance}{{14}{4}}
+\newlabel{localenergy}{{16}{4}}
+\newlabel{localEnergyExp}{{17}{4}}
 \newlabel{ratio}{{19}{4}}
 \newlabel{ratio2}{{20}{4}}
 \newlabel{MetropolisBrute}{{1}{5}}
@@ -31,66 +34,70 @@
 \newlabel{Langevin}{{21}{5}}
 \newlabel{LangevinSolution}{{22}{5}}
 \newlabel{FokkerPlanck}{{23}{5}}
-\newlabel{stationaryFokker}{{24}{5}}
+\newlabel{stationaryFokker}{{24}{6}}
+\newlabel{quantumForce}{{25}{6}}
 \newlabel{metropolisHastings}{{27}{6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Steepest descent method}{6}}
-\newlabel{localenergyalpha}{{30}{6}}
-\newlabel{waveenergy}{{31}{6}}
-\newlabel{wavederivative}{{32}{6}}
-\newlabel{steepestdescent}{{2}{7}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}The Steepest Descent method}{7}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Blocking}{8}}
-\newlabel{samplevariance}{{34}{8}}
-\newlabel{samplecovariance}{{36}{8}}
-\newlabel{trueSampleError}{{39}{8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Implementation}{9}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{9}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}System 1 - brute force Metropolis}{9}}
-\newlabel{parameters1}{{3}{9}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Parameters brute force Metropolis system 1}{9}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Analytical kinetic energy\relax }}{10}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Numerical kinetic energy\relax }}{10}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}System 1 - importance sampling}{10}}
-\newlabel{parameters2}{{4}{10}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}Parameters importance sampling Metropolis system 1}{10}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Analytical kinetic energy\relax }}{10}}
-\newlabel{tab:Tabell3}{{4}{10}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Numerical kinetic energy\relax }}{10}}
-\newlabel{tab:Tabell4}{{5}{10}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Optimization of Slater determinant}{6}}
+\newlabel{slaterRatio}{{32}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Steepest descent method}{7}}
+\newlabel{localenergyalpha}{{35}{7}}
+\newlabel{waveenergy}{{36}{7}}
+\newlabel{wavederivative}{{37}{7}}
+\newlabel{steepestdescent}{{2}{8}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}The Steepest Descent method}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Blocking}{9}}
+\newlabel{samplevariance}{{39}{9}}
+\newlabel{samplecovariance}{{41}{9}}
+\newlabel{trueSampleError}{{44}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Implementation}{10}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{10}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}System 1 - brute force Metropolis}{10}}
+\newlabel{parameters1}{{3}{10}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Parameters brute force Metropolis system 1}{10}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Analytical kinetic energy\relax }}{11}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Numerical kinetic energy\relax }}{11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}System 1 - importance sampling}{11}}
+\newlabel{parameters2}{{4}{11}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}Parameters importance sampling Metropolis system 1}{11}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Analytical kinetic energy\relax }}{11}}
+\newlabel{tab:Tabell3}{{4}{11}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Numerical kinetic energy\relax }}{11}}
+\newlabel{tab:Tabell4}{{5}{11}}
 \citation{ref1}
 \citation{ref1}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Analytical kinetic energy\relax }}{11}}
-\newlabel{tab:Tabell5}{{6}{11}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Numerical kinetic energy\relax }}{11}}
-\newlabel{tab:Tabell1}{{7}{11}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}System 2}{11}}
-\newlabel{parameters3}{{5}{11}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}Parameters system 2}{11}}
-\newlabel{tab:Tabell1}{{\caption@xref {tab:Tabell1}{ on input line 961}}{11}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Error analysis}{11}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces N = 10\relax }}{12}}
-\newlabel{fig:error10}{{1}{12}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces N = 50\relax }}{12}}
-\newlabel{fig:error50}{{2}{12}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces N = 100\relax }}{13}}
-\newlabel{fig:error100}{{3}{13}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}One-body density}{13}}
-\newlabel{parameters3}{{6}{13}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}Parameters one-body density}{13}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Radial distribution of particles - system 1\relax }}{14}}
-\newlabel{fig:density1}{{4}{14}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Radial distribution of particles - system 2\relax }}{14}}
-\newlabel{fig:density2}{{5}{14}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces System 1\relax }}{15}}
-\newlabel{fig:density3}{{6}{15}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces System 2\relax }}{15}}
-\newlabel{fig:density4}{{7}{15}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Analytical kinetic energy\relax }}{12}}
+\newlabel{tab:Tabell5}{{6}{12}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Numerical kinetic energy\relax }}{12}}
+\newlabel{tab:Tabell1}{{7}{12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}System 2}{12}}
+\newlabel{parameters3}{{5}{12}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}Parameters system 2}{12}}
+\newlabel{tab:Tabell1}{{\caption@xref {tab:Tabell1}{ on input line 1050}}{12}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Error analysis}{12}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces N = 10\relax }}{13}}
+\newlabel{fig:error10}{{1}{13}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces N = 50\relax }}{13}}
+\newlabel{fig:error50}{{2}{13}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces N = 100\relax }}{14}}
+\newlabel{fig:error100}{{3}{14}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}One-body density}{14}}
+\newlabel{parameters3}{{6}{14}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}Parameters one-body density}{14}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Radial distribution of particles - system 1\relax }}{15}}
+\newlabel{fig:density1}{{4}{15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Radial distribution of particles - system 2\relax }}{15}}
+\newlabel{fig:density2}{{5}{15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces System 1\relax }}{16}}
+\newlabel{fig:density3}{{6}{16}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces System 2\relax }}{16}}
+\newlabel{fig:density4}{{7}{16}}
 \citation{ref1}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusions}{16}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Appendix}{16}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Closed-form expressions}{16}}
-\newlabel{localenergy}{{41}{16}}
-\newlabel{analytickinnoninteracing}{{47}{16}}
-\newlabel{wfsystem1}{{50}{16}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Analytic energy for two-body quantum dot}{17}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusions}{17}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Appendix}{17}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Closed-form expressions}{17}}
+\newlabel{localenergy2}{{46}{17}}
+\newlabel{analytickinnoninteracing}{{52}{17}}
+\newlabel{wfsystem1}{{55}{17}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Analytic energy for two-body quantum dot}{18}}
 \bibcite{ref1}{1}
+\bibcite{ref2}{2}

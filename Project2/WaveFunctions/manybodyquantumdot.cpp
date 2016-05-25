@@ -23,7 +23,7 @@ ManyBodyQuantumDot::ManyBodyQuantumDot(System* system, double alpha, double beta
     m_omegaSqrt             = sqrt(omega);
     m_omegaAlpha            = omega*alpha;
     m_omegaAlphaSqrt        = sqrt(m_omegaAlpha);
-    m_alphaSqrt             = sqrt(alpha);
+    m_alphaSqrtInv          = 1.0/sqrt(alpha);
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfParticlesHalf = m_numberOfParticles / 2;
     m_gradientUp.resize(2); m_gradientDown.resize(2);
@@ -323,7 +323,7 @@ double ManyBodyQuantumDot::hermitePolynomialsParametersDerivative(int energyLeve
     }
 
     else if (energyLevel == 1) {
-        return m_omegaSqrt*position / m_alphaSqrt;
+        return m_omegaSqrt*m_alphaSqrtInv*position;
     }
 
     else if (energyLevel == 2) {
@@ -332,7 +332,7 @@ double ManyBodyQuantumDot::hermitePolynomialsParametersDerivative(int energyLeve
 
     else if (energyLevel == 3) {
         return 12*m_omegaAlphaSqrt*m_omega*position*position*position -
-               6*m_omegaSqrt*position / m_alphaSqrt;
+               6*m_omegaSqrt*m_alphaSqrtInv*position;
     }
 
     else {
@@ -677,24 +677,86 @@ std::vector<double> ManyBodyQuantumDot::gradientJastrow(std::vector<Particle *> 
     return ratioJastrow;
 }
 
-std::vector<double> ManyBodyQuantumDot::computeGradient(std::vector<Particle *> particles, int i) {
+std::vector<double> ManyBodyQuantumDot::computeGradient(std::vector<Particle *> particles, int particle) {
     // this function is used in importance sampling to calculate the drift force
     // returns a two-dimensional vector that is the gradient of the trial wave function w.r.t to particle i
     // divided by the trial wave function according to formula 16.10
 
-    //m_i = i;        // store for later use
+    /*std::vector<double> gradient(2*m_numberOfParticles);
+
+    std::vector<double> gradSlater(2*m_numberOfParticles);
+    std::vector<double> gradJastrow(2*m_numberOfParticles);
+    for (int j=0; j < m_numberOfParticles; j++) {
+        std::vector<double> grad1 = gradientSlater(particles, j);
+        std::vector<double> grad2 = gradientJastrow(particles, j);
+        gradSlater[2*j]    = grad1[0];
+        gradSlater[2*j+1]  = grad1[1];
+        gradJastrow[2*j]   = grad2[0];
+        gradJastrow[2*j+1] = grad2[1];
+    }
+
+    if (m_quantumForceOld) {
+        for (int j=0; j < 2*m_numberOfParticles; j++) {
+        gradient[j] = gradSlater[j] + gradJastrow[j];
+        }
+        m_quantumForceOld = false;
+    }
+    else {
+    for (int j=0; j < 2*m_numberOfParticles; j++) {
+        gradient[j] = gradSlater[j]/m_ratioSD + gradJastrow[j];
+        m_quantumForceOld = true;
+    }
+
+    }*/
+
 
     std::vector<double> gradient(2);
 
-    std::vector<double> gradSlater = gradientSlater(particles, i);
-    std::vector<double> gradJastrow = gradientJastrow(particles, i);
+    /*std::vector<double> gradSlater(2);
+    std::vector<double> gradJastrow(2);
+    gradSlater[0] = 0; gradSlater[1] = 0;
+    gradJastrow[0] = 0; gradJastrow[1] = 0;
+    for (int j=0; j < m_numberOfParticles; j++) {
+        std::vector<double> grad1 = gradientSlater(particles, j);
+        std::vector<double> grad2 = gradientJastrow(particles, j);
+        gradSlater[0] += grad1[0];
+        gradSlater[1] += grad1[1];
+        gradJastrow[0] += grad2[0];
+        gradJastrow[1] += grad2[1];
+    }
 
-    //gradient[0] = gradSlater[0] + gradJastrow[0];
-    //gradient[1] = gradSlater[1] + gradJastrow[1];
+
+
     //cout << m_ratioSD << endl;
+    //cout << m_ratioSD << endl;
+    if (m_quantumForceOld) {
+        gradient[0] = (gradSlater[0] + gradJastrow[0]);
+        gradient[1] = (gradSlater[1] + gradJastrow[1]);
+        m_quantumForceOld = false;
+    }
+    else {
+        gradient[0] = (gradSlater[0]/m_ratioSD + gradJastrow[0]);
+        gradient[1] = (gradSlater[1]/m_ratioSD + gradJastrow[1]);
+        m_quantumForceOld = true;
+    }*/
 
-    gradient[0] = (gradSlater[0] + gradJastrow[0])/m_ratioSD;
-    gradient[1] = (gradSlater[1] + gradJastrow[1])/m_ratioSD;
+
+    std::vector<double> gradSlater = gradientSlater(particles, particle);
+    std::vector<double> gradJastrow = gradientJastrow(particles, particle);
+    if (m_quantumForceOld) {
+        gradient[0] = gradSlater[0] + gradJastrow[0];
+        gradient[1] = gradSlater[1] + gradJastrow[1];
+        m_quantumForceOld = false;
+    }
+    else {
+        gradient[0] = gradSlater[0]/m_ratioSD + gradJastrow[0];
+        gradient[1] = gradSlater[1]/m_ratioSD + gradJastrow[1];
+        m_quantumForceOld = true;
+    }
+    /*cout << gradient[0] << endl;
+    cout << gradient[1] << endl;
+    cout << gradient[2] << endl;
+    cout << gradient[3] << endl;*/
 
     return gradient;
 }
@@ -759,5 +821,5 @@ void ManyBodyQuantumDot::setParameters(std::vector<double> parameters) {
     double alpha = parameters[0];
     m_omegaAlpha            = m_omega*alpha;
     m_omegaAlphaSqrt        = sqrt(m_omegaAlpha);
-    m_alphaSqrt             = sqrt(alpha);
+    m_alphaSqrtInv          = 1.0/sqrt(alpha);
 }

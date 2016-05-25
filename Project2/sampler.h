@@ -23,7 +23,9 @@ private:
     int     m_stepNumber = 0;
     double  m_localEnergy = 0;
     double  m_energy = 0;
-    double  m_standardDeviation = 0;
+    double  m_energySquared = 0;
+    double  m_variance = 0;
+    double  m_acceptanceRate = 0;
     std::vector<double>  m_parametersGradient = std::vector<double>();
     std::vector<double>  m_waveFunctionDerivative = std::vector<double>();
     std::vector<double>  m_waveFunctionEnergy = std::vector<double>();

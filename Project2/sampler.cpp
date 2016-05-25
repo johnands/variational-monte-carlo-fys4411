@@ -1,4 +1,5 @@
 #include <iostream>
+//#include <mpi.h>
 #include <cmath>
 #include <vector>
 #include <fstream>
@@ -31,6 +32,7 @@ void Sampler::sample(bool acceptedStep) {
     // Make sure the sampling variable(s) are initialized at the first step.
     if (m_firstStep) {
         m_energy = 0;
+        m_energySquared = 0;
         m_cumulativeEnergy = 0;
         m_cumulativeEnergySquared = 0;
         for (int i=0; i < m_numberOfParameters; i++) {
@@ -102,8 +104,9 @@ void Sampler::printOutputToTerminal() {
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy : " << std::setprecision(10) << m_energy << endl;
-    cout << " Standard deviation : " << std::setprecision(10) << m_standardDeviation << endl;
-    cout << " Acceptance rate : " << as / (double) ms*(1 - ef) << endl;
+    cout << " Variance : " << std::setprecision(10) << m_variance << endl;
+    cout << " Acceptance rate : " << m_acceptanceRate << endl;
+    cout << " Number of accepted steps " << as << endl;
     cout << endl;
 }
 
@@ -146,11 +149,31 @@ void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities
 
     m_energy                    = m_cumulativeEnergy / (double) m_stepNumber;
-    double averageSquared       = m_cumulativeEnergySquared / (double) m_stepNumber;
-    m_standardDeviation         = sqrt(averageSquared - m_energy*m_energy) / (double) m_stepNumber;
+    m_energySquared             = m_cumulativeEnergySquared / (double) m_stepNumber;
+    m_variance                  = (m_energySquared - m_energy*m_energy) / (double) m_stepNumber;
+
     for (int i=0; i < m_numberOfParameters; i++) {
         m_waveFunctionDerivative[i]    = m_cumulativeWaveFunctionDerivative[i] / (double) m_stepNumber;
         m_waveFunctionEnergy[i]        = m_cumulativeWaveFunctionEnergy[i] / (double) m_stepNumber;
+    }
+
+    m_acceptanceRate = m_system->getNumberOfAcceptedSteps() /
+                       (double) m_system->getNumberOfMetropolisSteps();
+
+    if (m_system->getParallel()) {
+        double reducedEnergy = 0;
+        double reducedVariance = 0;
+        double reducedAcceptanceRate = 0;
+        //MPI_Reduce(&m_energy, &reducedEnergy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        //MPI_Reduce(&m_variance, &reducedVariance, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        //MPI_Reduce(&m_acceptanceRate, &reducedAcceptanceRate, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+        int size = m_system->getSize();
+        if (m_system->getRank() == 0){
+            m_energy = reducedEnergy / size;
+            m_variance = reducedVariance / size;
+            m_acceptanceRate = reducedAcceptanceRate / size;
+        }
     }
 }
 
