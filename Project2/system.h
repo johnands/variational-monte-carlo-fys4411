@@ -8,8 +8,8 @@ public:
     bool metropolisStepSlater           ();
     bool metropolisStepSlaterImportance ();
     std::vector<double> driftForce  (int particle);
-    double evaluateGreensFunction   (std::vector<double> newPosition,
-                                     std::vector<double> oldPosition, std::vector<double> quantumForce);
+    double evaluateGreensFunction   (std::vector<double> oldPosition, std::vector<double> newPosition,
+                                     std::vector<double> quantumForceOld, std::vector<double> quantumForceNew);
     void runMetropolisSteps         (int numberOfMetropolisSteps);
     void setNumberOfParticles       (int numberOfParticles);
     void setNumberOfDimensions      (int numberOfDimensions);
@@ -25,6 +25,8 @@ public:
     void setParallel                (bool parallel);
     void setRank                    (int rank);
     void setSize                    (int size);
+    void setRatioSD                 (double ratioSD);
+    void setUseOldQuantumForce      (bool useOldQuantumForce);
 
     void setHamiltonian             (class Hamiltonian* hamiltonian);
     void setWaveFunction            (class WaveFunction* waveFunction);
@@ -50,6 +52,8 @@ public:
     bool getParallel()                  { return m_parallel; }
     int getRank()                       { return m_rank; }
     int getSize()                       { return m_size; }
+    double getRatioSD()                 { return m_ratioSD; }
+    bool getUseOldQuantumForce()        { return m_useOldQuantumForce; }
 
 private:
     int                             m_numberOfParticles = 0;
@@ -70,6 +74,9 @@ private:
 
     int                             m_rank;
     int                             m_size;
+
+    double                          m_ratioSD;
+    bool                            m_useOldQuantumForce = true;
 
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;

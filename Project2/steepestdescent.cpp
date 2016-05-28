@@ -22,7 +22,26 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
     int stepNumber = 0;
     int numberOfParameters = parameters.size();
     double tolerance = 1e-6;
-    double oldAbsoluteGradient = 1;
+
+    m_system->getWaveFunction()->setParameters(parameters);
+    // run one time before optimizing
+    m_system->runMetropolisSteps((int) 1e5);
+    std::vector<double> localEnergyGradient(numberOfParameters);
+    //localEnergyGradient[0] = m_system->getSampler()->getAlphaDerivative();
+    //localEnergyGradient[1] = m_system->getSampler()->getBetaDerivative();
+    for (int j=0; j < numberOfParameters; j++) {
+        localEnergyGradient[j] = 2 * ( m_system->getSampler()->getWaveFunctionEnergy()[j] -
+                                       m_system->getSampler()->getWaveFunctionDerivative()[j]  *
+                                       m_system->getSampler()->getEnergy() );
+    }
+    double oldAbsoluteGradient = 0;
+    for (int j=0; j < numberOfParameters; j++) {
+        oldAbsoluteGradient += localEnergyGradient[j]*localEnergyGradient[j];
+    }
+    cout << "gradient0: " << localEnergyGradient[0] << endl;
+    cout << "gradient1: " << localEnergyGradient[1] << endl;
+
+
     while (oldAbsoluteGradient > tolerance && stepNumber < maxNumberOfSteps) {
 
         cout << "****** Iteration " << stepNumber << " ******" << endl;
@@ -43,15 +62,17 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
                                            m_system->getSampler()->getWaveFunctionDerivative()[j]  *
                                            m_system->getSampler()->getEnergy() );
         }
-        //cout << "gradient0: " << localEnergyGradient[0] << endl;
-        //cout << "gradient1: " << localEnergyGradient[1] << endl;
+        //localEnergyGradient[0] = m_system->getSampler()->getAlphaDerivative();
+        //localEnergyGradient[1] = m_system->getSampler()->getBetaDerivative();
+        cout << "gradient0: " << localEnergyGradient[0] << endl;
+        cout << "gradient1: " << localEnergyGradient[1] << endl;
 
         // calculate absolute value of gradient
         double newAbsoluteGradient = 0;
         for (int j=0; j < numberOfParameters; j++) {
             newAbsoluteGradient += localEnergyGradient[j]*localEnergyGradient[j];
         }
-        cout << "Gradient: " << newAbsoluteGradient << endl;
+        //cout << "Gradient: " << newAbsoluteGradient << endl;
 
         // update alpha and beta if new gradient is less than old
         // if not, reduce step length
@@ -61,7 +82,7 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
             }
         }
         else {
-            m_stepLengthOptimize /= 1.2;
+            m_stepLengthOptimize *= 0.8;
             cout << "New step length: " << m_stepLengthOptimize << endl;
         }
 

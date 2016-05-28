@@ -23,6 +23,7 @@ public:
     std::vector<double> gradientSlater(std::vector<class Particle*> particles, int i);
     std::vector<double> gradientJastrow(std::vector<class Particle*> particles, int i);
     void setParameters(std::vector<double> parameters);
+    double getRatioSD() { return m_ratioSD; }
 
 private:
     double m_omega;

@@ -16,6 +16,8 @@ public:
     double getEnergy()          { return m_energy; }
     std::vector<double> getWaveFunctionDerivative() { return m_waveFunctionDerivative; }
     std::vector<double> getWaveFunctionEnergy() { return m_waveFunctionEnergy; }
+    double getAlphaDerivative() { return m_alphaDerivative; }
+    double getBetaDerivative() { return m_betaDerivative; }
 
 private:
     int     m_numberOfMetropolisSteps = 0;
@@ -29,6 +31,9 @@ private:
     std::vector<double>  m_parametersGradient = std::vector<double>();
     std::vector<double>  m_waveFunctionDerivative = std::vector<double>();
     std::vector<double>  m_waveFunctionEnergy = std::vector<double>();
+
+    double m_alphaDerivative = 0;
+    double m_betaDerivative = 0;
     double  m_cumulativeEnergy = 0;
     double  m_cumulativeEnergySquared = 0;
     std::vector<double>  m_cumulativeWaveFunctionDerivative = std::vector<double>();

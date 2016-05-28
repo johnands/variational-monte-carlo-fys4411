@@ -10,6 +10,7 @@
 #include "InitialStates/initialstate.h"
 #include "Math/random.h"
 #include <time.h>
+#include <armadillo>
 
 using std::cout;
 using std::endl;
@@ -21,26 +22,17 @@ bool System::metropolisStepSlater() {
     int particle = Random::nextInt(m_numberOfParticles);        // choose random particle
     int dimension = Random::nextInt(m_numberOfDimensions);      // choose random dimension
     double change = (Random::nextDouble()*2-1)*m_stepLength;    // propose change of particle's position
-    /*vector<double> change(2);
-    change[0] = (Random::nextDouble()*2-1)*m_stepLength;
-    change[1] = (Random::nextDouble()*2-1)*m_stepLength;*/
 
     // store new proposed position
     m_particles[particle]->setNewPosition(change, dimension);
-    //m_particles[particle]->setNewPositionAllDimensions(change);
 
+    // compute ratio of wave functions
     double ratio = m_waveFunction->computeRatio(m_particles, particle);
-    //cout << setprecision(10) << ratio*ratio << endl;
 
-    // this are the same for Slater
+    // Metropolis test
     if (ratio*ratio >= Random::nextDouble()) {
-        //cout << "yes" << endl;
         m_waveFunction->updateSlaterInverse(m_particles, particle);
         m_particles[particle]->adjustPosition(change, dimension);
-        //m_particles[particle]->adjustPositionAllDimensions(change);
-
-        //double inverse = m_waveFunction->evaluate(m_particles);
-
         return true;
     }
     else {
@@ -52,17 +44,29 @@ bool System::metropolisStepSlaterImportance() {
 
     int particle = Random::nextInt(m_numberOfParticles);    // choose random particle
 
-    // calculate old quantum force
-    vector<double> quantumForceOld = driftForce(particle);
-    //cout << "old " <<quantumForceOld[0] << endl;
-    //cout << "old " << quantumForceOld[1] << endl;
+    arma::mat quantumForceOld = arma::zeros<arma::mat>(m_numberOfParticles, m_numberOfDimensions);
+    arma::mat quantumForceNew = quantumForceOld;
+    arma::mat oldPositions    = quantumForceOld;
+
+    setUseOldQuantumForce(true);
+    for (int i=0; i < m_numberOfParticles; i++){
+        // calculate drift force for particle i
+        vector<double> force = driftForce(i);
+        for (int j=0; j < m_numberOfDimensions; j++){
+            // store in matrix
+            quantumForceOld(i,j) = force[j];
+            oldPositions(i,j) = m_particles[i]->getPosition()[j];
+        }
+    }
 
     // compute proposed new position
     vector<double> plusChange(m_numberOfDimensions);
     for (int dim=0; dim < m_numberOfDimensions; dim++) {
-        plusChange[dim] = 0.5*quantumForceOld[dim]*m_timeStep +
+        plusChange[dim] = 0.5*quantumForceOld(particle,dim)*m_timeStep +
                           Random::nextGaussian(0.0, sqrt(m_timeStep));
     }
+
+    //vector<double> quantumForceOld = driftForce(particle);
 
     // compute negative of proposed change
     vector<double> minusChange;
@@ -73,62 +77,46 @@ bool System::metropolisStepSlaterImportance() {
     // store new proposed position
     m_particles[particle]->setNewPositionAllDimensions(plusChange);
 
-    // compute ratio (excluding Green's functions)
+    // compute ratio of wave functions
     double ratio = m_waveFunction->computeRatio(m_particles, particle);
 
     // get old position
-    vector<double> oldPosition = m_particles[particle]->getPosition();
+    //vector<double> oldPosition = m_particles[particle]->getPosition();
 
     // get new position
-    vector<double> newPosition = m_particles[particle]->getNewPosition();
+    //vector<double> newPosition = m_particles[particle]->getNewPosition();
 
-    // compute new quantum force (with updated position of chosen particle and ratio)
-    // I need REAL position to be new to compute new drift force.....
+    // compute new quantum force with new position
     m_particles[particle]->adjustPositionAllDimensions(plusChange);
-    vector<double> quantumForceNew = driftForce(particle);
-    //cout << "new " << quantumForceNew[0] << endl;
-    //cout << "new " << quantumForceNew[1] << endl;
+    //vector<double> quantumForceNew = driftForce(particle);
 
+    setUseOldQuantumForce(false);
     double exponent = 0;
-    for (int dim=0; dim < m_numberOfDimensions; dim++) {
-        double term1 = - (oldPosition[dim] - newPosition[dim] - 0.5*m_timeStep*quantumForceNew[dim]) *
-                         (oldPosition[dim] - newPosition[dim] - 0.5*m_timeStep*quantumForceNew[dim]);
-        double term2 =   (-oldPosition[dim] + newPosition[dim] - 0.5*m_timeStep*quantumForceOld[dim]) *
-                         (-oldPosition[dim] + newPosition[dim] - 0.5*m_timeStep*quantumForceOld[dim]);
-        exponent += term1 + term2;
-    }
-
-    /*for (int j=0; j < m_numberOfParticles; j++) {
-        for (int dim=0; dim < m_numberOfDimensions; dim++) {
-            double term1, term2;
-            if (j != particle) {
-                term1 = - (- 0.5*m_timeStep*quantumForceNew[2*j+dim]) *
-                          (- 0.5*m_timeStep*quantumForceNew[2*j+dim]);
-                term2 =   (- 0.5*m_timeStep*quantumForceOld[2*j+dim]) *
-                          (- 0.5*m_timeStep*quantumForceOld[2*j+dim]);
-            }
-            else {
-                term1 = - (oldPosition[dim] - newPosition[dim] - 0.5*m_timeStep*quantumForceNew[2*j+dim]) *
-                          (oldPosition[dim] - newPosition[dim] - 0.5*m_timeStep*quantumForceNew[2*j+dim]);
-                term2 =   (-oldPosition[dim] + newPosition[dim] - 0.5*m_timeStep*quantumForceOld[2*j+dim]) *
-                          (-oldPosition[dim] + newPosition[dim] - 0.5*m_timeStep*quantumForceOld[2*j+dim]);
-            }
+    for (int i=0; i < m_numberOfParticles; i++) {
+        vector<double> force = driftForce(i);
+        // here, I must divide by Rsd
+        for (int j=0; j < m_numberOfDimensions; j++) {
+            quantumForceNew(i,j) = force[j];
+            double term1 = - (oldPositions(i,j) - m_particles[i]->getPosition()[j] - 0.5*m_timeStep*quantumForceNew(i,j)) *
+                             (oldPositions(i,j) - m_particles[i]->getPosition()[j] - 0.5*m_timeStep*quantumForceNew(i,j));
+            double term2 = (- oldPositions(i,j) + m_particles[i]->getPosition()[j] - 0.5*m_timeStep*quantumForceOld(i,j)) *
+                           (- oldPositions(i,j) + m_particles[i]->getPosition()[j] - 0.5*m_timeStep*quantumForceOld(i,j));
             exponent += term1 + term2;
-
+        }
     }
-    }*/
-    double greensRatio = exp(exponent / 2*m_timeStep);
 
-    // evaluate Greens' function with new and old position
-    //double GreensOld = evaluateGreensFunction(newPosition, oldPosition, quantumForceOld);
-    //double GreensNew = evaluateGreensFunction(oldPosition, newPosition, quantumForceNew);
-    //cout << GreensOld << endl;
-    //cout << GreensNew << endl;
+    double greensRatio = exp(exponent / (2*m_timeStep));
+    // calculate old quantum force
 
+
+    // compute ratio of new and old Greens' function
+    //double greensRatio = evaluateGreensFunction(oldPosition, newPosition, quantumForceOld, quantumForceNew);
+
+    // calculate final ratio
     ratio *= ratio;
     ratio *= greensRatio;
-    //cout << ratio << endl;
 
+    // Metropolis test
     if (ratio >= Random::nextDouble()) {
         m_waveFunction->updateSlaterInverse(m_particles, particle);       
         return true;
@@ -151,27 +139,18 @@ vector<double> System::driftForce(int particle) {
     return quantumForce;
 }
 
-double System::evaluateGreensFunction(vector<double> newPosition, vector<double> oldPosition,
-                                      vector<double> quantumForce) {
+double System::evaluateGreensFunction(vector<double> oldPosition, vector<double> newPosition,
+                                      vector<double> quantumForceOld, vector<double> quantumForceNew) {
 
-    //vector<double> greensVector;
-    double greensFunction = 0;
-    // make vector that needs to be dotted
-    /*for (int dim=0; dim < m_numberOfDimensions; dim++) {
-        greensVector.push_back(newPosition[dim] - oldPosition[dim] - 0.5*m_timeStep*quantumForce[dim]);
-    }*/
-
+    double exponent = 0;
     for (int dim=0; dim < m_numberOfDimensions; dim++) {
-        greensFunction += - (newPosition[dim] - oldPosition[dim] - 0.5*m_timeStep*quantumForce[dim]) *
-                            (newPosition[dim] - oldPosition[dim] - 0.5*m_timeStep*quantumForce[dim]);
+        double term1 = - (oldPosition[dim] - newPosition[dim] - 0.5*m_timeStep*quantumForceNew[dim]) *
+                         (oldPosition[dim] - newPosition[dim] - 0.5*m_timeStep*quantumForceNew[dim]);
+        double term2 =   (-oldPosition[dim] + newPosition[dim] - 0.5*m_timeStep*quantumForceOld[dim]) *
+                         (-oldPosition[dim] + newPosition[dim] - 0.5*m_timeStep*quantumForceOld[dim]);
+        exponent += term1 + term2;
     }
-
-    // find length squared of vector
-    /*for (int dim=0; dim < m_numberOfDimensions; dim++) {
-        greensFunction += greensVector[dim]*greensVector[dim];
-    }*/
-    greensFunction /= 2*m_timeStep;
-    return exp(greensFunction);
+    return exp(exponent / 2*m_timeStep);
 }
 
 bool System::metropolisStepImportance() {
@@ -181,7 +160,6 @@ bool System::metropolisStepImportance() {
      */
 
     int particle = Random::nextInt(m_numberOfParticles);    // choose random particle
-    //int dimension = Random::nextInt(m_numberOfDimensions);  // choose random dimension
 
     // calculate old quantum force using old position
     vector<double> quantumForceOld = driftForce(particle);
@@ -199,7 +177,7 @@ bool System::metropolisStepImportance() {
         minusChange.push_back(-plusChange[dim]);
     }
 
-    // get old wavefunction
+    // evaluate old wavefunction
     double waveFuncOld = m_waveFunction->evaluate(m_particles);
 
     // get old position
@@ -210,18 +188,16 @@ bool System::metropolisStepImportance() {
     vector<double> newPosition = m_particles[particle]->getPosition();
     double waveFuncNew = m_waveFunction->evaluate(m_particles);
 
-    // get old Green's function using old quantum force
-    double GreensOld = evaluateGreensFunction(newPosition, oldPosition, quantumForceOld);
-
-    // get new Green's function using new quantum force and switching new and old position
+    // calculate new drift force with new position
     vector<double> quantumForceNew = driftForce(particle);
-    double GreensNew = evaluateGreensFunction(oldPosition, newPosition, quantumForceNew);
+
+    // compute ratio of new and old Greens' function
+    double greensRatio = evaluateGreensFunction(oldPosition, newPosition, quantumForceOld, quantumForceNew);
 
     // accept/reject new position using Metropolis algorithm
-    double ratio = ( GreensNew*pow(waveFuncNew, 2) ) / ( GreensOld*pow(waveFuncOld, 2) );
+    double ratio = ( waveFuncNew*waveFuncNew * greensRatio ) / ( waveFuncOld*waveFuncOld );
 
     if (ratio >= Random::nextDouble()) {
-        //cout << m_particles[particle]->getPosition()[0] << endl;
         return true;
     }
     else {
@@ -251,7 +227,7 @@ bool System::metropolisStep() {
     double waveFuncNew = m_waveFunction->evaluate(m_particles);
 
     // accept/reject new position using Metropolis algorithm
-    double ratio = pow(waveFuncNew, 2) / pow(waveFuncOld, 2);
+    double ratio = ( waveFuncNew*waveFuncNew ) / ( waveFuncOld*waveFuncOld );
 
     if (ratio >= Random::nextDouble()) {
         return true;
@@ -269,7 +245,9 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps)
     if (m_samplerSetup == false) {
         m_sampler                   = new Sampler(this);
         m_samplerSetup = true;
-    } else {
+    }
+    else {
+        cout << "yes" << endl;
         m_sampler->clean();
     }
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
@@ -388,5 +366,13 @@ void System::setRank(int rank) {
 
 void System::setSize(int size) {
     m_size = size;
+}
+
+void System::setRatioSD(double ratioSD) {
+    m_ratioSD = ratioSD;
+}
+
+void System::setUseOldQuantumForce(bool useOldQuantumForce) {
+    m_useOldQuantumForce = useOldQuantumForce;
 }
 

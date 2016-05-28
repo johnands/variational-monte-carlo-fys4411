@@ -151,11 +151,16 @@ void Sampler::computeAverages() {
     m_energy                    = m_cumulativeEnergy / (double) m_stepNumber;
     m_energySquared             = m_cumulativeEnergySquared / (double) m_stepNumber;
     m_variance                  = (m_energySquared - m_energy*m_energy) / (double) m_stepNumber;
+    cout << "step number " << m_stepNumber << endl;
 
     for (int i=0; i < m_numberOfParameters; i++) {
         m_waveFunctionDerivative[i]    = m_cumulativeWaveFunctionDerivative[i] / (double) m_stepNumber;
         m_waveFunctionEnergy[i]        = m_cumulativeWaveFunctionEnergy[i] / (double) m_stepNumber;
     }
+    /*m_alphaDerivative = 2*(m_cumulativeWaveFunctionEnergy[0] - m_cumulativeWaveFunctionDerivative[0]*m_energy) /
+                        (double) m_stepNumber;
+    m_betaDerivative  = 2*(m_cumulativeWaveFunctionEnergy[1] - m_cumulativeWaveFunctionDerivative[1]*m_energy) /
+                        (double) m_stepNumber;*/
 
     m_acceptanceRate = m_system->getNumberOfAcceptedSteps() /
                        (double) m_system->getNumberOfMetropolisSteps();
@@ -179,9 +184,14 @@ void Sampler::computeAverages() {
 
 void Sampler::clean() {
     m_energy = 0;
+    m_localEnergy = 0;
     m_cumulativeEnergy = 0;
     m_cumulativeEnergySquared = 0;
     m_stepNumber = 0;
+    m_acceptanceRate = 0;
+    m_firstStep = true;
+    m_alphaDerivative = 0;
+    m_betaDerivative = 0;
     for (int i=0; i < m_numberOfParameters; i++) {
         m_waveFunctionDerivative[i] = 0;
         m_waveFunctionEnergy[i] = 0;
