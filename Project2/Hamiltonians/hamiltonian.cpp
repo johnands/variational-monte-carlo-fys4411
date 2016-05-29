@@ -11,13 +11,15 @@ Hamiltonian::Hamiltonian(System* system, bool useNumerical, bool useInteraction)
 }
 
 double Hamiltonian::computeLocalEnergy(std::vector<Particle*> particles) {
-    double kinetic = 0;
+
     if (m_useNumerical) {
-        kinetic = computeKineticEnergy(particles);
+        m_kineticEnergy = computeKineticEnergy(particles);
     } else {
-        kinetic = computeAnalyticalKineticEnergy(particles);
+        m_kineticEnergy = computeAnalyticalKineticEnergy(particles);
     }
-    return computePotentialEnergy(particles) + kinetic;
+
+    m_potentialEnergy = computePotentialEnergy(particles);
+    return m_kineticEnergy + m_potentialEnergy;
 }
 
 double Hamiltonian::computeKineticEnergy(std::vector<Particle*> particles) {
@@ -41,6 +43,6 @@ double Hamiltonian::computeKineticEnergy(std::vector<Particle*> particles) {
             laplacian += (plusStep - 2*zeroStep + minusStep) / (zeroStep*step*step);
         }
     }
-    //std::cout << laplacian << std::endl;
+
     return -0.5*laplacian;   
 }

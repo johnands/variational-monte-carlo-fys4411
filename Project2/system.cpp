@@ -247,7 +247,6 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps)
         m_samplerSetup = true;
     }
     else {
-        cout << "yes" << endl;
         m_sampler->clean();
     }
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
@@ -291,7 +290,12 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps)
          << " s" << endl;
 
     m_sampler->computeAverages();
-    m_sampler->printOutputToTerminal();
+    if (m_parallel) {
+        if (m_rank == 0) { m_sampler->printOutputToTerminal(); }
+    }
+    else {
+        m_sampler->printOutputToTerminal();
+    }
 }
 
 void System::setNumberOfParticles(int numberOfParticles) {

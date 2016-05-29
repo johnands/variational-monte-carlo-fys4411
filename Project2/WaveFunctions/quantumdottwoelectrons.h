@@ -11,7 +11,6 @@ public:
     void setParameters(std::vector<double> parameters) { m_parameters = parameters; }
 
 private:
-    double m_omega;
     double m_a;
 };
 

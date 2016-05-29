@@ -21,6 +21,24 @@ def extract(filename):
     return energies
 
 
+def extractBinary(path):
+
+    energies = np.fromfile(path)
+    print "Done loading file"
+
+    """
+    mydt = np.dtype([('x', np.double),('y', np.double)])
+    positions = np.fromfile(path, mydt)
+    print "Done loading file"
+    r = np.zeros(len(positions))
+    for i in xrange(len(positions)):
+        r[i] = np.sqrt([positions[i][0]*positions[i][0] + positions[i][1]*positions[i][1]])
+    """
+
+    return energies;
+
+
+
 def blocking(energies, numberOfBlocks, blockSize):
 
     # find mean of each block for given block size
@@ -41,17 +59,20 @@ def mean(blockEnergies):
    
        
 
-def main():
+def main(path, binary):
 
-    # extract data and convert to array
-    energies = np.array(extract('energy100interacting.dat'))
+    if binary:
+        energies = extractBinary(path)
+
+    else:
+        energies = np.array(extract(path))
     
     # block parameters
     numberOfEnergies = len(energies)
-    blockSizeStepLength = 1
+    blockSizeStepLength = 50
     minimumBlockSize = 1
     #maximumBlockSize = len(energies) / 250
-    maximumBlockSize = 4000
+    maximumBlockSize = 3000
     numberOfBlockSizes = (maximumBlockSize - minimumBlockSize) / blockSizeStepLength
     
     print 'No of energies = ', numberOfEnergies
@@ -81,7 +102,10 @@ def main():
 
 
 # ----- main -----
-varianceOfGivenBlockSize, allBlockSizes = main()
+path = "../dataFiles/energiesN2w100Ms6.bin"
+binary = True
+varianceOfGivenBlockSize, allBlockSizes = main(path, binary)
+
 plt.plot(allBlockSizes, varianceOfGivenBlockSize)
 plt.xlabel(r'$n_b$', fontsize=30)
 plt.ylabel(r'$\sigma$', fontsize=30)

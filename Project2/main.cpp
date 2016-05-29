@@ -1,5 +1,5 @@
 #include <iostream>
-//#include <mpi.h>
+#include <mpi.h>
 #include "system.h"
 #include "particle.h"
 #include "WaveFunctions/wavefunction.h"
@@ -21,17 +21,17 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-    bool parallel = false;
+    bool parallel = true;
 
     int rank, size;
     if (parallel) {
-        //MPI_Init (&argc, &argv);
-        //MPI_Comm_rank (MPI_COMM_WORLD, &rank);
-        //MPI_Comm_size (MPI_COMM_WORLD, &size);
+        MPI_Init (&argc, &argv);
+        MPI_Comm_rank (MPI_COMM_WORLD, &rank);
+        MPI_Comm_size (MPI_COMM_WORLD, &size);
     }
 
     int numberOfDimensions  = 2;
-    int numberOfParticles   = 20;
+    int numberOfParticles   = 2;
     int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // oscillator frequency
     double alpha            = 0.8;//0.98456;          // variational parameter 1
@@ -72,23 +72,34 @@ int main(int argc, char* argv[]) {
     system->setTimeStep                 (timeStep);
 
     system->setUseImportanceSampling    (false);
+    system->setUseSlater                (true);
+
     system->setWriteEnergiesToFile      (false);
     system->setWritePositionsToFile     (false);
-    system->setUseSlater                (true);
+
+    system->setOptimizeParameters       (false);
+
+    // optimize
+    if ( system->getOptimizeParameters() ) {
+        double initialAlpha = 0.5;
+        double initialBeta = 0.5;
+        std::vector<double> parameters(2);
+        parameters[0] = initialAlpha; parameters[1] = initialBeta;
+
+        double stepLengthOptimize = 0.01;
+        int numberOfMetropolisSteps = 1e5;
+        int maxNumberOfIterations = 100;
+        SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize,
+                                                   numberOfMetropolisSteps, maxNumberOfIterations);
+        sd->optimize(parameters);
+    }
+
+    system->setWriteEnergiesToFile      (false);
+    system->setWritePositionsToFile     (false);
 
     system->runMetropolisSteps          (numberOfSteps);
 
-    //if (parallel) //MPI_Finalize ();
-
-    // optimize
-    /*double initialAlpha = 0.5;
-    double initialBeta = 0.5;
-    std::vector<double> parameters(2);
-    parameters[0] = initialAlpha; parameters[1] = initialBeta;
-    system->setOptimizeParameters(true);
-    double stepLengthOptimize = 0.01;
-    SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize);
-    sd->optimize(parameters);*/
+    if (parallel) { MPI_Finalize (); }
 
     return 0;
 }

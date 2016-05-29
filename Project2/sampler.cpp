@@ -1,5 +1,5 @@
 #include <iostream>
-//#include <mpi.h>
+#include <mpi.h>
 #include <cmath>
 #include <vector>
 #include <fstream>
@@ -24,6 +24,10 @@ Sampler::Sampler(System* system) {
     m_stepNumber = 0;
 }
 
+struct Pos {
+    double x, y;
+} pos;
+
 void Sampler::setNumberOfMetropolisSteps(int steps) {
     m_numberOfMetropolisSteps = steps;
 }
@@ -33,8 +37,12 @@ void Sampler::sample(bool acceptedStep) {
     if (m_firstStep) {
         m_energy = 0;
         m_energySquared = 0;
+        m_kineticEnergy = 0;
+        m_potentialEnergy = 0;
         m_cumulativeEnergy = 0;
         m_cumulativeEnergySquared = 0;
+        m_cumulativeKineticEnergy = 0;
+        m_cumulativePotentialEnergy = 0;
         for (int i=0; i < m_numberOfParameters; i++) {
             m_waveFunctionDerivative[i] = 0;
             m_waveFunctionEnergy[i] = 0;
@@ -44,10 +52,19 @@ void Sampler::sample(bool acceptedStep) {
 
         m_localEnergy           = m_system->getHamiltonian()->
                                   computeLocalEnergy(m_system->getParticles());
+
         if (m_system->getOptimizeParameters()) {
             m_parametersGradient = m_system->getWaveFunction()->
                                    computeParametersGradient(m_system->getParticles());
         }
+
+        if ( m_system->getWriteEnergiesToFile() ) {
+            openEnergyFile();
+        }
+        if ( m_system->getWritePositionsToFile() ) {
+            openPositionFile();
+        }
+
         m_firstStep = false;
     }
 
@@ -70,12 +87,26 @@ void Sampler::sample(bool acceptedStep) {
         }
     }
 
-    m_cumulativeEnergy  += m_localEnergy;
-    m_cumulativeEnergySquared += m_localEnergy*m_localEnergy;
+    m_cumulativeEnergy          += m_localEnergy;
+    m_cumulativeEnergySquared   += m_localEnergy*m_localEnergy;
+    m_cumulativeKineticEnergy   += m_system->getHamiltonian()->getKineticEnergy();
+    m_cumulativePotentialEnergy += m_system->getHamiltonian()->getPotentialEnergy();
 
     // store energies or positions
-    if (m_system->getWriteEnergiesToFile())   { writeToFile(m_localEnergy); }
-    if (m_system->getWritePositionsToFile())  { writeToFile(); }
+    //if (m_system->getWriteEnergiesToFile())   { writeToFile(m_localEnergy); }
+    //if (m_system->getWritePositionsToFile())  { writeToFile(); }
+
+    if ( m_energyFileBinary.is_open() ) {
+        m_energyFileBinary.write(reinterpret_cast<const char*>(&m_localEnergy), sizeof(double));
+    }
+
+    if ( m_positionFileBinary.is_open() ) {
+        for (int i=0; i < m_system->getNumberOfParticles(); i++){
+            pos.x = m_system->getParticles()[i]->getPosition()[0];
+            pos.y = m_system->getParticles()[i]->getPosition()[1];
+            m_positionFileBinary.write(reinterpret_cast<char*>(&pos), sizeof(Pos));
+        }
+    }
 
     m_stepNumber++;
 }
@@ -104,9 +135,10 @@ void Sampler::printOutputToTerminal() {
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy : " << std::setprecision(10) << m_energy << endl;
+    cout << " Kinetic energy : " << std::setprecision(10) << m_kineticEnergy << endl;
+    cout << " Potential energy : " << std::setprecision(10) << m_potentialEnergy << endl;
     cout << " Variance : " << std::setprecision(10) << m_variance << endl;
     cout << " Acceptance rate : " << m_acceptanceRate << endl;
-    cout << " Number of accepted steps " << as << endl;
     cout << endl;
 }
 
@@ -148,30 +180,31 @@ void Sampler::writeToFile() {
 void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities
 
-    m_energy                    = m_cumulativeEnergy / (double) m_stepNumber;
-    m_energySquared             = m_cumulativeEnergySquared / (double) m_stepNumber;
+    m_energy                    = m_cumulativeEnergy            / (double) m_stepNumber;
+    m_energySquared             = m_cumulativeEnergySquared     / (double) m_stepNumber;
+    m_kineticEnergy             = m_cumulativeKineticEnergy     / (double) m_stepNumber;
+    m_potentialEnergy           = m_cumulativePotentialEnergy   / (double) m_stepNumber;
+
     m_variance                  = (m_energySquared - m_energy*m_energy) / (double) m_stepNumber;
-    cout << "step number " << m_stepNumber << endl;
 
     for (int i=0; i < m_numberOfParameters; i++) {
         m_waveFunctionDerivative[i]    = m_cumulativeWaveFunctionDerivative[i] / (double) m_stepNumber;
         m_waveFunctionEnergy[i]        = m_cumulativeWaveFunctionEnergy[i] / (double) m_stepNumber;
     }
-    /*m_alphaDerivative = 2*(m_cumulativeWaveFunctionEnergy[0] - m_cumulativeWaveFunctionDerivative[0]*m_energy) /
-                        (double) m_stepNumber;
-    m_betaDerivative  = 2*(m_cumulativeWaveFunctionEnergy[1] - m_cumulativeWaveFunctionDerivative[1]*m_energy) /
-                        (double) m_stepNumber;*/
 
     m_acceptanceRate = m_system->getNumberOfAcceptedSteps() /
                        (double) m_system->getNumberOfMetropolisSteps();
 
-    if (m_system->getParallel()) {
+    if ( m_system->getWriteEnergiesToFile() )   { closeEnergyFile(); }
+    if ( m_system->getWritePositionsToFile() )  { closePositionFile(); }
+
+    if ( m_system->getParallel() ) {
         double reducedEnergy = 0;
         double reducedVariance = 0;
         double reducedAcceptanceRate = 0;
-        //MPI_Reduce(&m_energy, &reducedEnergy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-        //MPI_Reduce(&m_variance, &reducedVariance, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-        //MPI_Reduce(&m_acceptanceRate, &reducedAcceptanceRate, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&m_energy, &reducedEnergy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&m_variance, &reducedVariance, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&m_acceptanceRate, &reducedAcceptanceRate, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
         int size = m_system->getSize();
         if (m_system->getRank() == 0){
@@ -182,11 +215,47 @@ void Sampler::computeAverages() {
     }
 }
 
+void Sampler::openEnergyFile() {
+
+    std::sprintf( m_energyFileName, "dataFiles/energiesN%dw%dMs%d.bin",
+                  (int) m_system->getNumberOfParticles(),
+                  (int) (m_system->getWaveFunction()->getOmega()*100),
+                  (int) log10(m_numberOfMetropolisSteps) );
+
+    m_energyFileBinary.open(m_energyFileName, std::ios::out);
+    if ( m_energyFileBinary.is_open() ) {
+    }
+}
+
+void Sampler::openPositionFile() {
+
+    std::sprintf( m_positionFileName, "dataFiles/positionsN%dw%dMs%d.bin",
+                  (int) m_system->getNumberOfParticles(),
+                  (int) (m_system->getWaveFunction()->getOmega()*100),
+                  (int) log10(m_numberOfMetropolisSteps) );
+
+    m_positionFileBinary.open(m_positionFileName, std::ios::out | std::ios::binary);
+}
+
+void Sampler::closeEnergyFile() {
+
+    m_energyFileBinary.close();
+}
+
+void Sampler::closePositionFile() {
+
+    m_positionFileBinary.close();
+}
+
 void Sampler::clean() {
     m_energy = 0;
     m_localEnergy = 0;
+    m_kineticEnergy = 0;
+    m_potentialEnergy = 0;
     m_cumulativeEnergy = 0;
     m_cumulativeEnergySquared = 0;
+    m_cumulativeKineticEnergy = 0;
+    m_cumulativePotentialEnergy = 0;
     m_stepNumber = 0;
     m_acceptanceRate = 0;
     m_firstStep = true;

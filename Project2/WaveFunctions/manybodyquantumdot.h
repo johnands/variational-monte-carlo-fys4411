@@ -26,7 +26,6 @@ public:
     double getRatioSD() { return m_ratioSD; }
 
 private:
-    double m_omega;
     double m_omegaSqrt;
     double m_omegaAlpha;
     double m_omegaAlphaSqrt;

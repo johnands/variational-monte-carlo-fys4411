@@ -5,30 +5,29 @@
 #include "sampler.h"
 #include <iostream>
 #include <cmath>
-#include <algorithm>
-#include <valarray>
 
 using std::cout;
 using std::endl;
 
-SteepestDescent::SteepestDescent(System* system, double stepLengthOptimize) {
+SteepestDescent::SteepestDescent(System* system, double stepLengthOptimize,
+                                 int numberOfMetropolisSteps, int maxNumberOfIterations) {
     m_system = system;
     m_stepLengthOptimize = stepLengthOptimize;
+    m_numberOfMetropolisSteps = numberOfMetropolisSteps;
+    m_maxNumberOfIterations = maxNumberOfIterations;
 }
 
 void SteepestDescent::optimize(std::vector<double> parameters) {
 
-    int maxNumberOfSteps = 100;
     int stepNumber = 0;
     int numberOfParameters = parameters.size();
-    double tolerance = 1e-6;
+    double tolerance = 1e-5;
 
-    m_system->getWaveFunction()->setParameters(parameters);
     // run one time before optimizing
+    m_system->getWaveFunction()->setParameters(parameters);
     m_system->runMetropolisSteps((int) 1e5);
+
     std::vector<double> localEnergyGradient(numberOfParameters);
-    //localEnergyGradient[0] = m_system->getSampler()->getAlphaDerivative();
-    //localEnergyGradient[1] = m_system->getSampler()->getBetaDerivative();
     for (int j=0; j < numberOfParameters; j++) {
         localEnergyGradient[j] = 2 * ( m_system->getSampler()->getWaveFunctionEnergy()[j] -
                                        m_system->getSampler()->getWaveFunctionDerivative()[j]  *
@@ -42,7 +41,7 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
     cout << "gradient1: " << localEnergyGradient[1] << endl;
 
 
-    while (oldAbsoluteGradient > tolerance && stepNumber < maxNumberOfSteps) {
+    while (m_stepLengthOptimize > tolerance && stepNumber < m_maxNumberOfIterations) {
 
         cout << "****** Iteration " << stepNumber << " ******" << endl;
 
@@ -53,7 +52,7 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
         m_system->getWaveFunction()->setParameters(parameters);
 
         // run metropolis steps
-        m_system->runMetropolisSteps((int) 1e5);
+        m_system->runMetropolisSteps((int) m_numberOfMetropolisSteps);
 
         // compute gradient of exp. value of local energy w.r.t. the variational parameters
         std::vector<double> localEnergyGradient(numberOfParameters);
@@ -62,8 +61,7 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
                                            m_system->getSampler()->getWaveFunctionDerivative()[j]  *
                                            m_system->getSampler()->getEnergy() );
         }
-        //localEnergyGradient[0] = m_system->getSampler()->getAlphaDerivative();
-        //localEnergyGradient[1] = m_system->getSampler()->getBetaDerivative();
+
         cout << "gradient0: " << localEnergyGradient[0] << endl;
         cout << "gradient1: " << localEnergyGradient[1] << endl;
 
@@ -94,26 +92,40 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
         // before new iteration
         oldAbsoluteGradient = newAbsoluteGradient;
         stepNumber++;
-
-        /*if (std::all_of(localEnergyGradient.begin(), localEnergyGradient.end(), [&tolerance](double j)
-        { return std::fabs(j) < tolerance; } ))
-            //cout << "Number of steps run: " << i << endl;
-            break;*/
     }
 
+    // write the optimal parameters to screen
     for (int j=0; j < numberOfParameters; j++) {
         cout << " Optimal parameter " << j+1 << " : " << parameters.at(j) << endl;
     }
     cout << endl;
-
-    // run many Metropolis steps with the optimal parameters
-
-    // make initial state
-    m_system->getInitialState()->setupInitialState();
-
-    // set value of parameters
-    m_system->getWaveFunction()->setParameters(parameters);
-
-    // run metropolis steps
-    m_system->runMetropolisSteps((int) 1e6);
 }
+
+
+/*
+  -- System info --
+ Optimal parameter 1 : 0.7961730521
+ Optimal parameter 2 : 0.8189088609
+
+ Time elapsed: 41.783 s
+ step number 899999
+
+
+ Number of particles  : 20
+ Number of dimensions : 2
+ Number of Metropolis steps run : 10^6
+ Number of equilibration steps  : 10^5
+
+  -- Wave function parameters --
+ Number of parameters : 2
+ Parameter 1 : 0.79617
+ Parameter 2 : 0.81891
+
+  -- Results --
+ Energy : 156.0638026
+ Variance : 1.30429743e-06
+ Acceptance rate : 0.531308
+ Number of accepted steps 531308
+
+Press <RETURN> to close this window...
+*/

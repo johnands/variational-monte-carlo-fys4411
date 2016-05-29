@@ -8,6 +8,7 @@ public:
     //std::vector<double> computeGradient(std::vector<class Particle*> particles);
     int     getNumberOfParameters() { return m_numberOfParameters; }
     std::vector<double> getParameters() { return m_parameters; }
+    double getOmega() { return m_omega; }
     virtual void setParameters(std::vector<double> parameters) = 0;
     virtual double evaluate(std::vector<class Particle*> particles) = 0;
     virtual double computeLaplacian(std::vector<class Particle*> particles) = 0;
@@ -20,5 +21,6 @@ protected:
     int     m_numberOfParameters = 0;
     std::vector<double> m_parameters = std::vector<double>();
     class System* m_system = nullptr;
+    double m_omega;
 };
 
