@@ -200,17 +200,24 @@ void Sampler::computeAverages() {
 
     if ( m_system->getParallel() ) {
         double reducedEnergy = 0;
+        double reducedKineticEnergy = 0;
+        double reducedPotentialEnergy = 0;
         double reducedVariance = 0;
         double reducedAcceptanceRate = 0;
+
         MPI_Reduce(&m_energy, &reducedEnergy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&m_kineticEnergy, &reducedKineticEnergy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&m_potentialEnergy, &reducedPotentialEnergy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
         MPI_Reduce(&m_variance, &reducedVariance, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
         MPI_Reduce(&m_acceptanceRate, &reducedAcceptanceRate, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
         int size = m_system->getSize();
         if (m_system->getRank() == 0){
-            m_energy = reducedEnergy / size;
-            m_variance = reducedVariance / size;
-            m_acceptanceRate = reducedAcceptanceRate / size;
+            m_energy            = reducedEnergy          / size;
+            m_kineticEnergy     = reducedKineticEnergy   / size;
+            m_potentialEnergy   = reducedPotentialEnergy / size;
+            m_variance          = reducedVariance        / (size*size);
+            m_acceptanceRate    = reducedAcceptanceRate  / size;
         }
     }
 }

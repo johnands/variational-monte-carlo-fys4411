@@ -142,10 +142,10 @@ modulus of the positions of the electrons (for a given electron $i$) as $r_i = \
 \subsection{Trial wavefunction}
 We study a system of electrons, which are fermions that obey the Pauli exclusion principle.
 This means that we have to approximate the exact wave function for the system with a trial
-wave function that is antisymmetric. Our antisymmetric ansatz is a product of a Slater determinant $|D|$
-and a correlation term,
+wave function that is antisymmetric. Our antisymmetric ansatz $\Psi_T$ is a product of a 
+Slater determinant $\Psi_{SD} = |D|$ and a so-called Jastrow correlation term $\Psi_J$,
 \begin{equation}
-   \psi_{T}({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha, \beta) = 
+   \psi_{T}({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha, \beta) = \Psi_{SD}\Psi_J = 
    |D({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha)|
    \prod_{i<j}^{N}\exp{\left(\frac{a r_{ij}}{(1+\beta r_{ij})}\right)}, 
    \label{TrialWF}
@@ -161,17 +161,19 @@ Hamiltonian \eqref{OneBodyHamiltonian}. The rows correspond to the position of a
 while the columns stand for the various quantum numbers.
 The single-particle wave functions in a two-dimensional harmonic oscillator are
 \begin{equation}
- \phi_{n_x,n_y}(x,y) = A H_{n_x}(\sqrt{\omega}x)H_{n_y}(\sqrt{\omega}y)\exp{[-\alpha\omega(x^2+y^2)/2]}.
+ \phi_{n_x,n_y}(x,y) = A H_{n_x}(\sqrt{\alpha\omega}x)H_{n_y}(\sqrt{\alpha\omega}y)\exp{[-\alpha\omega(x^2+y^2)/2]}.
 \end{equation}
 The functions $H_{n_x}(\sqrt{\omega}x)$ are so-called Hermite polynomials (given in appendix), while
 $A$ is a normalization constant. 
-For two particles, the trial wave function \eqref{TrialWF} reduces to
+For $N=2$, the trial wave function \eqref{TrialWF} reduces to
 \begin{equation}
    \psi_{T}({\bf r}_1,{\bf r}_2, \alpha, \beta) = 
    C\exp{\left(-\alpha\omega(r_1^2+r_2^2)/2\right)}
    \exp{\left(\frac{ar_{12}}{(1+\beta r_{12})}\right)}, 
 \label{trialWF2}
 \end{equation}
+
+
 
  
 
@@ -487,6 +489,7 @@ This operation is simply a dot product of a vector of single-particle wave funct
 at the new position with the $i$-th column of the inverse matrix $D^{-1}$ evaluated at the original position,
 and has a time scaling of $\mathcal{O}(N)$.\\
 
+\subsubsection{Optimization of inverse Slater matrix}
 \noindent The operation \eqref{slaterRatio} demands that we maintain the inverse matrix $D^{-1}$ for each
 MC cycle. Getting the inverse of an $N\times N$-matrix på Gaussian elimination has a complexicty of order
 $\mathcal{O}(N^3)$ operations, which we cannot afford. An alternative way of updating the inverse
@@ -504,6 +507,94 @@ of $\mathcal{O}(N^2)$ and is as follows:
  $$d_{ki}^{-1}({\bf R}^{\textrm{new}}) = \frac{1}{R_{SD}} d_{ki}^{-1}({\bf R}^{\textrm{old}}) \quad
  k = \{1,\dots,N\}$$
 \end{itemize}
+
+\subsubsection{Splitting the Slater determinant}
+
+It can be shown, see for example Moskowitz and Kalos \cite{ref3} that we can approximate the Slater
+determinant $|D|$ as a product of two smaller ones, where each can be identified with
+spin-up $\uparrow$ and spin-down $\downarrow$ respectively,
+\begin{equation}
+ |D| = |D|_\uparrow \cdot |D|_\downarrow
+\end{equation}
+To illustrate, we write out the Slater determinant \eqref{slaterMatrix} for $N=4$:
+\begin{equation}
+    |D| = \frac{1}{\sqrt{4!}} \left|\begin{array}{cccc}
+\phi_{00\uparrow}({\bf r}_1) &\phi_{00\downarrow}({\bf r}_1) 
+&\phi_{10\uparrow}({\bf r}_1) &\phi_{10\downarrow}({\bf r}_1) \\
+\phi_{00\uparrow}({\bf r}_2) &\phi_{00\downarrow}({\bf r}_2) 
+&\phi_{10\uparrow}({\bf r}_2) &\phi_{10\downarrow}({\bf r}_2) \\
+\phi_{00\uparrow}({\bf r}_3) &\phi_{00\downarrow}({\bf r}_3) 
+&\phi_{10\uparrow}({\bf r}_3) &\phi_{10\downarrow}({\bf r}_3) \\
+\phi_{00\uparrow}({\bf r}_4) &\phi_{00\downarrow}({\bf r}_4) 
+&\phi_{10\uparrow}({\bf r}_4) &\phi_{10\downarrow}({\bf r}_4) \\
+                      \end{array} \right|
+\end{equation}
+The Slater determinant as written is zero since the spatial wave functions for the
+spin-up and spin-down states are equal. 
+However,we can now factorize this determinant in the following way,
+\begin{equation}
+|D| = \frac{1}{\sqrt{2}}\left|\begin{array}{cc}
+\phi_{00\uparrow}({\bf r}_1) &\phi_{10\uparrow}({\bf r}_1) \\
+\phi_{00\uparrow}({\bf r}_2) &\phi_{10\uparrow}({\bf r}_2) \\
+            \end{array} \right|
+\cdot
+\frac{1}{\sqrt{2}} \left| \begin{array}{cc}
+\phi_{00\downarrow}({\bf r}_3) &\phi_{10\downarrow}({\bf r}_3) \\
+\phi_{00\downarrow}({\bf r}_4) &\phi_{10\downarrow}({\bf r}_4) \\
+       \end{array} \right|
+       \label{SlaterDetFactorized}
+\end{equation}
+This ansatz is not antisymmetric under exchange of two electrons with opposite spins, but it can 
+be shown that it gives the same expectation value for the energy as the full Slater determinant. 
+The above is correct only for spin-independent Hamiltonians. Our trial wave function
+can now be written as
+\begin{equation}
+ \Psi_T = |D|_\uparrow |D|_\downarrow \Psi_C
+\end{equation}
+
+
+\noindent The factorization above makes it possible to perform the calculation of the Slater ratio \eqref{slaterRatio}
+and the updating of the inverse Slater matrix seperately for $|D|_\uparrow$ and $|D|_\downarrow$:
+\begin{equation}
+ \frac{|D|^{\textrm{new}}}{|D|^{\textrm{old}}} = \frac{|D|^{\textrm{new}}_\uparrow}{|D|^{\textrm{old}}_\downarrow}
+ \cdot
+ \frac{|D|^{\textrm{new}}_\uparrow}{|D|^{\textrm{old}}_\downarrow}
+\end{equation}
+We see from \eqref{SlaterDetFactorized} that one of the two determinants is unaffected
+when we move only one particle at a time, it will therefore cancel from the ratio. This means
+that we only need to update one determinant of size $N/2$ when we compute $R_{SD}$
+and update $|D|^{-1}$. The efficiency enhancements due to optimization are summed up in \eqref{tab:Optimization}.
+\begin{table}[H] 
+  \begin{center}
+    \begin{tabular*}{14cm}{l @{\extracolsep{\fill}} ll}
+      \toprule
+      Operation & No optimization & With optimization  \\ 
+      \hline
+      Evaluation of $R_{SD}$  & $\mathcal{O}(N)$ & $\mathcal{O}(N/2)$ \\
+      Updating inverse  & $\mathcal{O}(N^2)$ & $\mathcal{O}(N^2/4)$ \\ 
+      Transition of one particle & $\mathcal{O}(N)$ + $\mathcal{O}(N^2)$ &
+                                   $\mathcal{O}(N/2)$ + $\mathcal{O}(N^2/4)$ \\ 
+      \bottomrule
+      \end{tabular*} 
+    \end{center}
+      \caption {Comparison of the computational cost involved in the computation of the
+                Slater determinant with and without optimization} 
+  \label{tab:Optimization} 
+\end{table}
+
+\subsection{Optimization of gradient and Laplacian}
+
+We need the ratio $\frac{\nabla \Psi_T}{\Psi_T}$ to compute the quantum force \eqref{quantumForce}
+used in importance sampling. This ratio can be written as
+\begin{equation}
+ \frac{\nabla \Psi_T}{\Psi_T} = \frac{\nabla (\Psi_{SD}\Psi_C)}{\Psi_{SD}\Psi_C} = 
+ \frac{\Psi_{C}\nabla\Psi_{SD} + \Psi_{SD}\nabla\Psi_C}{\Psi_{SD}\Psi_C} = 
+ \frac{\nabla \Psi_D}{\Psi_D} + \frac{\nabla \Psi_C}{\Psi_C}
+\end{equation}
+
+
+
+
 
 
 
@@ -529,47 +620,62 @@ The algorithm is as follows:
 \begin{itemize}
  \item Choose an initial set of parameters $\boldsymbol{\alpha}_0$ and step length $\gamma_0$.
  \item For $i \geq 0$: Compute $\boldsymbol{\alpha}_{i+1} = \boldsymbol{\alpha}_i - \gamma_i 
- \nabla_{\boldsymbol{\alpha}} \langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$
+ \nabla_{\boldsymbol{\alpha}_i} \langle E_L({\bf R}, \boldsymbol{\alpha}_i) \rangle$
  \item Continue until a maximum number of steps are performed or 
  $|\nabla_{\boldsymbol{\alpha}} \langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle|$ is
        less than some tolerance
 \end{itemize}
-We should get $\langle E_L({\bf R}, \boldsymbol{\alpha}_i) \rangle \geq \langle E_L({\bf R}, 
-\boldsymbol{\alpha}_{i+1}) \rangle \geq \dots$.
+We should get $|\nabla_{\boldsymbol{\alpha}_i}\langle E_L({\bf R}, 
+\boldsymbol{\alpha}_i) \rangle|^2 \geq |\nabla_{\boldsymbol{\alpha}_{i+1}}\langle 
+E_L({\bf R}, \boldsymbol{\alpha}_{i+1}) \rangle|^2 \geq \dots$.
 If this is not the case, we reject the new step and decrease the step size to obtain a more
 accurate value. 
 $\langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$ is as we have seen a multidimensional integral \eqref{localEnergyExp}, 
 and the gradient w.r.t. $\boldsymbol{\alpha}$
 is not easily computed. Let us define
 \begin{equation}
- \bar{E}_\alpha = \frac{d \langle E_L(\alpha) \rangle}{d\alpha}
+ \bar{E}_\alpha = \frac{\partial \langle E_L(\boldsymbol{\alpha}) \rangle}{\partial \alpha}
 \end{equation}
 and 
 \begin{equation}
- \bar{\Psi}_T = \frac{d \Psi_T(\alpha)}{d\alpha}
+ \bar{E}_\beta = \frac{\partial \langle E_L(\boldsymbol{\alpha}) \rangle}{\partial \beta}
 \end{equation}
-Using the chain rule and the hermicity of the Hamiltonian it can be shown that
+Using the chain rule and the hermicity of the Hamiltonian,
+it can be shown that
 \begin{equation}
- \bar{E}_\alpha = 2 \left( \Bigr\langle \frac{\bar{\Psi}_T}{\Psi_T(\alpha)} E_L(\alpha) \Bigr\rangle 
- - \Bigr\langle \frac{\bar{\Psi}_T}{\Psi_T(\alpha)}\Bigr\rangle \langle E_L(\alpha) \rangle   \right)
+ \bar{E}_\alpha = 2 \left( \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial \alpha} E_L 
+ \Bigr\rangle 
+ - \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial \alpha}\Bigr\rangle \langle E_L \rangle   \right)
  \label{localenergyalpha}
+\end{equation}
+and 
+\begin{equation}
+ \bar{E}_\beta = 2 \left( \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial \beta} E_L 
+ \Bigr\rangle 
+ - \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial \beta}\Bigr\rangle \langle E_L \rangle   \right)
+ \label{localenergybeta}
 \end{equation}
 thus we need the expectation values of
 \begin{equation}
- \frac{\bar{\Psi}_T}{\Psi_T(\alpha)} E_L(\alpha)
- \label{waveenergy}
+ \frac{\partial \ln{\Psi_T}}{\partial \alpha} E_L \quad
+  \frac{\partial \ln{\Psi_T}}{\partial \alpha}
 \end{equation}
 and 
 \begin{equation}
- \frac{\bar{\Psi}_T}{\Psi_T(\alpha)}
- \label{wavederivative}
+ \frac{\partial \ln{\Psi_T}}{\partial \beta} E_L \quad
+  \frac{\partial \ln{\Psi_T}}{\partial \beta}
 \end{equation}
+For our trial wave function \eqref{TrialWF}, we have
+\begin{equation}
+ \ln{\Psi_T} = 
+\end{equation}
+
 The complete VMC method then amounts to the following:
 \begin{itemize}
- \item Make initial guess $\alpha_0$
+ \item Make initial guess $\boldsymbol{\alpha}_0$
  \item Run $10^4$-$10^5$ Metropolis steps, sample \eqref{waveenergy} and \eqref{wavederivative}
  \item Compute \eqref{localenergyalpha} 
- \item Calculate new $\alpha$ using the Steepest descent method
+ \item Calculate new $\boldsymbol{\alpha}$ using the Steepest descent method
 \end{itemize}
 The above steps are repeated until the above stopping condition is fulfilled, before a new round of
 Metropolis steps are run, this time with many cycles ($10^6$-$10^8$). We then obtain our approximation
@@ -1364,10 +1470,15 @@ The analytic expression for the local energy is thus
  Phys. Rev. A {\bf 48}, 3561 - 3566 (1993).
  
  \bibitem{ref2}
- M. .L. Pedersen, G. Hagen, M. Hjorth-Jensen, S. Kvaal, and F. Pederiva, 
+ M. L. Pedersen, G. Hagen, M. Hjorth-Jensen, S. Kvaal, and F. Pederiva, 
  \textit{Ab inito computation of the energies of circular quantum dots}
  Phys. Rev. B {\bf 84}, 115302 (2011)
-
+ 
+ \bibitem{ref3}
+ Jules W. Moskowitz, M. H. Kalos,
+ \textit{A new look at correlations in atomic and molecular systems. 
+         I. Application of fermion monte carlo variational method.}
+ Int. J. Quantum Chem. {\bf 20} 1107 (1981)
 
 \end{thebibliography}
 

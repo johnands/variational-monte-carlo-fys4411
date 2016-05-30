@@ -34,8 +34,8 @@ int main(int argc, char* argv[]) {
     int numberOfParticles   = 2;
     int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.8;//0.98456;          // variational parameter 1
-    double beta             = 0.8;//0.40691;        // variational parameter 2
+    double alpha            = 0.98456;          // variational parameter 1
+    double beta             = 0.40691;        // variational parameter 2
     double stepLength       = 1.8;          // metropolis step length
     double equilibration    = 0.1;          // amount of the total steps used for equilibration
     double timeStep         = 0.005;        // importance sampling

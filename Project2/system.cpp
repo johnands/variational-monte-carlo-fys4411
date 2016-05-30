@@ -11,6 +11,7 @@
 #include "Math/random.h"
 #include <time.h>
 #include <armadillo>
+#include <mpi.h>
 
 using std::cout;
 using std::endl;
@@ -253,8 +254,9 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps)
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
 
     // measure cpu time
-    clock_t start, finish;
-    start = clock();
+    //clock_t start, finish;
+    //start = clock();
+    double startTime = MPI_Wtime();
 
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep;
@@ -285,13 +287,20 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps)
         }
 
     }
-    finish = clock();
-    cout << "Time elapsed: " << std::setprecision(5) << ((double) (finish-start)/CLOCKS_PER_SEC)
-         << " s" << endl;
+    //finish = clock();
+    double endTime = MPI_Wtime();
+    /*cout << "Time elapsed: " << std::setprecision(5) << ((double) (finish-start)/CLOCKS_PER_SEC)
+         << " s" << endl;*/
+    double totalTime = endTime - startTime;
+
 
     m_sampler->computeAverages();
     if (m_parallel) {
-        if (m_rank == 0) { m_sampler->printOutputToTerminal(); }
+        if (m_rank == 0) {
+            cout << "Time elapsed: " << std::setprecision(5) << totalTime <<
+                    " on number of processors: " << m_size << endl;
+            m_sampler->printOutputToTerminal();
+        }
     }
     else {
         m_sampler->printOutputToTerminal();

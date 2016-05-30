@@ -168,11 +168,11 @@ void ManyBodyQuantumDot::setUpSlater() {
     m_slaterSpinDownInverse = m_slaterSpinDown.i();
 
     // write out initial matrices
-    cout << "Initial Slater Up: " << m_slaterSpinUp << endl;
+    /*cout << "Initial Slater Up: " << m_slaterSpinUp << endl;
     cout << "Initial Slater Down: " << m_slaterSpinDown << endl;
 
     cout << "Initial Slater Up Inverse: " << m_slaterSpinUpInverse << endl;
-    cout << "Initial Slater Down Inverse: " << m_slaterSpinDownInverse << endl;
+    cout << "Initial Slater Down Inverse: " << m_slaterSpinDownInverse << endl;*/
 }
 
 double ManyBodyQuantumDot::singleParticleWaveFunctions(int nx, int ny, double x, double y) {
