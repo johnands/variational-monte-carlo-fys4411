@@ -46,7 +46,7 @@ void SteepestDescent::optimize(std::vector<double> parameters) {
         cout << "****** Iteration " << stepNumber << " ******" << endl;
 
         // make initial state
-        m_system->getInitialState()->setupInitialState();
+        //m_system->getInitialState()->setupInitialState();
 
         // set parameter values
         m_system->getWaveFunction()->setParameters(parameters);

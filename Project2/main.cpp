@@ -31,20 +31,18 @@ int main(int argc, char* argv[]) {
     }
 
     int numberOfDimensions  = 2;
-    int numberOfParticles   = 2;
+    int numberOfParticles   = 20;
     int numberOfSteps       = (int) 1e6;
-    double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.98456;          // variational parameter 1
+    double omega            = 0.05;            // oscillator frequency
+    double alpha            = 0.6285;        // variational parameter 1
     double beta             = 0.40691;        // variational parameter 2
-    double stepLength       = 1.8;          // metropolis step length
-    double equilibration    = 0.1;          // amount of the total steps used for equilibration
-    double timeStep         = 0.005;        // importance sampling
-    double a                = 0.0043;       // hard sphere radius
-    double a2               = 1;          // two-body quantum dot (depends on spin)
-    double gamma            = 2.82843;      // trap potential strength z-direction
+    double stepLength       = 1.8;            // metropolis step length
+    double equilibration    = 0.1;            // amount of the total steps used for equilibration
+    double timeStep         = 0.005;          // importance sampling
+    double a2               = 1;              // two-body quantum dot (depends on spin)
 
-    bool useNumerical           = false;    // compute kinetic energy numerically
-    bool useInteraction         = true;    // if false: only harmonic oscillator
+    bool useNumerical           = false;      // compute kinetic energy numerically
+    bool useInteraction         = true;       // if false: only harmonic oscillator
 
     System* system = new System();
 
@@ -54,7 +52,7 @@ int main(int argc, char* argv[]) {
         system->setSize(size);
     }
 
-    system->setUseJastrow               (true);
+    system->setUseJastrow               (false);
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles));
 
     //system->setHamiltonian              (new HarmonicOscillator(system, omega, useNumerical));
@@ -77,11 +75,11 @@ int main(int argc, char* argv[]) {
     system->setWriteEnergiesToFile      (false);
     system->setWritePositionsToFile     (false);
 
-    system->setOptimizeParameters       (false);
+    system->setOptimizeParameters       (true);
 
     // optimize
     if ( system->getOptimizeParameters() ) {
-        double initialAlpha = 0.5;
+        double initialAlpha = 0.2854;
         double initialBeta = 0.5;
         std::vector<double> parameters(2);
         parameters[0] = initialAlpha; parameters[1] = initialBeta;

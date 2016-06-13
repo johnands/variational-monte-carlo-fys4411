@@ -172,6 +172,12 @@ For $N=2$, the trial wave function \eqref{TrialWF} reduces to
    \exp{\left(\frac{ar_{12}}{(1+\beta r_{12})}\right)}, 
 \label{trialWF2}
 \end{equation}
+For the pure harmonic oscillator \eqref{OneBodyHamiltonian}, $\Psi_T$ does not have the correlation term:
+\begin{equation}
+   \psi_{T}({\bf r}_1,{\bf r}_2, \alpha, \beta) = 
+   C\exp{\left(-\alpha\omega(r_1^2+r_2^2)/2\right)}
+\label{trialWFHarmOscillator}
+\end{equation}
 
 
 
@@ -198,7 +204,7 @@ and one with spin down. This gives the following shell structure (with $n=n_x+n_
 We see that for $N = {2, 6, 12, 20}$, all the states up to shell $0, 1, 2, 3$ are filled respectively. 
 These values of $N$ are thus magic numbers.
 From \eqref{exactenergy} we obtain the following energies,
-\begin{table}[!htb] 
+\begin{table}[H] 
   \begin{center}
     \begin{tabular*}{4cm}{c @{\extracolsep{\fill}} c}
       \toprule
@@ -440,7 +446,7 @@ The Metropolis Hastings algorithm is the same as the brute force method, now wit
 \eqref{metropolisHastings} and trial positions
 calculated according to \eqref{LangevinSolution}.
 
-\subsection{Optimization of Slater determinant}
+\subsection{Optimization of trial wave function and its deriviatives}
 
 The trial wave function \eqref{TrialWF} plays a central role in our VMC simulation.
 It is needed in the Metropolis algorithm and in the evaluation of the quantum force \eqref{quantumForce}.
@@ -452,6 +458,7 @@ evaluate $Nd$ Slater determinants for the gradient (quantum force and kinetic en
 the Laplacian (kinetic energy). Therefore, it is imperative to find alternative ways of computing
 the quantities related to the trial wave function to improve performance. \\
 
+\subsubsection{Optimization of Metropolis ratio}
 \noindent It turns out that the solution is an algorithm that requires to keep track of the \textit{inverse}
 of the Slater matrix \eqref{slaterMatrix}. The inverse of $D$ can be expressed in terms of its cofactors $C_{ij}$ and its
 determinant $|D|$,
@@ -488,6 +495,8 @@ where the last equality follows from the definition of the Slater matrix \eqref{
 This operation is simply a dot product of a vector of single-particle wave functions evaluated
 at the new position with the $i$-th column of the inverse matrix $D^{-1}$ evaluated at the original position,
 and has a time scaling of $\mathcal{O}(N)$.\\
+
+\noindent 
 
 \subsubsection{Optimization of inverse Slater matrix}
 \noindent The operation \eqref{slaterRatio} demands that we maintain the inverse matrix $D^{-1}$ for each
@@ -550,6 +559,7 @@ The above is correct only for spin-independent Hamiltonians. Our trial wave func
 can now be written as
 \begin{equation}
  \Psi_T = |D|_\uparrow |D|_\downarrow \Psi_C
+ \eqref{TrialWFSpins}
 \end{equation}
 
 
@@ -563,10 +573,10 @@ and the updating of the inverse Slater matrix seperately for $|D|_\uparrow$ and 
 We see from \eqref{SlaterDetFactorized} that one of the two determinants is unaffected
 when we move only one particle at a time, it will therefore cancel from the ratio. This means
 that we only need to update one determinant of size $N/2$ when we compute $R_{SD}$
-and update $|D|^{-1}$. The efficiency enhancements due to optimization are summed up in \eqref{tab:Optimization}.
+and update $|D|^{-1}$. The efficiency enhancements due to optimization are summed up in Table \ref{tab:Optimization}.
 \begin{table}[H] 
   \begin{center}
-    \begin{tabular*}{14cm}{l @{\extracolsep{\fill}} ll}
+    \begin{tabular*}{14cm}{@{\extracolsep{\fill}} lll}
       \toprule
       Operation & No optimization & With optimization  \\ 
       \hline
@@ -582,7 +592,7 @@ and update $|D|^{-1}$. The efficiency enhancements due to optimization are summe
   \label{tab:Optimization} 
 \end{table}
 
-\subsection{Optimization of gradient and Laplacian}
+\subsubsection{Optimization of gradient}
 
 We need the ratio $\frac{\nabla \Psi_T}{\Psi_T}$ to compute the quantum force \eqref{quantumForce}
 used in importance sampling. This ratio can be written as
@@ -591,6 +601,44 @@ used in importance sampling. This ratio can be written as
  \frac{\Psi_{C}\nabla\Psi_{SD} + \Psi_{SD}\nabla\Psi_C}{\Psi_{SD}\Psi_C} = 
  \frac{\nabla \Psi_D}{\Psi_D} + \frac{\nabla \Psi_C}{\Psi_C}
 \end{equation}
+Inserting $\Psi_{SD} = |D|_\uparrow|D|_\downarrow$ yields
+\begin{equation}
+ \frac{\nabla \Psi_T}{\Psi_T} = \frac{\nabla|D|_\uparrow}{|D|_\uparrow} + 
+ \frac{\nabla |D|_\downarrow}{|D|_\downarrow} + \frac{\nabla \Psi_C}{\Psi_C}
+\end{equation}
+The process to obtain the gradient-determinant ratio needed in this expression is analogous to
+the one used in deriving \eqref{slaterRatio}. The result is
+\begin{equation}
+ \frac{\nabla_i |D|}{|D|} = \sum_{j=1}^N \nabla_i d_{ij}({\bf R}^{\textrm{old}}) d_{ji}^{-1}
+ ({\bf R}^{\textrm{old}})
+        = \sum_{j=1}^N \nabla_i \phi_j({\bf R}_i^{\textrm{old}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+        \label{gradientRatioBefore}
+\end{equation}
+This expression is used to calculate the quantum force before the ratio \eqref{ratio2} is computed. 
+After the position of one particle is altered, the expression is modified to
+\begin{equation}
+ \frac{\nabla_i |D|}{|D|}
+        = \frac{1}{R_{SD}} \sum_{j=1}^N \nabla_i \phi_j({\bf R}_i^{\textrm{new}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+        \label{gradientRatioAfter}
+\end{equation}
+Note that the old inverse Slater matrix is used in both cases because this is not updated until after 
+a step has been accepted. According to \eqref{TrialWFSpins}, we only need to compute the gradient w.r.t.
+either $|D|_\uparrow$ or $|D|_\downarrow$. We use the particle index to decide which matrix we need 
+to update: If $i < N/2$ we only calculate the spin-up gradient:
+\begin{equation}
+ \frac{\nabla_i |D|_\uparrow}{|D|_\uparrow} = 
+ \sum_{j=0}^{N/2-1} \nabla_i \phi_j({\bf R}_i^{\textrm{old}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+\end{equation}
+or else, $i \geq N/2$, we update the spin-down gradient:
+\begin{equation}
+ \frac{\nabla_i |D|_\downarrow}{|D|_\downarrow} = 
+ \sum_{j=N/2}^{N-1} \nabla_i \phi_j({\bf R}_i^{\textrm{old}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+\end{equation}
+where the sum now runs from $j=0$ because 
+
+
+
+
 
 
 
@@ -863,394 +911,30 @@ e.g. implement a new wave function; only the specifics of this new wave function
 
 \section{Results}
 
+We calculate the ground-state energies for the magic numbers $N = 2$, $N=6$, $N=12$ and $N=20$
+and for oscillator frequencies
+$\omega = 0.01$, $\omega = 0.05$, $\omega = 0.1$, $\omega = 0.5$ and $\omega = 1.0$. 
+The one-body density is computed for all $N$ and $\omega$, both with and without the Jastrow factor. 
+For $N=2$ we calculate the ground state energy using two different wave functions:
+\begin{enumerate}
+ \item The trial wave function is \eqref{TrialWF2} for which we have an analytic
+ expression \eqref{analyticLocalEnergy} for the Laplacian $\nabla \Psi_T$ (method 1)
+ \item The trial wave function is \eqref{TrialWF}, i.e. the full Slater determinant (method 2)
+\end{enumerate}
+These two approaches should yield the same energies and is therefore a good test to see
+if the Slater determinants are implemented correctly. They are in the following called method 1 and method 2
+respectively. We also calculate the mean distance between the two electrons. \\
+
+\noindent
+We utilize the blocking technique for error analysis of the enegrgy calculations. A performance analysis
+is made by comparing the time usage of a serial vs. a parallel version of the code, both with and without
+vectorization. 
+
+\subsection{Results for two electrons - method 1}
+As a first validation of our code, we calculate the ground state energy of the two-electron system
+in a pure harmonic oscillator \eqref{HarmonicOscillator} and benchmark the results with Table \eqref{tab:HOEnergies}.
 
 
-\noindent We calculate the ground state energy for system 1 both with and without importance sampling.
-Only the brute force Metropolis algorithm is applied for system 2.
-The kinetic energy is calculated both numerically and analytically for system 1, 
-referred to as the \textit{numerical method} and the \textit{analytical method} respectively.
-Only the analytical method is applied for system 2. 
-
-\noindent We use blocking to analyze the error of the statistical data for system 2.
-The steepest descent method is applied to optimize $\alpha$. 
-In addition to this, the one-body density is computed for both systems.
-
-
-\subsection{System 1 - brute force Metropolis}
-
-The parameters used to produce the below results are as follows
-\belowcaptionskip=-10pt
-\begin{lstlisting}[label=parameters1,caption=Parameters brute force Metropolis system 1]
-    int numberOfSteps       = (int) 1e4;
-    double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.5;          // variational parameter 1
-    double stepLength       = 1.5;          // metropolis step length
-    double equilibration    = 0.1;          
-\end{lstlisting}
-
-We want to valide our code using the benchmark \eqref{exactenergy} and
-compare the CPU time difference for computing kinetic energy numerically vs analytically. 
-The Metropolis step length is set so that the acceptance rate equals about $0.5$.
-The number of Metropolis steps is only $1e4$ because setting $\alpha = 0.5$ is equivalent to
-having a trial wavefunction that is exact for this system, according to \eqref{exactwf}. Thus, a few steps should suffice
-to obtain the exact energy.
-
-\begin{table}[H]
-    \begin{minipage}{.5\linewidth}
-      \centering
-   \begin{tabular}{ | c | r | r | r | r |}
-    \hline
-    N& d& $\langle \textrm{E}\rangle$& $\sigma$& CPU time \\*
-    \hline
-    1& 1& 0.5& 0& 5.53e-3 \\*
-    \hline
-    1& 2& 1& 0&  5.66e-3\\*
-    \hline
-    1& 3& 1.5& 0&  5.70e-3\\*
-    \hline
-    10& 1& 5& 0&  7.20e-3\\*
-    \hline
-    10& 2& 10& 0&  7.36e-3\\*
-    \hline
-    10& 3& 15& 0&  1.00-3\\*
-    \hline
-    100& 1& 50& 0&  0.0215\\*
-    \hline
-    100& 2& 100& 0&  0.223\\*
-    \hline
-    100& 3& 150& 0&  0.274\\*
-    \hline
-    500& 1& 250& 0&  0.0843\\*
-    \hline
-    500& 2& 500& 0&  0.110\\*
-    \hline
-    500& 3& 750& 0&  0.131\\*
-    \hline
-  \end{tabular}
-        \caption{Analytical kinetic energy}
-    \end{minipage}
-    \begin{minipage}{.5\linewidth}
-      \centering
-       
-   \begin{tabular}{ | c | r | r | r | r |}
-    \hline
-    N& d& $\langle {\textrm E_L} \rangle$& $\sigma$& CPU time \\*
-    \hline
-    1& 1& 0.5& 9.87e-8& 6.96e-3 \\*
-    \hline
-    1& 2& 1& 1.873-7&  0.0151\\*
-    \hline
-    1& 3& 1.5& 1.88e-7&  0.0157\\*
-    \hline
-    10& 1& 5& 4.42e-7&  0.0314\\*
-    \hline
-    10& 2& 10& 6.78e-7&  0.0598\\*
-    \hline
-    10& 3& 15& 1.11e-6&  0.0955\\*
-    \hline
-    100& 1& 50& 2.78e-6&  0.743\\*
-    \hline
-    100& 2& 100& 6.18e-6&  1.78\\*
-    \hline
-    100& 3& 150& 8.95e-6&  3.16\\*
-    \hline
-    500& 1& 200& 1.32e-5&  15.1\\*
-    \hline
-    500& 2& 500& 2.52e-5&  41.5\\*
-    \hline
-    500& 3& 750& 6.65e-5&  74.5\\*
-    \hline
-  \end{tabular}
-   \caption{Numerical kinetic energy}
-    \end{minipage} 
-\end{table}
-As expected, the CPU time increases with $N$ and $d$ (number of dimensions).
-Calcuating the kinetic energy analytically speeds up the simulation a great deal and 
-the CPU time difference increases exponentially with $N$.\\
-
-\noindent The analytical method reproduces the exact energies with zero error. 
-The numerical method results in a small deviation due to the inherent 
-error of the differentiation algorithm that increases with $N$.
-This is not a statistical error, thus we do not perform an error analysis with the blocking method
-for system 1. 
-
-
-\subsection{System 1 - importance sampling}
-
-With the following parameters,
-\belowcaptionskip=-10pt
-\begin{lstlisting}[label=parameters2,caption=Parameters importance sampling Metropolis system 1]
-    int numberOfSteps       = (int) 1e4;
-    double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.5;          // variational parameter 1
-    double stepLength       = 1.5;          // metropolis step length
-    double equilibration    = 0.1;          // amount of the total steps
-    double timeStep         = 0.001;        // importance sampling
-\end{lstlisting}
-we obtain
-\begin{table}[H]
-      \begin{minipage}{.5\linewidth}
-  \centering
-  \begin{tabular}{ | c | r | r | r | r |}
-    \hline
-    N& d& $\langle {\textrm E_L}\rangle$& $\sigma$& Time \\*
-    \hline
-    1& 1& 0.5& 0& 0.0183 \\*
-    \hline
-    1& 2& 1& 0&  0.0338\\*
-    \hline
-    1& 3& 1.5& 0&  0.0501\\*
-    \hline
-    10& 1& 5& 0&  0.0479\\*
-    \hline
-    10& 2& 10& 0&  0.0488\\*
-    \hline
-    10& 3& 15& 0&  0.0812\\*
-    \hline
-    100& 1& 50& 0&  0.0605\\*
-    \hline
-    100& 2& 100& 0&  0.1212\\*
-    \hline
-    100& 3& 150& 0&  0.218\\*
-    \hline
-    500& 1& 200& 0&  0.171\\*
-    \hline
-    500& 2& 500& 0&  0.451\\*
-    \hline
-    500& 3& 750& 0&  0.941\\*
-    \hline
-  \end{tabular}
-  \caption{Analytical kinetic energy}
-  \label{tab:Tabell3}
-  \end{minipage}
-  \begin{minipage}{.5\linewidth}
-   \centering
-     \begin{tabular}{ | c | r | r | r | r |}
-    \hline
-    N& D& $\langle {\textrm E_L}\rangle$& $\sigma$& CPU time \\*
-    \hline
-    1& 1& 0.5& 9.41e-8& 0.0170 \\*
-    \hline
-    1& 2& 1& 1.48e-7&  0.0352\\*
-    \hline
-    1& 3& 1.5& 1.58e-7&  0.0618\\*
-    \hline
-    10& 1& 5& 3.42e-7&  0.0413\\*
-    \hline
-    10& 2& 10& 3.50e-7&  0.104\\*
-    \hline
-    10& 3& 15& 9.23e-7&  0.163\\*
-    \hline
-    100& 1& 50& 3.02e-6&  0.737\\*
-    \hline
-    100& 2& 100& 5.72e-6&  1.889\\*
-    \hline
-    100& 3& 150& 6.88e-6&  3.319\\*
-    \hline
-    500& 1& 200& 1.01e-5&  15.509\\*
-    \hline
-    500& 2& 500& 4.94e-5&  41.047\\*
-    \hline
-    500& 3& 750& 2.42e-5&  75.584\\*
-    \hline
-  \end{tabular}
-  \caption{Numerical kinetic energy}
-  \label{tab:Tabell4}
-  \end{minipage}
-\end{table}
-The analytic method again reproduces the exact energies, while the numerical method has a small error. 
-However,there are two differences between the results produced by the brute force algorithm and 
-Metropolis with importance sampling.
-Firstly, the CPU time increases because we have to calculate the drift vector and Green's function for 
-each Monte Carlo cycle.
-Secondly, the error (for numerical kinetic energy) \textit{decreases} for the same number of Monte Carlo cycles
-as we should expect 
-considering the more efficient
-way of sampling positions compared to brute force sampling. \\
-
-\noindent We also want to investigate how the results depend on the chosen time step.
-For $N = 100$ and $d = 3$ we get,
-\begin{table}[H]
-  \begin{minipage}{.5\linewidth}
-  \centering
-  \begin{tabular}{ | c | r | r |}
-    \hline
-    Time step& Acceptance rate& $\sigma$ \\*
-    \hline
-    0.001& 0.871& 0 \\*
-    \hline
-    0.005& 0.831& 0 \\*
-    \hline
-    0.01&  0.801& 0 \\*
-    \hline
-  \end{tabular}
-  \caption{Analytical kinetic energy}
-  \label{tab:Tabell5}
-  \end{minipage}
-  \begin{minipage}{.5\linewidth}
-   \centering
-    \begin{tabular}{ | c | r | r |}
-    \hline
-    Time step& Acceptance rate& $\sigma$ \\*
-    \hline
-    0.001& 0.871& 6.88e-6 \\*
-    \hline
-    0.005& 0.831& 7.39e-6 \\*
-    \hline
-    0.01&  0.801& 9.91e-6 \\*
-    \hline
-  \end{tabular}
-  \caption{Numerical kinetic energy}
-  \label{tab:Tabell1}
-  \end{minipage}
-\end{table}
-We see that the acceptance rate decreases for increasing time step. This is because
-the probability of accepting a new state is larger for small $\Delta t$; the ratio
-\eqref{metropolisHastings} yields a value near $1$ when the wave function at the proposed 
-new position is very close to the old one. \\
-
-\noindent The error increases slightly with the time step, caused by the fact
-that the decreasing acceptance rate leads to more inaccurate sampling.  
-
-\subsection{System 2}
-
-Before running the simulation for system 2, we must optimize the variational parameter $\alpha$ using
-the steepest descent method. We run $1e5$ number of Metropolis steps for each iteration.
-The set of parameters
-\belowcaptionskip=-10pt
-\begin{lstlisting}[label=parameters3,caption=Parameters system 2]
-double omega            = 1.0;          // oscillator frequency
-double beta             = 2.82843;      // variational parameter 2
-double stepLength       = 1.5;          // metropolis step length
-double equilibration    = 0.1;          // amount of the total steps
-double a                = 0.0043;       // hard sphere radius
-double gamma            = 2.82843;      // trap potential strength z-direction
-
-double initialAlpha = 0.7;
-double stepLengthOptimize = 0.01;
-\end{lstlisting}
-yields the the optimal variational parameter $\alpha = 0.500605$. 
-We now run simulations for $N=10$, $N=50$ and $N=100$ bosons with this optimal $\alpha$, computing
-the Laplacian analytically. 
-The number of Monte Carlo steps is $1e6$ for $N=10$ and $1e5$ for $N=50$ and $N=100$.
-\begin{table}[H]
-  \centering
-  \begin{tabular}{ | c | r | r | r | }
-    \hline
-    N& $\langle {\textrm E_L}\rangle$& $\sigma$& CPU time \\*
-    \hline
-    10& 24.143& 7.14e-3& 9.027 \\*
-    \hline
-    50& 120.51& 0.121& 87.86  \\*
-    \hline
-    100& 239.5& 1.114& 687.66\\*
-    \hline
-  \end{tabular}
-  \label{tab:Tabell1}
-\end{table}
-These energies are quite close to those in \ref{tab:benchmarks} from \cite{ref1}. 
-Reproducing these excactly is not expected, as our set of parameters are not equal to those used in \cite{ref1}. 
-The energy values are not that different from those of system 1, especially for $N=10$ and $N=50$. 
-This tells us that the correlation effects are not very dominant, due to the dilute nature of our system. 
-A denser system would have had larger correlations. 
-
-\subsubsection{Error analysis}
-As discussed above, our estimate of error for system 2 is too low because the correlation effects 
-are not included in the error estimate. A proper error analysis is done using the blocking method.
-First, we plot the standard deviation $\sigma$ as a function of block size $n_b$,
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[width = 160mm]{error_10.pdf}
-  \caption{N = 10}\label{fig:error10}
-  \end{center}
-\end{figure}
-
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[width = 160mm]{error_50.pdf}
-  \caption{N = 50}\label{fig:error50}
-  \end{center}
-\end{figure}
-
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[width = 160mm]{error_100.pdf}
-  \caption{N = 100}\label{fig:error100}
-  \end{center}
-\end{figure}
-We can now estimate $\tau$ by looking at which block size $n_b$ the plateau is reached and multiply
-this value with the above Monte Carlo step size, 
-\begin{itemize}
- \item N=10: $n_b \approx 100 \Rightarrow \tau = 100\cdot 1.5 = 150$ 
- \item N=50: $n_b \approx 1000 \Rightarrow \tau = 1000\cdot 1.5 = 1500$
- \item N=100: $n_b \approx 1500 \Rightarrow \tau = 1500\cdot 1.5 = 2250$
-\end{itemize}
-The true sample errors are then, according to \eqref{trueSampleError},
-\begin{itemize}
- \item N=10: $\sigma_{true} = 0.032$
- \item N=50: $\sigma_{true} = 0.77$
- \item N=100: $\sigma_{true} = 6.1$
-\end{itemize}
-We observe that the true sample errors are almost one order of magnitude larger than the uncorrelated
-error estimates. 
-
-
-\subsection{One-body density}
-The one-body density is defined as
-\begin{equation}
- \rho({\bf r}) = \int d{\bf r}_2 \dots d{\bf r}_N |\Psi({\bf r}, {\bf r}_2, \dots , {\bf r}_N)|^2
-\end{equation}
-This quantity can be visuzalized by making a histogram of the radial distance of the bosons.
-The following paramters,
-\belowcaptionskip=-10pt
-\begin{lstlisting}[label=parameters3,caption=Parameters one-body density]
-    int numberOfDimensions  = 3;
-    int numberOfParticles   = 30;
-    int numberOfSteps       = (int) 1e6;
-    double omega            = 1.0;          // oscillator frequency
-    double alpha            = 0.5;          // variational parameter 1
-    double beta             = 2.82843;      // variational parameter 2
-    double stepLength       = 1.5;          // metropolis step length
-    double equilibration    = 0.1;          // amount of the total steps used
-    double a                = 0.0043;       // hard sphere radius
-    double gamma            = 2.82843;      // trap potential strength z-direction
-\end{lstlisting}
-results in
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[width = 200mm]{radialDistSystem1.pdf}
-  \caption{Radial distribution of particles - system 1}\label{fig:density1}
-  \end{center}
-\end{figure}
-
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[width = 200mm]{radialDistSystem2.pdf}
-  \caption{Radial distribution of particles - system 2}\label{fig:density2}
-  \end{center}
-\end{figure}
-The distribution for system 1 is shifted towards the right compared to system 2, thus
-the average radial distance is larger. \\
-
-\noindent The distribution of particles in the $yz$-plane is included for visualization purposes,
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[width = 140mm]{radialDist1YZ.pdf}
-  \caption{System 1}\label{fig:density3}
-  \end{center}
-\end{figure}
-
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[width = 140mm]{radialDist2YZ.pdf}
-  \caption{System 2}\label{fig:density4}
-  \end{center}
-\end{figure}
-We observe also here that system 1 is more spread out than system 2. System 1 has a spherical distribution
-centered around origo. System 2 is however shifted towards positive y- and z-direction and has a slightly 
-elliptical shape with an elongation in the z-direction. 
-The latter is caused by the elliptical harmonic oscillator potential \eqref{trap_eqn} with
-$\omega_z / \omega_{ho} = 2.82834$.
 
 
 \section{Conclusions}
@@ -1436,6 +1120,7 @@ The analytic expression for the local energy is thus
  - \frac{2a\alpha \omega r_{12}}{(1+\beta r_{12})^2} \\
  &+ \frac{2a}{(1+\beta r_{12})^2}\Biggr[ \frac{a}{(1+\beta r_{12})^2} + 
               \frac{1}{r_{12}} - \frac{2\beta}{1 + \beta r_{12}} \Biggr]
+              \label{analyticLocalEnergy}
 \end{align}
 
 
