@@ -3,7 +3,7 @@
 \usepackage[T1]{fontenc}    % Riktig fontencoding
 \usepackage[utf8]{inputenc} % Riktig tegnsett
 \usepackage{babel}   % Ordelingsregler, osv
-\usepackage{graphicx}       % Inkludere bilder
+\usepackage{graphicx, caption}       % Inkludere bilder
 \usepackage{booktabs}       % Ordentlige tabeller
 \usepackage{url}            % Skrive url-er
 \usepackage{textcomp}       % Den greske bokstaven micro i text-mode
@@ -16,6 +16,7 @@
 \usepackage{amsmath}  
 \usepackage{braket} 
 \usepackage{multicol}
+\usepackage{tikz}
 %\usepackage[]{mcode}
 
 % add source code in box
@@ -116,8 +117,23 @@ and without vectorization.\\
 
 \noindent ***structure of report***y
 
+\section{Systems}
+As mentioned in the introduction we want to study electrons confined in a Harmonic Oscillator (HO) trap in two dimensions. The trap we will use 
+is an isotropic HO potential, with an idealized Hamiltonian given by
+\begin{equation}
+ H = \sum_{i=1}^N\left(-\frac{1}{2} \nabla_i^2 + \frac{1}{2} \omega^2 r_i^2 \right) + \sum_{i<j} \frac{1}{r_{ij}}
+\end{equation}
+where natural units ($\hbar = c = e = m_e = 1$) are used and all energies are in atomic units a.u. The Hamiltonian includes a standard HO part
+\begin{equation*}
+ H_0 = \sum_{i=1}^N \left( -\frac{1}{2}\nabla_i^2 + \frac{1}{2}\omega^2 r_i^2 \right)
+\end{equation*}
+and a repulsive interaction between two electrons, given by
+\begin{equation*}
+ H_1 = \sum_{i < j} \frac{1}{r_{ij}}
+\end{equation*}
+where $r_{ij} = |{\bf r}_1 - {\bf r}_2|$ is the distance between the electrons. The modulus of the positions of the electrons is defined as $r_i = \sqrt{r_{i_x}^2 + r_{i_y}^2}$.
 
-
+\begin{comment}
 \section{Theory}
 \subsection{Physical system}
 We consider a system of electrons confined in a pure two-dimensional 
@@ -143,17 +159,22 @@ modulus of the positions of the electrons (for a given electron $i$) as $r_i = \
 We study a system of electrons, which are fermions that obey the Pauli exclusion principle.
 This means that we have to approximate the exact wave function for the system with a trial
 wave function that is antisymmetric. Our antisymmetric ansatz $\Psi_T$ is a product of a 
-Slater determinant $\Psi_{SD} = |D|$ and a so-called Jastrow correlation term $\Psi_J$,
+Slater determinant $\Psi_{SD} = |D|$ and a linear Pade-Jastrow correlation term $\Psi_C$ 
 \begin{equation}
-   \psi_{T}({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha, \beta) = \Psi_{SD}\Psi_J = 
+ \Psi_C = \exp{\left(\frac{a r_{ij}}{1+\beta r_{ij}}\right)}
+ \label{correlationFunction}
+\end{equation}
+The full wave function for $N$ electrons can be written
+\begin{equation}
+   \psi_{T}({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha, \beta) = \Psi_{SD}\Psi_C = 
    |D({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha)|
-   \prod_{i<j}^{N}\exp{\left(\frac{a r_{ij}}{(1+\beta r_{ij})}\right)}, 
+   \prod_{i<j}^{N}\exp{\left(\frac{a r_{ij}}{1+\beta r_{ij}}\right)}, 
    \label{TrialWF}
 \end{equation}
 where $\alpha$ and $\beta$ are the variational parameters.
 The Slater matrix $D$ is defined as
 \begin{equation}
- d_{ij} = \phi_j({\bf r}_i)
+ D_{ij} = \phi_j({\bf r}_i)
  \label{slaterMatrix}
 \end{equation}
 where $\phi_j({\bf r}_i)$ are single-particle wave functions, i.e. eigenfunctions of the one-body 
@@ -178,12 +199,101 @@ For the pure harmonic oscillator \eqref{OneBodyHamiltonian}, $\Psi_T$ does not h
    C\exp{\left(-\alpha\omega(r_1^2+r_2^2)/2\right)}
 \label{trialWFHarmOscillator}
 \end{equation}
+\end{comment}
 
 
+\subsection{Unperturbed system}
+If we only include the HO part of the Hamiltonian we say that the system is unperturbed since there are no interaction between the electrons. The wave function for one 
+electron in an oscillator potential in two dimensions is
+\begin{equation}
+ \phi_{n_x,n_y}(x,y) = AH_{n_x}(\sqrt{\alpha\omega}x)H_{n_y}(\sqrt{\alpha\omega}y)\exp\left(-\frac{\alpha\omega(x^2+y^2)}{2}\right).
+\end{equation}
+The functions $H_{n_x}(\sqrt{\alpha\omega}x)$ are Hermite polynomials while $A$ is a normalization constant. For the lowest lying state, $n_x = n_y = 0$, the energy is given by
+$\epsilon_{n_x,n_y} = \omega(n_x+n_y+1) = \omega$. Now, due the Pauli exclusion principle we can not have two electrons in the same state, however each energy level (distinct $(n_x,n_y)$ pair)
+can contain two electrons since they can have either spin up or spin down. We can visualize this as follows:
+\begin{figure}[h!]
+\begin{center}
+\begin{tikzpicture}
+  \draw[->] (-3.5,-1) -- (3.5,-1) node[anchor=west] {};
+  \draw[->] (-3.5,-1) -- (-3.5,3) node[anchor=south] {$\epsilon_{n_x,n_y}$};
+
+  \draw (-3.6,0) node[anchor=east] {$1\omega$} -- (-3.4,0);
+  \draw (-3.6,1) node[anchor=east] {$2\omega$} -- (-3.4,1);
+  \draw (-3.6,2) node[anchor=east] {$3\omega$} -- (-3.4,2);
+
+  
+
+  \begin{scope}
+    \draw (-.5,0) -- (.5,0);
+    \draw[->] (-.25,-.25) node[anchor=north]{} -- (-.25,.25);
+    \draw[<-] (.25,-.25)  node[anchor=north]{} -- (.25,.25);
+  \end{scope}
+
+  \begin{scope}[xshift=-1cm,yshift=1cm]
+    \draw (-.5,0) -- (.5,0);
+    \draw[->] (-.25,-.25) node[anchor=north]{} -- (-.25,.25);
+    \draw[<-] (.25,-.25) node[anchor=north]{} -- (.25,.25);
+  \end{scope}
+
+
+  \begin{scope}[xshift=1cm,yshift=1cm]
+    \draw (-.5,0) -- (.5,0);
+    \draw[->] (-.25,-.25) node[anchor=north]{} -- (-.25,.25);
+    \draw[<-] (.25,-.25) node[anchor=north]{} -- (.25,.25);
+  \end{scope}
+
+
+  \begin{scope}[xshift=-2cm,yshift=2cm]
+    \draw (-.5,0) -- (.5,0);
+    \draw[->] (-.25,-.25) node[anchor=north]{} -- (-.25,.25);
+    \draw[<-] (.25,-.25) node[anchor=north]{} -- (.25,.25);
+  \end{scope}
+
+
+  \begin{scope}[xshift=0cm,yshift=2cm]
+    \draw (-.5,0) -- (.5,0);
+    \draw[->] (-.25,-.25) node[anchor=north]{} -- (-.25,.25);
+    \draw[<-] (.25,-.25) node[anchor=north]{} -- (.25,.25);
+  \end{scope}
+
+
+  \begin{scope}[xshift=2cm,yshift=2cm]
+    \draw (-.5,0) -- (.5,0);
+    \draw[->] (-.25,-.25) node[anchor=north]{} -- (-.25,.25);
+    \draw[<-] (.25,-.25) node[anchor=north]{} -- (.25,.25);
+  \end{scope}
+
+\end{tikzpicture}
+\caption{Fig text}
+\end{center}
+\end{figure}
+If we "fill" each energy level with electrons we say that we have a closed shell system, where the number of particles needed to fill each energy 
+level constitutes a magic number. The first magic numbers are $N=2,6,12,20$. In the unperturbed case the ground state energy will just be the sum of each individual particle's
+energy.
+\begin{table}[H] 
+  \begin{center}
+    \begin{tabular*}{4cm}{c @{\extracolsep{\fill}} c}
+      \toprule
+      $N$ & $E$ \\ 
+      \hline
+      2  & $2\omega$ \\
+      6  & $10\omega$ \\ 
+      12 & $28\omega$ \\ 
+      20 & $60\omega$ \\ 
+      \bottomrule
+      \end{tabular*} 
+    \end{center}
+    \captionsetup{width=12cm}
+      \caption {Exact ground state energies $E$ in atomic units for $N$ electrons in a pure two-dimensional 
+                harmonic oscillator with oscillator frequency $\omega$.
+                The values of $N$ are magic numbers for the system.} 
+  \label{tab:HOEnergies} 
+\end{table}
+This provides an excellent way to check that our program is working properly when we exclude interaction between the electrons.
 
  
 
-
+\begin{comment}
 \subsection{Benchmarks}
 We need to compare our results to exact theoretical closed-form expressions or other research to validate our code. 
 $N$ fermions in a harmonic oscillator potential withouth interaction
@@ -226,6 +336,8 @@ From \eqref{exactenergy} we obtain the following energies,
 \noindent For the full Hamiltonian \eqref{fullHamiltonian} there are only analytic solutions
 for two electrons. According to \cite{ref1}, the ground state energy for two electrons
 with $\omega = 1$ is $E = 3 \, a.u.$. For $N = 6,12,20$ we benchmark our results with \cite{ref2}. ????
+\end{comment}
+
 
 \section{Methods}
 
@@ -458,19 +570,27 @@ evaluate $Nd$ Slater determinants for the gradient (quantum force and kinetic en
 the Laplacian (kinetic energy). Therefore, it is imperative to find alternative ways of computing
 the quantities related to the trial wave function to improve performance. \\
 
-\subsubsection{Optimization of Metropolis ratio}
-\noindent It turns out that the solution is an algorithm that requires to keep track of the \textit{inverse}
+\subsubsection{Optimization of determinant-to-determinant ratio}
+The ratio \eqref{ratio2} used in the Metropolis algorithm is the following 
+for our trial wave function (not squared):
+\begin{equation}
+ R = \frac{|D|^{\textrm{new}}}{|D|^{\textrm{old}}}
+ \frac{\Psi_C^{\textrm{new}}}{\Psi_C^{\textrm{old}}}
+\end{equation}
+where we label the Slater determinant-to-determinant ratio as $R_{SD}$ and the correlation-to-correlation
+ratio $R_C$.
+It turns out that we can compute $R_{SD}$ using an algorithm that requires to keep track of the \textit{inverse}
 of the Slater matrix \eqref{slaterMatrix}. The inverse of $D$ can be expressed in terms of its cofactors $C_{ij}$ and its
 determinant $|D|$,
 \begin{equation}
- d_{ij}^{-1} = \frac{C_{ji}}{|D|}
+ D_{ij}^{-1} = \frac{C_{ji}}{|D|}
 \end{equation}
 where $C_{ji}$ is the transposed cofactor matrix. 
 The Slater part $R_{SD}$ of the ratio \eqref{ratio2} can thus be written,
 \begin{equation}
  R_{SD} = \frac{|D({\bf R}^{\textrm{new}})|}{|D({\bf R}^{\textrm{old}})|}
-  = \frac{\sum_{j=1}^N d_{ij}({\bf R}^{\textrm{new}}) C_{ij}({\bf R}^{\textrm{new}})}
-  {\sum_{j=1}^N d_{ij}({\bf R}^{\textrm{old}}) C_{ij}({\bf R}^{\textrm{old}})}
+  = \frac{\sum_{j=1}^N D_{ij}({\bf R}^{\textrm{new}}) C_{ij}({\bf R}^{\textrm{new}})}
+  {\sum_{j=1}^N D_{ij}({\bf R}^{\textrm{old}}) C_{ij}({\bf R}^{\textrm{old}})}
 \end{equation}
 When moving \textit{one} particle for each Monte Carlo cycle, ${\bf R}^{\textrm{new}}$ differs from 
 ${\bf R}^{\textrm{old}}$ by the position of only one, say the $i$-th particle. This means that
@@ -482,13 +602,13 @@ $C$ is independent of the entries of the $i$-th row of its corresponding matrix 
 \end{equation}
 and
 \begin{equation}
- R_{SD} = \frac{\sum_{j=1}^N d_{ij}({\bf R}^{\textrm{new}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})}
-  {\sum_{j=1}^N d_{ij}({\bf R}^{\textrm{old}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})}
+ R_{SD} = \frac{\sum_{j=1}^N D_{ij}({\bf R}^{\textrm{new}}) D_{ji}^{-1}({\bf R}^{\textrm{old}})}
+  {\sum_{j=1}^N D_{ij}({\bf R}^{\textrm{old}}) D_{ji}^{-1}({\bf R}^{\textrm{old}})}
 \end{equation}
 By definition, the denominator of this expression is unity, thus we obtain for the ratio,
 \begin{equation}
- R_{SD} = \sum_{j=1}^N d_{ij}({\bf R}^{\textrm{new}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
-        = \sum_{j=1}^N \phi_j({\bf R}_i^{\textrm{new}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+ R_{SD} = \sum_{j=1}^N D_{ij}({\bf R}^{\textrm{new}}) D_{ji}^{-1}({\bf R}^{\textrm{old}})
+        = \sum_{j=1}^N \phi_j({\bf R}_i^{\textrm{new}}) D_{ji}^{-1}({\bf R}^{\textrm{old}})
         \label{slaterRatio}
 \end{equation}
 where the last equality follows from the definition of the Slater matrix \eqref{slaterMatrix}. 
@@ -508,14 +628,17 @@ of $\mathcal{O}(N^2)$ and is as follows:
 \begin{itemize}
  \item Update all but the $i$-th column of $D^{-1}$. For each column $j\neq i$,
  calculate the quantity 
- $$S_j = \sum_{l=1}^N d_{il} ({\bf R}^{\textrm{new}}) d_{lj}^{-1} ({\bf R}^{\textrm{old}})$$
+ $$S_j = \sum_{l=1}^N D_{il} ({\bf R}^{\textrm{new}}) D_{lj}^{-1} ({\bf R}^{\textrm{old}})$$
  \item The new elements of the $j$-th column of $D^{-1}$ is then given by: 
- $$d_{kj}^{-1}({\bf R}^{\textrm{new}}) = d_{kj}^{-1}({\bf R}^{\textrm{old}}) - \frac{S_j}{R_{SD}}
- d_{ki}^{-1}({\bf R}^{\textrm{old}}) \quad k = \{1,\dots,N\}, \quad j \neq i$$
+ $$D_{kj}^{-1}({\bf R}^{\textrm{new}}) = D_{kj}^{-1}({\bf R}^{\textrm{old}}) - \frac{S_j}{R_{SD}}
+ D_{ki}^{-1}({\bf R}^{\textrm{old}}) \quad k = \{1,\dots,N\}, \quad j \neq i$$
  \item Finally the $i$-th column of $D^{-1}$ is updated simply as follows:
- $$d_{ki}^{-1}({\bf R}^{\textrm{new}}) = \frac{1}{R_{SD}} d_{ki}^{-1}({\bf R}^{\textrm{old}}) \quad
+ $$D_{ki}^{-1}({\bf R}^{\textrm{new}}) = \frac{1}{R_{SD}} D_{ki}^{-1}({\bf R}^{\textrm{old}}) \quad
  k = \{1,\dots,N\}$$
 \end{itemize}
+This means that we only need to invert the Slater matrix with conventional methods like
+Gaussian elimination or LU-decomposition once, after we have initialized them. For the subesequent steps,
+we use the above algorithm to obtain the inverse matrix. 
 
 \subsubsection{Splitting the Slater determinant}
 
@@ -559,7 +682,7 @@ The above is correct only for spin-independent Hamiltonians. Our trial wave func
 can now be written as
 \begin{equation}
  \Psi_T = |D|_\uparrow |D|_\downarrow \Psi_C
- \eqref{TrialWFSpins}
+ \label{TrialWFSpins}
 \end{equation}
 
 
@@ -605,53 +728,166 @@ Inserting $\Psi_{SD} = |D|_\uparrow|D|_\downarrow$ yields
 \begin{equation}
  \frac{\nabla \Psi_T}{\Psi_T} = \frac{\nabla|D|_\uparrow}{|D|_\uparrow} + 
  \frac{\nabla |D|_\downarrow}{|D|_\downarrow} + \frac{\nabla \Psi_C}{\Psi_C}
+ \label{gradientOfTrialWF}
 \end{equation}
 The process to obtain the gradient-determinant ratio needed in this expression is analogous to
 the one used in deriving \eqref{slaterRatio}. The result is
 \begin{equation}
- \frac{\nabla_i |D|}{|D|} = \sum_{j=1}^N \nabla_i d_{ij}({\bf R}^{\textrm{old}}) d_{ji}^{-1}
+ \frac{\nabla_i |D|}{|D|} = \sum_{j=1}^{N/2} \nabla_i D_{ij}({\bf R}^{\textrm{old}}) D_{ji}^{-1}
  ({\bf R}^{\textrm{old}})
-        = \sum_{j=1}^N \nabla_i \phi_j({\bf R}_i^{\textrm{old}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+        = \sum_{j=1}^{N/2}\nabla_i \phi_j({\bf R}_i^{\textrm{old}}) D_{ji}^{-1}({\bf R}^{\textrm{old}})
         \label{gradientRatioBefore}
 \end{equation}
+where the sum runs up to $N/2$ for both $|D|_\uparrow$ and $|D|_\downarrow$. 
 This expression is used to calculate the quantum force before the ratio \eqref{ratio2} is computed. 
 After the position of one particle is altered, the expression is modified to
 \begin{equation}
  \frac{\nabla_i |D|}{|D|}
-        = \frac{1}{R_{SD}} \sum_{j=1}^N \nabla_i \phi_j({\bf R}_i^{\textrm{new}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+        = \frac{1}{R_{SD}} \sum_{j=1}^{N/2} \nabla_i \phi_j({\bf R}_i^{\textrm{new}}) D_{ji}^{-1}({\bf R}^{\textrm{old}})
         \label{gradientRatioAfter}
 \end{equation}
 Note that the old inverse Slater matrix is used in both cases because this is not updated until after 
-a step has been accepted. According to \eqref{TrialWFSpins}, we only need to compute the gradient w.r.t.
-either $|D|_\uparrow$ or $|D|_\downarrow$. We use the particle index to decide which matrix we need 
-to update: If $i < N/2$ we only calculate the spin-up gradient:
+a step has been accepted. We see from \eqref{gradientOfTrialWF} that we can compute
+the gradients of the spin-up and spin-down determinants seperately. Furthermore, according to 
+the factorization \eqref{SlaterDetFactorized},
+one of the Slater gradients is always zero for a given particle $i$:
+\begin{itemize}
+ \item $\nabla_i |D|_\downarrow = 0$  for $i \leq N/2$
+ \item $\nabla_i |D|_\uparrow = 0$ for $i > N/2$
+\end{itemize}
+thus we only need to compute one of them for each particle. This is implemented as follows:
+\belowcaptionskip=-10pt
+\begin{lstlisting}[label=slaterGradient,caption=Computation of the Slater gradient ratio for particle i. 
+The spin-up matrix only contains the single-particle wave functions as functions of the first half of the 
+particles. The spin-down matrix is a function of the second half. One of them is thus
+zero for a given particle $i$.]
+
+  // get position of particle i
+    double x = particles[i]->getPosition()[0];
+    double y = particles[i]->getPosition()[1];
+
+    // spin-up slater
+    if (i < m_numberOfParticlesHalf) {
+        for (int j=0; j < m_numberOfParticlesHalf; j++) {
+            int nx = m_quantumNumbers(j,0);
+            int ny = m_quantumNumbers(j,1);
+            std::vector<double> grad = singleParticleWFGradient(nx, ny, x, y);
+            m_gradientUp[0] += grad[0] * m_slaterSpinUpInverse(j,i);
+            m_gradientUp[1] += grad[1] * m_slaterSpinUpInverse(j,i);
+        }
+    }
+    // spin-down slater
+    else {
+        for (int j=0; j < m_numberOfParticlesHalf; j++) {
+            int nx = m_quantumNumbers(j,0);
+            int ny = m_quantumNumbers(j,1);
+            std::vector<double> grad = singleParticleWFGradient(nx, ny, x, y);
+            m_gradientDown[0] += grad[0] * 
+            m_slaterSpinDownInverse(j,i-m_numberOfParticlesHalf);
+            m_gradientDown[1] += grad[1] * 
+            m_slaterSpinDownInverse(j,i-m_numberOfParticlesHalf);
+        }
+    }
+\end{lstlisting}
+
+
+\subsubsection{Optimization of the Laplacian}
+We need the Laplacian of the trial wave function to compute the expectation value of the kinetic
+energy $K$. For electron $i$ this is
 \begin{equation}
- \frac{\nabla_i |D|_\uparrow}{|D|_\uparrow} = 
- \sum_{j=0}^{N/2-1} \nabla_i \phi_j({\bf R}_i^{\textrm{old}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+ \langle K_i \rangle = -\frac{1}{2} \frac{\langle\Psi_T|\nabla_i^2|\Psi_T\rangle}{\langle\Psi_T|\Psi\rangle_T}
+ \label{kineticEnergy}
 \end{equation}
-or else, $i \geq N/2$, we update the spin-down gradient:
+It can be shown that the Laplacian of the trial wave function can be written
 \begin{equation}
- \frac{\nabla_i |D|_\downarrow}{|D|_\downarrow} = 
- \sum_{j=N/2}^{N-1} \nabla_i \phi_j({\bf R}_i^{\textrm{old}}) d_{ji}^{-1}({\bf R}^{\textrm{old}})
+ \frac{\nabla^2\Psi_T}{\Psi_T} = \frac{\nabla^2|D|_\uparrow}{|D|_\uparrow} + 
+ \frac{\nabla^2|D|_\downarrow}{|D|_\downarrow} + \frac{\nabla^2\Psi_C}{\Psi_C} + 
+ 2\left[\frac{\nabla|D|_\uparrow}{|D|_\uparrow} + \frac{\nabla|D|_\downarrow}{|D|_\downarrow}\right]
+ \cdot \frac{\nabla \Psi_C}{\Psi_C}
 \end{equation}
-where the sum now runs from $j=0$ because 
+where the Laplace-determinant-to-determinant ratio is given by
+\begin{equation}
+ \frac{\nabla_i^2|D|}{|D|} = \sum_{j=1}^{N/2}\nabla_i^2D_{ij}({\bf R}^{\textrm{new}})D_{ji}^{-1}({\bf R}^{\textrm{new}})
+ = \sum_{j=1}^{N/2}\nabla_i^2\phi_j({\bf R}_i^{\textrm{new}})D_{ji}^{-1}({\bf R}^{\textrm{new}})
+\end{equation}
+This expression must be computed for all electrons to obtain the total Laplacian for the whole system, which is needed
+in the local energy \eqref{localenergy}. To save computation time, we only recalculate $E_L$ when
+a step is accepted. 
 
+\subsubsection{Optimization of the correlation-to-correlation ratio}
+The correlation function $\Psi_C$ \eqref{correlationFunction} can be written
+\begin{equation}
+ \Psi_C = \prod_{i<j}^N\exp{(f_{ij})} = \exp(U)
+\end{equation}
+where 
+\begin{equation}
+ f_{ij} = \frac{a_{ij}r_{ij}}{1+\beta r_{ij}}
+ \label{pade-jastrow}
+\end{equation}
+and 
+\begin{equation}
+ U = \sum_{i<j}^Nf_{ij}
+\end{equation}
+We see that $\Psi_C$ depends on the relative distances $r_{ij}$ between the electrons. The total
+number of different relative distances is $N(N-1)/2$, computing the correlation-to-correation ratio
+$R_C$ therefore scales as $\mathcal{O}(N^2)$. However, when moving only one electron at a time, say the 
+$k$-th electron, only the $N-1$ distances having $k$ as one of their indicies are changed. The 
+rest of the factors thus cancel, and we have
+\begin{equation}
+ R_C = \frac{\Psi_C^{\textrm{new}}}{\Psi_C^{\textrm{old}}} = 
+ \frac{\exp{(U^{\textrm{new}})}}{\exp{(U^{\textrm{old}})}} = 
+ \exp{(\Delta U)}
+\end{equation}
+where 
+\begin{equation}
+ \Delta U = \sum_{i\neq k}^N (f_{ki}^{\textrm{new}} - f_{ki}^{\textrm{old}})
+\end{equation}
 
+\subsubsection{Optimization of the $\nabla \Psi_C / \Psi_C$ ratio}
+The expression to be derived in the following is of interest when computing the quantum force \eqref{quantumForce}
+and the kinetic energy \eqref{kineticEnergy}. From the discussion in the last section, only $N-1$ terms survive
+when we differentiate w.r.t. particle $k$. 
+The ratio $\nabla \Psi_C / \Psi_C$ for particle $i$
+in one dimension is thus
+\begin{equation}
+\frac{1}{\Psi_C}\frac{\partial \Psi_C}{\partial x_k} = 
+\frac{1}{\exp{U}}\frac{\partial \exp{U}}{\partial x_k} = 
+\frac{\partial U}{\partial x_k} = 
+\sum_{i\neq k}^N \frac{\partial f_{ki}}{\partial x_k}
+\end{equation}
+where
+\begin{equation}
+ \frac{\partial f_{ki}}{\partial x_k} = \frac{\partial f_{ki}}{\partial r_{ki}}
+ \frac{\partial r_{ki}}{\partial x_k} = \frac{a_{ki}}{(1 + \beta r_{ki})^2}\frac{x_k - x_i}{r_{ki}}
+\end{equation}
+with similar expressions for $y_k$. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\subsubsection{Optimization of the $\nabla^2 \Psi_C / \Psi_C$ ratio}
+The following ratio is needed to compute the Laplacian $\nabla^2 \Psi_T / \Psi_T$. 
+For particle $k$ in one dimension this is
+\begin{align}
+ \frac{1}{\Psi_C}\frac{\partial^2 \Psi_C}{\partial x_k^2} &= 
+ \frac{1}{\exp{U}}\frac{\partial}{\partial x_k}\left(\frac{\partial \exp{U}}{\partial x_k}\right) = 
+ \frac{1}{\exp{U}}\frac{\partial}{\partial x_k}\left(\exp{U}\frac{\partial \exp{U}}{\partial x_k}\right)\\ &= 
+ \left(\frac{\partial U}{\partial x_k}\right)^2 + \frac{\partial^2 U}{\partial x_k^2} =
+ \left(\frac{1}{\Psi_C}\frac{\partial \Psi_C}{\partial x_k}\right)^2 + 
+ \sum_{i\neq k}^N \frac{\partial^2 f_{ki}}{\partial x_k^2}
+\end{align}
+The total Laplacian for particle $k$ is thus
+\begin{equation}
+ \frac{\nabla^2_k \Psi_C}{\Psi_C} = \left(\frac{\nabla_k \Psi_C}{\Psi_C}\right)^2 + 
+ \sum_{i\neq k}^N \nabla_i^2 f_{ki}
+\end{equation}
+where
+\begin{equation}
+ \nabla_i^2 f_{ki}  = 
+ \frac{1}{r_{ki}}\frac{\partial f_{ki}}{\partial r_{ki}} + \frac{\partial^2 f_{ki}}{\partial r_{ki}^2}
+\end{equation}
+and 
+\begin{equation}
+ \frac{\partial^2 f_{ki}}{\partial r_{ki}^2} = -\frac{2a_{ki}\beta}{(1 + \beta r_{ki})^3}
+\end{equation}
+We must sum over all particles $k$ and both dimensions to obtain the full Laplacian for the system.
 
 
 
@@ -680,43 +916,74 @@ If this is not the case, we reject the new step and decrease the step size to ob
 accurate value. 
 $\langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$ is as we have seen a multidimensional integral \eqref{localEnergyExp}, 
 and the gradient w.r.t. $\boldsymbol{\alpha}$
-is not easily computed. Let us define
+is not easily computed.
+Let us define
 \begin{equation}
- \bar{E}_\alpha = \frac{\partial \langle E_L(\boldsymbol{\alpha}) \rangle}{\partial \alpha}
+ \bar{E}_{c_n} = \frac{\partial \langle E_L(\boldsymbol{\alpha}) \rangle}{\partial c_n}
 \end{equation}
-and 
-\begin{equation}
- \bar{E}_\beta = \frac{\partial \langle E_L(\boldsymbol{\alpha}) \rangle}{\partial \beta}
-\end{equation}
+where $c_n$ is a variational parameter.
 Using the chain rule and the hermicity of the Hamiltonian,
 it can be shown that
 \begin{equation}
- \bar{E}_\alpha = 2 \left( \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial \alpha} E_L 
+ \bar{E}_{c_n} = 2 \left( \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial c_n} E_L 
  \Bigr\rangle 
- - \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial \alpha}\Bigr\rangle \langle E_L \rangle   \right)
+ - \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial c_n}\Bigr\rangle \langle E_L \rangle   \right)
  \label{localenergyalpha}
-\end{equation}
-and 
-\begin{equation}
- \bar{E}_\beta = 2 \left( \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial \beta} E_L 
- \Bigr\rangle 
- - \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial \beta}\Bigr\rangle \langle E_L \rangle   \right)
- \label{localenergybeta}
 \end{equation}
 thus we need the expectation values of
 \begin{equation}
- \frac{\partial \ln{\Psi_T}}{\partial \alpha} E_L \quad
-  \frac{\partial \ln{\Psi_T}}{\partial \alpha}
+ \frac{\partial \ln{\Psi_T}}{\partial c_n} E_L
 \end{equation}
 and 
 \begin{equation}
- \frac{\partial \ln{\Psi_T}}{\partial \beta} E_L \quad
-  \frac{\partial \ln{\Psi_T}}{\partial \beta}
+\frac{\partial \ln{\Psi_T}}{\partial c_n}
 \end{equation}
 For our trial wave function \eqref{TrialWF}, we have
 \begin{equation}
- \ln{\Psi_T} = 
+ \frac{\partial\ln{\Psi_T}}{\partial c_n} = \frac{\partial\ln{|D|_\uparrow}}{\partial c_n} + 
+ \frac{\partial\ln{|D|_\downarrow}}{\partial c_n} + \frac{\partial\ln{\Psi_C}}{\partial c_n}
 \end{equation}
+Inserting our variational parameters $\alpha$ and $\beta$, we observe that
+\begin{equation}
+ \frac{\partial\ln{\Psi_C}}{\partial \alpha} = 0
+\end{equation}
+and 
+\begin{equation}
+ \frac{\partial\ln{|D|_\uparrow}}{\partial \beta} = \frac{\partial\ln{|D|_\downarrow}}{\partial \beta} = 0
+\end{equation}
+so we end up with
+\begin{equation}
+ \frac{\partial\ln{\Psi_T}}{\partial \alpha} = \frac{\partial\ln{|D|_\uparrow}}{\partial \alpha} + 
+ \frac{\partial\ln{|D|_\downarrow}}{\partial \alpha}
+\end{equation}
+and 
+\begin{equation}
+\frac{\partial\ln{\Psi_T}}{\partial \beta} = \frac{\partial\ln{\Psi_C}}{\partial \beta}
+\end{equation}
+We can calculate the above derivatives with the help of the following linear algebra identity:
+If $A$ is an invertible matrix which depends on a real parameter $t$, and if $dA/dt$ exists, then
+\begin{equation}
+ \frac{d}{dt}|A| = |A|\textrm{tr}\left(A^{-1}\frac{dA}{dt}\right)
+\end{equation}
+thus we have
+\begin{equation}
+ \frac{d}{dt}\ln{|A|(t)} = \textrm{tr}\left(A^{-1}\frac{dA}{dt}\right) = 
+ \sum_{i=1}^N\sum_{j=1}^N\frac{dA_{ij}}{dt}A_{ji}^{-1}
+\end{equation}
+For the Slater determinants, this expression is analogous to the gradient-ratio \eqref{gradientRatioBefore},
+only now we differentiate the single-particle wave functions w.r.t. $\alpha$:
+\begin{equation}
+ \frac{\partial\ln{|D|}}{\partial \alpha} = 
+ \sum_{i=1}^{N/2} \sum_{j=1}^{N/2} \frac{\partial \phi_j({\bf R}_i)}{\partial \alpha} D_{ji}^{-1}({\bf R}_i)
+\end{equation}
+The corresponding expression for the correlation function is
+\begin{equation}
+ \frac{\partial\ln{\Psi_C}}{\partial \beta} = 
+ \sum_{i=1}^N\sum_{j>i}^N \frac{\partial}{\partial\beta}
+ \left(\frac{a_{ij}r_{ij}}{1 + \beta r_{ij}}\right) = 
+ -\sum_{i=1}^N\sum_{j>i}^N \frac{a_{ij}r_{ij}^2}{(1 + \beta r_{ij})^2}
+\end{equation}
+
 
 The complete VMC method then amounts to the following:
 \begin{itemize}
@@ -908,7 +1175,7 @@ capability to alter vital functionality and also makes the program more user-fri
 Object-oriented code is also easy to expand on. We don't need to add new functionality to
 e.g. implement a new wave function; only the specifics of this new wave function needs to be implemented. 
 
-
+\begin{comment}
 \section{Results}
 
 We calculate the ground-state energies for the magic numbers $N = 2$, $N=6$, $N=12$ and $N=20$
@@ -933,122 +1200,213 @@ vectorization.
 \subsection{Results for two electrons - method 1}
 As a first validation of our code, we calculate the ground state energy of the two-electron system
 in a pure harmonic oscillator \eqref{HarmonicOscillator} and benchmark the results with Table \eqref{tab:HOEnergies}.
+\end{comment}
+\section{Results and discussion}
 
 
+\subsection{Some text}
+
+\subsection{More than two particles}
+
+\subsection{Performance analysis}
+
+
+\begin{table}[H]
+\caption{Optimal $\alpha$ and  $\beta$ values for given $\omega$'s  with jastrow factor.}
+\centering
+\begin{tabular}{ c c c }
+\hline
+\hline
+  $\omega$ & $\alpha$ & $\beta$ \\
+  \hline
+1    & 0.992067 & 0.400016\\
+0.5  & 0.952981 & 0.354743\\
+0.1  & 0.952833 & 0.354292\\
+0.05 & 0.913976 & 0.235196\\
+0.01 & 0.911692 & 0.203919\\
+\hline
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Optimal $\alpha$ values for given $\omega$'s  without jastrow factor.}
+\centering
+\begin{tabular}{ c c }
+\hline
+\hline
+  $\omega$ & $\alpha$ \\
+  \hline
+1    & 0.686717\\
+0.5  & 0.669455\\
+0.1  & 0.655921\\
+0.05 & 0.526488\\
+0.01 & 0.477602\\
+\hline
+\hline
+\end{tabular}
+\end{table}
+
+
+\begin{table}[H]
+\caption{Optimal $\alpha$ and $\beta$ values for given $\omega$'s  with jastrow factor and Slater determinant.}
+\centering
+\begin{tabular}{ c c c c }
+\hline
+\hline
+ N & $\omega$ & $\alpha$ & $\beta$ \\
+\hline
+ 6  & 1    & 1.03741   & 0.472513\\
+   & 0.5  & 0.931202  & 0.395044\\
+   & 0.1  & 0.831104  & 0.211443\\
+   & 0.05 & 0.849742  & 0.155566\\
+   & 0.01 & 0.842683  & 0.10789\\
+ \hline 
+12 & 1    & 1.10364   & 0.468861\\
+   & 0.5  & 0.936306  & 0.414534\\
+   & 0.1  & 0.84105   & 0.208143 \\
+   & 0.05 & 0.842746  & 0.153921\\
+   & 0.01 & 0.835467  & 0.0923274\\
+   \hline
+20 & 1    & 1.06019   & 0.474467\\
+   & 0.5  & 0.944121  & 0.419367\\
+   & 0.1  & 0.856981  & 0.200372\\
+   & 0.05 & 0.842341  & 0.153017\\
+   & 0.01 & 0.835301  & 0.0922157\\
+   \hline
+   \hline
+\end{tabular}
+\end{table}
+
+
+\begin{table}[H]
+\caption{Optimal $\alpha$ values for given $\omega$'s with Slater determinant and without jastrow factor}
+\centering
+\begin{tabular}{ c c c  }
+\hline
+\hline
+N & $\omega$ & $\alpha$  \\
+\hline
+6  & 1    & 1.03741 \\  
+   & 0.5  & 0.931202  \\
+   & 0.1  & 0.831104  \\
+   & 0.05 & 0.849742  \\
+   & 0.01 & 0.842683  \\
+\hline  
+12 & 1    & 1.10364   \\
+   & 0.5  & 0.936306  \\
+   & 0.1  & 0.84105   \\
+   & 0.05 & 0.842746  \\
+   & 0.01 & 0.835467  \\
+\hline   
+20 & 1    & 1.06019   \\
+   & 0.5  & 0.944121  \\
+   & 0.1  & 0.856981  \\
+   & 0.05 & 0.842341  \\
+   & 0.01 & 0.835301  \\
+\hline
+\hline
+   \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\begin{center}
+
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_w=1_N=2_WithoutSlater.png}
+  \caption{$\omega = 1$ and $N = 2$ without Slater determinant.}
+  \label{fig:NAVN1}
+\end{subfigure}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_w=05_N=2_WithoutSlater.png}
+  \caption{$\omega = 0.5$ and $N = 2$ without Slater determinant.}
+  \label{fig:NAVN2}
+\end{subfigure}
+\vspace{1cm}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_w=01_N=2_WithoutSlater.png}
+  \caption{$\omega = 0.1$ and $N = 2$ without Slater determinant.}
+  \label{fig:NAVN3}
+\end{subfigure}
+   \begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_w=005_N=2_WithoutSlater.png}
+  \caption{$\omega = 0.05$ and $N = 2$ without Slater determinant.}
+  \label{fig:NAVN4}
+\end{subfigure}
+\vspace{1cm}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_w=001_N=2_WithoutSlater.png}
+  \caption{$\omega = 0.01$ and $N = 2$ without Slater determinant.}
+  \label{fig:NAVN5}
+\end{subfigure}
+    \label{WithoutSlater}
+  \end{center}
+  \caption{blablabla}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_N=6_w=1_Slater.png}
+  \caption{$\omega = 1$ and $N = 6$ with Slater determinant.}
+  \label{fig:NAVN1}
+\end{subfigure}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_N=6_w=05_Slater.png}
+  \caption{$\omega = 0.5$ and $N = 6$ with Slater determinant.}
+  \label{fig:NAVN2}
+\end{subfigure}
+\vspace{1cm}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_N=6_w=01_Slater.png}
+  \caption{$\omega = 0.1$ and $N = 6$ with Slater determinant.}
+  \label{fig:NAVN3}
+\end{subfigure}
+   \begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=1.1\linewidth]{OBD_N=6_w=005_Slater.png}
+  \caption{$\omega = 0.05$ and $N = 6$ with Slater determinant.}
+  \label{fig:NAVN4}
+\end{subfigure}
+\vspace{1cm}
+%\begin{subfigure}{.4\textwidth}
+%  \centering
+%  \includegraphics[width=1.1\linewidth]{OBD_N=6_w=001_Slater.png}
+%  \caption{$\omega = 0.01$ and $N = 6$ with Slater determinant.}
+%  \label{fig:NAVN5}
+%\end{subfigure}
+    \label{WithoutSlater}
+  \end{center}
+  \caption{blablabla}
+\end{figure}
 
 
 \section{Conclusions}
-
-For system 1, the exact ground state energies were reproduced with zero error when using the closed-form expression
-for the Laplacian of the wave function. Computing this quantity numerically resulted in a small variance caused by 
-the error in the differentiation algorithm. Implementing closed-form expressions saved significant CPU time. 
-
-The error in the energies for system 2 were larger, but quite close to those in \cite{ref1}. This tells us 
-that the optimal $\alpha$ found by the steepest descent method was a good approximation. 
-Doing a proper error analysis by applying the blocking method was important to estimate the true sample errors, which was
-almost one order of magnitude larger than the initial suggestions. 
-
-The one-body density visualizations showed that system 2 were more dense than system 1. The different traps we used
-decided how the distribution of particles looked like: The spherical trap resulted in a spherical distribution
-centered around zero, while the elliptical trap stretched out the distribution in the z-direction. 
-
-The framework we have developed can also be used to model fermionic systems if we include the proper
-symmetry requirements. Further optimization of the code can be done, especially by applying parallelization. 
+ 
 
 
 
 
 \section{Appendix}
 
-\subsection{Closed-form expressions}
-
-The quantity we are aiming to compute is the expectiation value of the so-called local energy
- \begin{equation}
-    E_L({\bf R})=\frac{1}{\Psi_T({\bf R})}H\Psi_T({\bf R}),
-    \label{localenergy2}
- \end{equation}
-We can find closed-form expressions for the local energy with our specific Hamiltonian $H$ and trial wavefunction $\Psi_T$.
-Computing the local energy involves a second derivative of $\Psi_T$, which can be expensive to compute numerically. 
-Analytical expressions are therefore useful, as they can speed up the computations.\\
-
-\noindent First, we find the local energy with only the (spherical) harmonic oscillator potential, that is we set $a=0$ and $\beta=1$.
-During these calcuations we will use natural units, thus $\hbar=m=1$.
-For one particle in one dimension we have
-\begin{equation}
-\Psi_T(x) = e^{-\alpha x^2}
-\end{equation}
-and
-\begin{equation}
-    H =  
-	 -\frac{1}{2}
-	 \frac{\partial^2}{\partial x^2} +
-	 \frac{1}{2}\omega x^2
-\end{equation}
-The second derivate of the trial wave function is
-\begin{equation}
- \frac{\partial^2 \Psi_T}{\partial x^2} = 2\alpha e^{-\alpha x^2}(2\alpha x^2 - 1)
-\end{equation}
-so that
-\begin{equation}
- E_L = \frac{1}{\Psi_T}H\Psi_T = \alpha(1 - 2\alpha x^2) + \frac{1}{2}\omega^2x^2
-\end{equation}
-In three dimensions the double derivative is replaced by the Laplacian when computing the kinetic energy
-\begin{align}
- \frac{1}{\Psi_T}\bigtriangledown^2\Psi_T &= 2\alpha(2\alpha x^2 - 1) + 2\alpha(2\alpha y^2 - 1) + 2\alpha(2\alpha z^2 - 1) \\
-                          &= 2\alpha(2\alpha r^2 - 3) \label{analytickinnoninteracing}
-\end{align}
-thus the local energy is
-\begin{equation}
- E_L = \frac{1}{\Psi_T}\left(-\frac{1}{2}\bigtriangledown^2\Psi_T + V_{ext}\right) = \alpha(3 - 2\alpha r^2) + 
- \frac{1}{2}\omega^2r^2 
-\end{equation}
-We now turn our attention to $N$ particles, with the following wavefunction and Hamiltonian
-\begin{align}
- &\Psi_T({\bf R}) = \prod_i e^{-\alpha r_i^2} \\ \label{wfsystem1}
- &H =     \sum_i^N \left(
-	 -\frac{1}{2}
-	 { \bigtriangledown }_{i}^2 +
-	 \frac{1}{2}\omega^2r_i^2 \right)
-\end{align}
-The first term of the k-th Laplacian of this wavefunction is
-\begin{equation}
- \bigtriangledown^2_k\prod_i e^{-\alpha r_i^2} = 2\alpha(2\alpha x_k^2 - 1)\prod_i e^{-\alpha r_i^2}
-\end{equation}
-and when we divide with $\Psi_T$ to obtain the the local energy we end up with
-\begin{equation}
- E_L = \sum_i^N \left( \alpha(3 - 2\alpha r_i^2) + \frac{1}{2}\omega^2r_i^2 \right)
-\end{equation}
-For one dimension the expression is
-\begin{equation}
- E_L = \sum_i^N \left( \alpha(1 - 2\alpha x_i^2) + \frac{1}{2}\omega^2x_i^2 \right)
-\end{equation} \\
-
-\noindent It is also useful to compute the analytical expression for the drift force $F$ to be used in importance sampling
-\begin{equation}
- F = \frac{2\nabla \Psi_T}{\Psi_T}.
-\end{equation}
-The gradient of $\Psi_T$ is
-\begin{align}
- \nabla \Psi_T &= (-2\alpha x, -2\alpha y, -2\alpha z)e^{-\alpha r^2} \\
-               &= -2\alpha e^{-\alpha r^2} \bf{r}
-\end{align}
-where ${\bf r} = (x, y, z)$.
-Dividing by the wavefunction and multiplying with 2
-\begin{equation}
- F = -4\alpha \bf{r}
-\end{equation}
-
-
 \subsection{Analytic energy for two-body quantum dot}
 
 \begin{align}
- \Psi_T({\bf r_1}, {\bf r_2}) &= \textrm{exp}(-\alpha \omega(r_1^2 + r_2^2)/2)
+ \Psi_T({\bf r}_1, {\bf r}_2) &= \textrm{exp}(-\alpha \omega(r_1^2 + r_2^2)/2)
  \textrm{exp}\left(\frac{a r_{12}}{1 + \beta r_{12}}\right) \\
  &= K_1K_2
 \end{align}
 Laplacian of this wave function:
 \begin{equation}
- \nabla^2 \Psi_T({\bf r_1}, {\bf r_2}) = \frac{\partial \Psi_T}{\partial x_1^2} + 
+ \nabla^2 \Psi_T({\bf r}_1, {\bf r}_2) = \frac{\partial \Psi_T}{\partial x_1^2} + 
  \frac{\partial \Psi_T}{\partial y_1^2} + \frac{\partial \Psi_T}{\partial x_2^2} +
  \frac{\partial \Psi_T}{\partial y_2^2}
 \end{equation}
@@ -1066,7 +1424,11 @@ Gradient of first term:
 \end{equation}
 so that
 \begin{equation}
- \nabla K_1 = -\alpha \omega K_1 (x_1, y_1, x_2, y_2)
+ \nabla K_1 = -\alpha\omega K_1 {\bf r}
+\end{equation}
+where
+\begin{equation}
+ {\bf r} = (x_1, y_1, x_2, y_2)
 \end{equation}
 Gradient of second term:
 \begin{equation}
@@ -1074,8 +1436,19 @@ Gradient of second term:
 \end{equation}
 so that
 \begin{equation}
- \nabla K_2 = K_2 \frac{a}{r_{12}(1 + \beta r_{12})^2} (x_1 - x_2, y_1 - y_2, x_2 - x_1, y_2 - y_2)
+ \nabla K_2 = 
+ K_2 \frac{a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{12}
 \end{equation}
+where
+\begin{equation}
+ {\bf r}_{12} = (x_1 - x_2, y_1 - y_2, x_2 - x_1, y_2 - y_1) 
+\end{equation}
+The quantum force used in importance sampling is thus
+\begin{align}
+ F = 2\frac{\nabla \Psi_T}{\Psi_T} = 2\frac{\nabla(K_1K_2)}{K_1K_2} = 
+ 2\frac{1}{K_1K_2}(K_2 \nabla K_1 + K_1 \nabla K_2) = 
+ -2\alpha\omega {\bf r} + \frac{2a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{12}
+\end{align}
 Laplacian of first term:
 \begin{equation}
  \frac{\partial^2 K_1}{\partial x_1^2} = K_1 (\alpha^2 \omega^2 x_1^2 -\alpha \omega )  
@@ -1114,17 +1487,22 @@ and
  \Bigr[(x_1 - x_2)(x_1 - x_2) + (y_1 - y_2)(y_1 - y_2)\Bigr] \\
  &= -K_1K_2 \frac{a\alpha \omega r_{12}}{(1+\beta r_{12})^2}
 \end{align}
-The analytic expression for the local energy is thus
+The analytic expression for the Laplacian ratio is thus
 \begin{align}
- E_L = \frac{\nabla^2\Psi_T}{\Psi_T} &= 2\alpha^2 \omega^2(r_1^2 + r_2^2) - 4\alpha \omega
+ \frac{\nabla^2\Psi_T}{\Psi_T} &= 2\alpha^2 \omega^2(r_1^2 + r_2^2) - 4\alpha \omega
  - \frac{2a\alpha \omega r_{12}}{(1+\beta r_{12})^2} \\
  &+ \frac{2a}{(1+\beta r_{12})^2}\Biggr[ \frac{a}{(1+\beta r_{12})^2} + 
               \frac{1}{r_{12}} - \frac{2\beta}{1 + \beta r_{12}} \Biggr]
               \label{analyticLocalEnergy}
 \end{align}
+and we get for the local energy in the Hamiltonian \eqref{fullHamiltonian}
+\begin{equation}
+ E_L = \frac{1}{\Psi_T}H\Psi_T = -\frac{1}{2}\frac{\nabla^2\Psi_T}{\Psi_T} + 
+ \frac{1}{2}\omega^2(r_1^2 + r_2^2) + \frac{1}{r_{12}}
+\end{equation}
 
 
-
+\subsection{Hermite polynomials and their derivatives}
 
 
 
@@ -1198,7 +1576,7 @@ The analytic expression for the local energy is thus
 % Enkel figur
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width = 120mm]{/users/filiphl/Desktop/Studie/Emne/ObligX/filnavn.png}
+  \includegraphics[width = 120mm]{}
   \caption{some caption}\label{fig:fig1}
   \end{center}
 \end{figure}
@@ -1241,4 +1619,4 @@ The analytic expression for the local energy is thus
                       \end{array} \right)
 \end{equation*}
 %%%%%%%%
-
+\end{comment}

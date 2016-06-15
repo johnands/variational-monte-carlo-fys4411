@@ -33,9 +33,9 @@ int main(int argc, char* argv[]) {
     int numberOfDimensions  = 2;
     int numberOfParticles   = 20;
     int numberOfSteps       = (int) 1e6;
-    double omega            = 0.05;            // oscillator frequency
-    double alpha            = 0.6285;        // variational parameter 1
-    double beta             = 0.40691;        // variational parameter 2
+    double omega            = 1.0;            // oscillator frequency
+    double alpha            = 0.98;        // variational parameter 1
+    double beta             = 0.40;        // variational parameter 2
     double stepLength       = 1.8;            // metropolis step length
     double equilibration    = 0.1;            // amount of the total steps used for equilibration
     double timeStep         = 0.005;          // importance sampling
@@ -79,12 +79,12 @@ int main(int argc, char* argv[]) {
 
     // optimize
     if ( system->getOptimizeParameters() ) {
-        double initialAlpha = 0.2854;
+        double initialAlpha = 0.5;
         double initialBeta = 0.5;
         std::vector<double> parameters(2);
         parameters[0] = initialAlpha; parameters[1] = initialBeta;
 
-        double stepLengthOptimize = 0.01;
+        double stepLengthOptimize = 0.05;
         int numberOfMetropolisSteps = 1e5;
         int maxNumberOfIterations = 100;
         SteepestDescent* sd  = new SteepestDescent(system, stepLengthOptimize,

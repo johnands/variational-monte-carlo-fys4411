@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.6.9)  13 JUN 2016 18:33
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.6.9)  15 JUN 2016 19:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -296,25 +296,41 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 \Gin@req@height=\dimen104
 \Gin@req@width=\dimen105
 )
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2013/05/02 v3.3-89 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2013/05/02 v1.6-88 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 57.
+\captionmargin=\dimen106
+\captionmargin@=\dimen107
+\captionwidth=\dimen108
+\caption@tempdima=\dimen109
+\caption@indent=\dimen110
+\caption@parindent=\dimen111
+\caption@hangindent=\dimen112
+)
+\c@ContinuedFloat=\count89
+)
 (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2005/04/14 v1.61803 publication quality tables
-\heavyrulewidth=\dimen106
-\lightrulewidth=\dimen107
-\cmidrulewidth=\dimen108
-\belowrulesep=\dimen109
-\belowbottomsep=\dimen110
-\aboverulesep=\dimen111
-\abovetopsep=\dimen112
-\cmidrulesep=\dimen113
-\cmidrulekern=\dimen114
-\defaultaddspace=\dimen115
-\@cmidla=\count89
-\@cmidlb=\count90
-\@aboverulesep=\dimen116
-\@belowrulesep=\dimen117
-\@thisruleclass=\count91
-\@lastruleclass=\count92
-\@thisrulewidth=\dimen118
+\heavyrulewidth=\dimen113
+\lightrulewidth=\dimen114
+\cmidrulewidth=\dimen115
+\belowrulesep=\dimen116
+\belowbottomsep=\dimen117
+\aboverulesep=\dimen118
+\abovetopsep=\dimen119
+\cmidrulesep=\dimen120
+\cmidrulekern=\dimen121
+\defaultaddspace=\dimen122
+\@cmidla=\count90
+\@cmidlb=\count91
+\@aboverulesep=\dimen123
+\@belowrulesep=\dimen124
+\@thisruleclass=\count92
+\@lastruleclass=\count93
+\@thisrulewidth=\dimen125
 )
 (/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip10
@@ -489,7 +505,7 @@ Package: nicefrac 1998/08/04 v0.9b Nice fractions
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count93
+\c@float@type=\count94
 \float@exts=\toks17
 \float@box=\box26
 \@float@everytoks=\toks18
@@ -497,28 +513,10 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/lipsum/lipsum.sty
 Package: lipsum 2011/04/14 v1.2 150 paragraphs of Lorem Ipsum dummy text
-\c@lips@count=\count94
+\c@lips@count=\count95
 )
 (/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
 Package: subcaption 2013/02/03 v1.1-62 Sub-captions (AR)
-
-(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
-Package: caption 2013/05/02 v3.3-89 Customizing captions (AR)
-
-(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
-Package: caption3 2013/05/02 v1.6-88 caption3 kernel (AR)
-Package caption3 Info: TeX engine: e-TeX on input line 57.
-\captionmargin=\dimen119
-\captionmargin@=\dimen120
-\captionwidth=\dimen121
-\caption@tempdima=\dimen122
-\caption@indent=\dimen123
-\caption@parindent=\dimen124
-\caption@hangindent=\dimen125
-)
-\c@ContinuedFloat=\count95
-Package caption Info: float package is loaded.
-)
 \c@subfigure=\count96
 \c@subtable=\count97
 )
@@ -648,6 +646,69 @@ Package: multicol 2011/06/27 v1.7a multicolumn formatting (FMi)
 \colbreak@box=\box55
 \multicol@sort@counter=\count118
 )
+(/usr/share/texmf/tex/latex/pgf/frontendlayer/tikz.sty
+(/usr/share/texmf/tex/latex/pgf/basiclayer/pgf.sty
+(/usr/share/texmf/tex/latex/pgf/utilities/pgfrcs.sty
+(/usr/share/texmf/tex/generic/pgf/utilities/pgfutil-common.tex
+\pgfutil@everybye=\toks25
+)
+(/usr/share/texmf/tex/generic/pgf/utilities/pgfutil-latex.def
+\pgfutil@abb=\box56
+
+(/usr/share/texlive/texmf-dist/tex/latex/ms/everyshi.sty
+Package: everyshi 2001/05/15 v3.00 EveryShipout Package (MS)
+))
+(/usr/share/texmf/tex/generic/pgf/utilities/pgfrcs.code.tex
+Package: pgfrcs 2010/10/25 v2.10 (rcs-revision 1.24)
+))
+Package: pgf 2008/01/15 v2.10 (rcs-revision 1.12)
+
+(/usr/share/texmf/tex/latex/pgf/basiclayer/pgfcore.sty
+(/usr/share/texmf/tex/latex/pgf/systemlayer/pgfsys.sty
+(/usr/share/texmf/tex/generic/pgf/systemlayer/pgfsys.code.tex
+Package: pgfsys 2010/06/30 v2.10 (rcs-revision 1.37)
+
+(/usr/share/texmf/tex/generic/pgf/utilities/pgfkeys.code.tex
+\pgfkeys@pathtoks=\toks26
+\pgfkeys@temptoks=\toks27
+
+(/usr/share/texmf/tex/generic/pgf/utilities/pgfkeysfiltered.code.tex
+\pgfkeys@tmptoks=\toks28
+))
+\pgf@x=\dimen143
+\pgf@y=\dimen144
+\pgf@xa=\dimen145
+\pgf@ya=\dimen146
+\pgf@xb=\dimen147
+\pgf@yb=\dimen148
+\pgf@xc=\dimen149
+\pgf@yc=\dimen150
+\w@pgf@writea=\write3
+\r@pgf@reada=\read1
+\c@pgf@counta=\count119
+\c@pgf@countb=\count120
+\c@pgf@countc=\count121
+\c@pgf@countd=\count122
+
+(/usr/share/texmf/tex/generic/pgf/systemlayer/pgf.cfg
+File: pgf.cfg 2008/05/14  (rcs-revision 1.7)
+)
+Package pgfsys Info: Driver file for pgf: pgfsys-pdftex.def on input line 900.
+
+(/usr/share/texmf/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2009/05/22  (rcs-revision 1.26)
+
+(/usr/share/texmf/tex/generic/pgf/systemlayer/pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2008/05/19  (rcs-revision 1.10)
+)))
+(/usr/share/texmf/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2008/07/18  (rcs-revision 1.7)
+\pgfsyssoftpath@smallbuffer@items=\count123
+\pgfsyssoftpath@bigbuffer@items=\count124
+)
+(/usr/share/texmf/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2006/10/16  (rcs-revision 1.4)
+))
 (/usr/share/texmf/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
 
@@ -666,25 +727,184 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
 )
-(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count119
-\lst@gtempboxa=\box56
-\lst@token=\toks25
-\lst@length=\count120
-\lst@currlwidth=\dimen143
-\lst@column=\count121
-\lst@pos=\count122
-\lst@lostspace=\dimen144
-\lst@width=\dimen145
-\lst@newlines=\count123
-\lst@lineno=\count124
-\lst@maxwidth=\dimen146
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcore.code.tex
+Package: pgfcore 2010/04/11 v2.10 (rcs-revision 1.7)
+
+(/usr/share/texmf/tex/generic/pgf/math/pgfmath.code.tex
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathcalc.code.tex
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathutil.code.tex)
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathparser.code.tex
+\pgfmath@dimen=\dimen151
+\pgfmath@count=\count125
+\pgfmath@box=\box57
+\pgfmath@toks=\toks29
+\pgfmath@stack@operand=\toks30
+\pgfmath@stack@operation=\toks31
+)
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfunctions.code.tex
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfunctions.basic.code.tex)
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfunctions.trigonometric.code.tex)
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfunctions.random.code.tex)
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfunctions.comparison.code.tex)
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfunctions.base.code.tex)
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfunctions.round.code.tex)
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfunctions.misc.code.tex)))
+(/usr/share/texmf/tex/generic/pgf/math/pgfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count126
+))
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex
+File: pgfcorepoints.code.tex 2010/04/09  (rcs-revision 1.20)
+\pgf@picminx=\dimen152
+\pgf@picmaxx=\dimen153
+\pgf@picminy=\dimen154
+\pgf@picmaxy=\dimen155
+\pgf@pathminx=\dimen156
+\pgf@pathmaxx=\dimen157
+\pgf@pathminy=\dimen158
+\pgf@pathmaxy=\dimen159
+\pgf@xx=\dimen160
+\pgf@xy=\dimen161
+\pgf@yx=\dimen162
+\pgf@yy=\dimen163
+\pgf@zx=\dimen164
+\pgf@zy=\dimen165
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorepathconstruct.code.tex
+File: pgfcorepathconstruct.code.tex 2010/08/03  (rcs-revision 1.24)
+\pgf@path@lastx=\dimen166
+\pgf@path@lasty=\dimen167
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorepathusage.code.tex
+File: pgfcorepathusage.code.tex 2008/04/22  (rcs-revision 1.12)
+\pgf@shorten@end@additional=\dimen168
+\pgf@shorten@start@additional=\dimen169
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex
+File: pgfcorescopes.code.tex 2010/09/08  (rcs-revision 1.34)
+\pgfpic=\box58
+\pgf@hbox=\box59
+\pgf@layerbox@main=\box60
+\pgf@picture@serial@count=\count127
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2008/04/22  (rcs-revision 1.9)
+\pgflinewidth=\dimen170
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoretransformations.code.tex
+File: pgfcoretransformations.code.tex 2009/06/10  (rcs-revision 1.11)
+\pgf@pt@x=\dimen171
+\pgf@pt@y=\dimen172
+\pgf@pt@temp=\dimen173
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
+File: pgfcorequick.code.tex 2008/10/09  (rcs-revision 1.3)
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoreobjects.code.tex
+File: pgfcoreobjects.code.tex 2006/10/11  (rcs-revision 1.2)
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorepathprocessing.code.tex
+File: pgfcorepathprocessing.code.tex 2008/10/09  (rcs-revision 1.8)
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorearrows.code.tex
+File: pgfcorearrows.code.tex 2008/04/23  (rcs-revision 1.11)
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
+File: pgfcoreshade.code.tex 2008/11/23  (rcs-revision 1.13)
+\pgf@max=\dimen174
+\pgf@sys@shading@range@num=\count128
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
+File: pgfcoreimage.code.tex 2010/03/25  (rcs-revision 1.16)
+
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex
+File: pgfcoreexternal.code.tex 2010/09/01  (rcs-revision 1.17)
+\pgfexternal@startupbox=\box61
+))
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
+File: pgfcorelayers.code.tex 2010/08/27  (rcs-revision 1.2)
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcoretransparency.code.tex
+File: pgfcoretransparency.code.tex 2008/01/17  (rcs-revision 1.2)
+)
+(/usr/share/texmf/tex/generic/pgf/basiclayer/pgfcorepatterns.code.tex
+File: pgfcorepatterns.code.tex 2009/07/02  (rcs-revision 1.3)
+)))
+(/usr/share/texmf/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
+File: pgfmoduleshapes.code.tex 2010/09/09  (rcs-revision 1.13)
+\pgfnodeparttextbox=\box62
+)
+(/usr/share/texmf/tex/generic/pgf/modules/pgfmoduleplot.code.tex
+File: pgfmoduleplot.code.tex 2010/10/22  (rcs-revision 1.8)
+)
+(/usr/share/texmf/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty
+Package: pgfcomp-version-0-65 2007/07/03 v2.10 (rcs-revision 1.7)
+\pgf@nodesepstart=\dimen175
+\pgf@nodesepend=\dimen176
+)
+(/usr/share/texmf/tex/latex/pgf/compatibility/pgfcomp-version-1-18.sty
+Package: pgfcomp-version-1-18 2007/07/23 v2.10 (rcs-revision 1.1)
+))
+(/usr/share/texmf/tex/latex/pgf/utilities/pgffor.sty
+(/usr/share/texmf/tex/latex/pgf/utilities/pgfkeys.sty
+(/usr/share/texmf/tex/generic/pgf/utilities/pgfkeys.code.tex))
+(/usr/share/texmf/tex/generic/pgf/utilities/pgffor.code.tex
+Package: pgffor 2010/03/23 v2.10 (rcs-revision 1.18)
+\pgffor@iter=\dimen177
+\pgffor@skip=\dimen178
+\pgffor@stack=\toks32
+\pgffor@toks=\toks33
+))
+(/usr/share/texmf/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+Package: tikz 2010/10/13 v2.10 (rcs-revision 1.76)
+
+(/usr/share/texmf/tex/generic/pgf/libraries/pgflibraryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2010/05/31 v2.10 (rcs-revision 1.15)
+\pgf@plot@mark@count=\count129
+\pgfplotmarksize=\dimen179
+)
+\tikz@lastx=\dimen180
+\tikz@lasty=\dimen181
+\tikz@lastxsaved=\dimen182
+\tikz@lastysaved=\dimen183
+\tikzleveldistance=\dimen184
+\tikzsiblingdistance=\dimen185
+\tikz@figbox=\box63
+\tikz@tempbox=\box64
+\tikztreelevel=\count130
+\tikznumberofchildren=\count131
+\tikznumberofcurrentchild=\count132
+\tikz@fig@count=\count133
+
+(/usr/share/texmf/tex/generic/pgf/modules/pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2010/08/24  (rcs-revision 1.4)
+\pgfmatrixcurrentrow=\count134
+\pgfmatrixcurrentcolumn=\count135
+\pgf@matrix@numberofcolumns=\count136
+)
+\tikz@expandcount=\count137
+
+(/usr/share/texmf/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytopat
+hs.code.tex
+File: tikzlibrarytopaths.code.tex 2008/06/17 v2.10 (rcs-revision 1.2)
+))) (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count138
+\lst@gtempboxa=\box65
+\lst@token=\toks34
+\lst@length=\count139
+\lst@currlwidth=\dimen186
+\lst@column=\count140
+\lst@pos=\count141
+\lst@lostspace=\dimen187
+\lst@width=\dimen188
+\lst@newlines=\count142
+\lst@lineno=\count143
+\lst@maxwidth=\dimen189
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
-\c@lstnumber=\count125
-\lst@skipnumbers=\count126
-\lst@framebox=\box57
+\c@lstnumber=\count144
+\lst@skipnumbers=\count145
+\lst@framebox=\box66
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg
 File: listings.cfg 2013/08/26 1.5b listings configuration
@@ -700,45 +920,72 @@ Package: fullpage 1999/02/23 1.1 (PWD)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty
 Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
-\every@verbatim=\toks26
-\verbatim@line=\toks27
-\verbatim@in@stream=\read1
-) (./report2.aux)
+\every@verbatim=\toks35
+\verbatim@line=\toks36
+\verbatim@in@stream=\read2
+) (./report2.aux
+
+LaTeX Warning: Label `fig:NAVN1' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:NAVN1' multiply defined.
+
+
+LaTeX Warning: Label `fig:NAVN2' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:NAVN2' multiply defined.
+
+
+LaTeX Warning: Label `fig:NAVN3' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:NAVN3' multiply defined.
+
+
+LaTeX Warning: Label `fig:NAVN4' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:NAVN4' multiply defined.
+
+
+LaTeX Warning: Label `WithoutSlater' multiply defined.
+
+)
 \openout1 = `report2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 52.
-LaTeX Font Info:    ... okay on input line 52.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 52.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 52.
-
-(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 53.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 53.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    ... okay on input line 53.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count127
-\scratchdimen=\dimen147
-\scratchbox=\box58
-\nofMPsegments=\count128
-\nofMParguments=\count129
-\everyMPshowfont=\toks28
-\MPscratchCnt=\count130
-\MPscratchDim=\dimen148
-\MPnumerator=\count131
-\makeMPintoPDFobject=\count132
-\everyMPtoPDFconversion=\toks29
+\scratchcounter=\count146
+\scratchdimen=\dimen190
+\scratchbox=\box67
+\nofMPsegments=\count147
+\nofMParguments=\count148
+\everyMPshowfont=\toks37
+\MPscratchCnt=\count149
+\MPscratchDim=\dimen191
+\MPnumerator=\count150
+\makeMPintoPDFobject=\count151
+\everyMPtoPDFconversion=\toks38
 ) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
 )
@@ -788,160 +1035,275 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
-\c@lstlisting=\count133
-LaTeX Font Info:    Try loading font information for U+msa on input line 69.
+
+ABD: EveryShipout initializing macros
+\c@lstlisting=\count152
+LaTeX Font Info:    Try loading font information for U+msa on input line 70.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 69.
+LaTeX Font Info:    Try loading font information for U+msb on input line 70.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./report2.toc)
-\tf@toc=\write3
-\openout3 = `report2.toc'.
+\tf@toc=\write4
+\openout4 = `report2.toc'.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 99--105
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 106--116
+Underfull \hbox (badness 10000) in paragraph at lines 100--106
 
  []
 
-[1]
-Underfull \hbox (badness 10000) in paragraph at lines 137--140
+
+Underfull \hbox (badness 10000) in paragraph at lines 107--117
 
  []
 
-[2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 290--293
+[1] [2]
+Underfull \hbox (badness 10000) in paragraph at lines 402--405
 
+ []
+
+[3]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 468--468
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 468--468
+[][][][][][][] 
  []
 
 [4]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 356--356
-[][][][][][][] 
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 356--356
-[][][][][][][] 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 386--389
-
- []
-
-[5]
-Underfull \hbox (badness 10000) in paragraph at lines 427--429
+Underfull \hbox (badness 10000) in paragraph at lines 498--501
 
  []
 
 
-Overfull \hbox (16.69345pt too wide) in paragraph at lines 438--441
+Underfull \hbox (badness 10000) in paragraph at lines 539--541
+
+ []
+
+
+Overfull \hbox (16.69345pt too wide) in paragraph at lines 550--553
 \T1/cmr/m/n/10 which in turn means that our brute force Metropo-lis ac-cep-t/re
 -ject ra-tio [] is re-placed by the so-called []
  []
 
+[5]
 
-Underfull \hbox (badness 10000) in paragraph at lines 451--460
+LaTeX Warning: Reference `TrialWF' on page 6 undefined on input line 563.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 563--572
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 493--498
+LaTeX Warning: Reference `slaterMatrix' on page 6 undefined on input line 583.
+
+
+LaTeX Warning: Reference `slaterMatrix' on page 6 undefined on input line 614.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 613--618
 
  []
 
 [6]
 
-LaTeX Warning: Reference `TrialWFSpins' on page 7 undefined on input line 562.
+LaTeX Warning: Reference `slaterMatrix' on page 7 undefined on input line 651.
 
 [7]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 763--763
+[][][][][][][] 
+ []
 
-LaTeX Warning: Reference `TrialWFSpins' on page 8 undefined on input line 625.
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 763--763
+[][][][][][][] 
+ []
 
 [8]
 
-LaTeX Warning: Reference `waveenergy' on page 9 undefined on input line 724.
+LaTeX Warning: Reference `correlationFunction' on page 9 undefined on input lin
+e 818.
+
+[9]
+
+LaTeX Warning: Reference `TrialWF' on page 10 undefined on input line 941.
+
+[10]
+
+LaTeX Warning: Reference `waveenergy' on page 11 undefined on input line 991.
 
 
-LaTeX Warning: Reference `wavederivative' on page 9 undefined on input line 724
+LaTeX Warning: Reference `wavederivative' on page 11 undefined on input line 99
+1.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 995--998
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 1001--1001
+[][][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 1001--1001
+[][][][][][][] 
+ []
+
+[11] [12]
+Underfull \hbox (badness 10000) in paragraph at lines 1118--1120
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1169--1170
+
+ []
+
+[13] [14] <OBD_w=1_N=2_WithoutSlater.png, id=81, 1386.1386pt x 1031.2929pt>
+File: OBD_w=1_N=2_WithoutSlater.png Graphic file (type png)
+
+<use OBD_w=1_N=2_WithoutSlater.png>
+Package pdftex.def Info: OBD_w=1_N=2_WithoutSlater.png used on input line 1317.
+
+(pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
+
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1317--1318
+ [][] 
+ []
+
+<OBD_w=05_N=2_WithoutSlater.png, id=83, 586.8324pt x 442.2924pt>
+File: OBD_w=05_N=2_WithoutSlater.png Graphic file (type png)
+
+<use OBD_w=05_N=2_WithoutSlater.png>
+Package pdftex.def Info: OBD_w=05_N=2_WithoutSlater.png used on input line 1323
 .
+(pdftex.def)             Requested size: 225.34363pt x 169.84105pt.
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 728--731
-
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1323--1324
+ [][] 
  []
 
+<OBD_w=01_N=2_WithoutSlater.png, id=84, 586.8324pt x 442.2924pt>
+File: OBD_w=01_N=2_WithoutSlater.png Graphic file (type png)
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 734--734
-[][][][][][][] 
+<use OBD_w=01_N=2_WithoutSlater.png>
+Package pdftex.def Info: OBD_w=01_N=2_WithoutSlater.png used on input line 1330
+.
+(pdftex.def)             Requested size: 225.34363pt x 169.84105pt.
+
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1330--1331
+ [][] 
  []
 
+<OBD_w=005_N=2_WithoutSlater.png, id=85, 586.8324pt x 442.2924pt>
+File: OBD_w=005_N=2_WithoutSlater.png Graphic file (type png)
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 734--734
-[][][][][][][] 
+<use OBD_w=005_N=2_WithoutSlater.png>
+Package pdftex.def Info: OBD_w=005_N=2_WithoutSlater.png used on input line 133
+6.
+(pdftex.def)             Requested size: 225.34363pt x 169.84105pt.
+
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1336--1337
+ [][] 
  []
 
-[9] [10]
-Underfull \hbox (badness 10000) in paragraph at lines 851--853
+<OBD_w=001_N=2_WithoutSlater.png, id=86, 586.8324pt x 442.2924pt>
+File: OBD_w=001_N=2_WithoutSlater.png Graphic file (type png)
 
+<use OBD_w=001_N=2_WithoutSlater.png>
+Package pdftex.def Info: OBD_w=001_N=2_WithoutSlater.png used on input line 134
+3.
+(pdftex.def)             Requested size: 225.34363pt x 169.84105pt.
+
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1343--1344
+ [][] 
  []
 
+[15] <OBD_N=6_w=1_Slater.png, id=90, 1386.1386pt x 1031.2929pt>
+File: OBD_N=6_w=1_Slater.png Graphic file (type png)
 
-Underfull \hbox (badness 10000) in paragraph at lines 902--903
+<use OBD_N=6_w=1_Slater.png>
+Package pdftex.def Info: OBD_N=6_w=1_Slater.png used on input line 1356.
+(pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
 
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1356--1357
+ [][] 
  []
 
-[11]
+<OBD_N=6_w=05_Slater.png, id=91, 1386.1386pt x 1031.2929pt>
+File: OBD_N=6_w=05_Slater.png Graphic file (type png)
 
-LaTeX Warning: Reference `TrialWF2' on page 12 undefined on input line 920.
+<use OBD_N=6_w=05_Slater.png>
+Package pdftex.def Info: OBD_N=6_w=05_Slater.png used on input line 1362.
+(pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 924--927
-
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1362--1363
+ [][] 
  []
 
+<OBD_N=6_w=01_Slater.png, id=92, 1386.1386pt x 1031.2929pt>
+File: OBD_N=6_w=01_Slater.png Graphic file (type png)
 
-LaTeX Warning: Reference `HarmonicOscillator' on page 12 undefined on input lin
-e 935.
+<use OBD_N=6_w=01_Slater.png>
+Package pdftex.def Info: OBD_N=6_w=01_Slater.png used on input line 1369.
+(pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 969--973
-
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1369--1370
+ [][] 
  []
 
-[12]
-Underfull \hbox (badness 10000) in paragraph at lines 1024--1025
+<OBD_N=6_w=005_Slater.png, id=93, 1386.1386pt x 1031.2929pt>
+File: OBD_N=6_w=005_Slater.png Graphic file (type png)
 
+<use OBD_N=6_w=005_Slater.png>
+Package pdftex.def Info: OBD_N=6_w=005_Slater.png used on input line 1375.
+(pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
+
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1375--1376
+ [][] 
  []
 
-[13] [14] [15] (./report2.aux)
+[16 <./OBD_w=1_N=2_WithoutSlater.png> <./OBD_w=05_N=2_WithoutSlater.png> <./OBD
+_w=01_N=2_WithoutSlater.png> <./OBD_w=005_N=2_WithoutSlater.png> <./OBD_w=001_N
+=2_WithoutSlater.png>] [17 <./OBD_N=6_w=1_Slater.png> <./OBD_N=6_w=05_Slater.pn
+g> <./OBD_N=6_w=01_Slater.png> <./OBD_N=6_w=005_Slater.png>]
+
+LaTeX Warning: Reference `fullHamiltonian' on page 18 undefined on input line 1
+498.
+
+[18] [19] (./report2.aux)
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) 
 Here is how much of TeX's memory you used:
- 7577 strings out of 495028
- 102817 string characters out of 6181498
- 276360 words of memory out of 5000000
- 10618 multiletter control sequences out of 15000+600000
- 24375 words of font info for 61 fonts, out of 8000000 for 9000
+ 15464 strings out of 495028
+ 264234 string characters out of 6181498
+ 418435 words of memory out of 5000000
+ 18308 multiletter control sequences out of 15000+600000
+ 23435 words of font info for 61 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 42i,12n,44p,318b,1550s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,12n,55p,397b,1553s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk> </home/
-fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk> </home/fenics/.te
-xmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> </home/fenics/.texmf-var/fo
+fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> </home/fenics/.te
+xmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk> </home/fenics/.texmf-var/fo
 nts/pk/ljfour/jknappen/ec/ecbx1200.600pk> </home/fenics/.texmf-var/fonts/pk/ljf
 our/jknappen/ec/ecrm1000.600pk> </home/fenics/.texmf-var/fonts/pk/ljfour/jknapp
 en/ec/ecbx1000.600pk> </home/fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx
@@ -965,10 +1327,10 @@ s/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/symbols/msbm10.pfb>
-Output written on report2.pdf (16 pages, 308580 bytes).
+Output written on report2.pdf (20 pages, 738950 bytes).
 PDF statistics:
- 513 PDF objects out of 1000 (max. 8388607)
- 133 compressed objects within 2 object streams
+ 553 PDF objects out of 1000 (max. 8388607)
+ 146 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 58 words of extra memory for PDF output out of 10000 (max. 10000000)
 
