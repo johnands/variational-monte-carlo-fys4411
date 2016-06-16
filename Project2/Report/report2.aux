@@ -1,99 +1,133 @@
 \relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
 \select@language{english}
 \@writefile{toc}{\select@language{english}}
 \@writefile{lof}{\select@language{english}}
 \@writefile{lot}{\select@language{english}}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Systems}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Unperturbed system}{2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Fig text\relax }}{2}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Exact ground state energies $E$ in atomic units for $N$ electrons in a pure two-dimensional harmonic oscillator with oscillator frequency $\omega $. The values of $N$ are magic numbers for the system.\relax }}{2}}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Methods}{2}{section.2}}
+\newlabel{multidim}{{2}{2}{Methods}{equation.2.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Monte Carlo integration}{2}{subsection.2.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Metropolis algorithm}{2}{subsection.2.2}}
+\newlabel{detailedbalance}{{6}{2}{Metropolis algorithm}{equation.2.6}{}}
+\newlabel{localEnergy}{{8}{3}{Metropolis algorithm}{equation.2.8}{}}
+\newlabel{localEnergyExp}{{9}{3}{Metropolis algorithm}{equation.2.9}{}}
+\newlabel{ratio}{{11}{3}{Metropolis algorithm}{equation.2.11}{}}
+\newlabel{metropolisRatio}{{12}{3}{Metropolis algorithm}{equation.2.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Importance sampling}{3}{subsection.2.3}}
+\newlabel{Langevin}{{13}{3}{Importance sampling}{equation.2.13}{}}
+\newlabel{LangevinSolution}{{14}{4}{Importance sampling}{equation.2.14}{}}
+\newlabel{FokkerPlanck}{{15}{4}{Importance sampling}{equation.2.15}{}}
+\newlabel{stationaryFokker}{{16}{4}{Importance sampling}{equation.2.16}{}}
+\newlabel{quantumForce}{{17}{4}{Importance sampling}{equation.2.17}{}}
+\newlabel{metropolisHastings}{{19}{4}{Importance sampling}{equation.2.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Steepest descent method}{4}{subsection.2.4}}
+\newlabel{localEnergyParameters}{{21}{4}{Steepest descent method}{equation.2.21}{}}
+\newlabel{sampleOptimize1}{{22}{5}{Steepest descent method}{equation.2.22}{}}
+\newlabel{sampleOptimize2}{{23}{5}{Steepest descent method}{equation.2.23}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Blocking}{6}{subsection.2.5}}
+\newlabel{samplevariance}{{34}{6}{Blocking}{equation.2.34}{}}
+\newlabel{samplecovariance}{{36}{6}{Blocking}{equation.2.36}{}}
+\newlabel{trueSampleError}{{39}{6}{Blocking}{equation.2.39}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Systems}{7}{section.3}}
+\newlabel{fullHamiltonian}{{40}{7}{Systems}{equation.3.40}{}}
+\newlabel{HOHamiltonian}{{41}{7}{Systems}{equation.3.41}{}}
+\newlabel{repulsiveHamiltonian}{{42}{7}{Systems}{equation.3.42}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Unperturbed system}{7}{subsection.3.1}}
+\newlabel{singleParticleWF}{{43}{7}{Unperturbed system}{equation.3.43}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Fig text\relax }}{7}{figure.caption.2}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Exact ground state energies $E$ in atomic units for $N$ electrons in a pure two-dimensional harmonic oscillator with oscillator frequency $\omega $. The values of $N$ are magic numbers for the system.\relax }}{7}{table.caption.3}}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{tab:HOEnergies}{{1}{2}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Methods}{3}}
-\newlabel{multidim}{{4}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Monte Carlo integration}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Metropolis algorithm}{3}}
-\newlabel{detailedbalance}{{8}{3}}
-\newlabel{localenergy}{{10}{4}}
-\newlabel{localEnergyExp}{{11}{4}}
-\newlabel{ratio}{{13}{4}}
-\newlabel{ratio2}{{14}{4}}
-\newlabel{MetropolisBrute}{{1}{4}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Brute Force Metropolis algorithm}{4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Importance sampling}{5}}
-\newlabel{Langevin}{{15}{5}}
-\newlabel{LangevinSolution}{{16}{5}}
-\newlabel{FokkerPlanck}{{17}{5}}
-\newlabel{stationaryFokker}{{18}{5}}
-\newlabel{quantumForce}{{19}{5}}
-\newlabel{metropolisHastings}{{21}{6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Optimization of trial wave function and its deriviatives}{6}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}Optimization of determinant-to-determinant ratio}{6}}
-\newlabel{slaterRatio}{{27}{6}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}Optimization of inverse Slater matrix}{6}}
+\newlabel{tab:HOEnergies}{{1}{7}{Exact ground state energies $E$ in atomic units for $N$ electrons in a pure two-dimensional harmonic oscillator with oscillator frequency $\omega $. The values of $N$ are magic numbers for the system.\relax }{table.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Perturbed system}{8}{subsection.3.2}}
+\newlabel{correlationFunction}{{44}{8}{Perturbed system}{equation.3.44}{}}
+\newlabel{trialWF}{{45}{8}{Perturbed system}{equation.3.45}{}}
+\newlabel{slaterMatrix}{{46}{8}{Perturbed system}{equation.3.46}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Two-electron perturbed system}{8}{subsubsection.3.2.1}}
+\newlabel{trialWF2}{{3.2.1}{8}{Two-electron perturbed system}{subsubsection.3.2.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}6-,12- and 20-electron perturbed system}{8}{subsubsection.3.2.2}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Optimization of trial wave function and its deriviatives}{8}{section.4}}
+\newlabel{sec:optimization}{{4}{8}{Optimization of trial wave function and its deriviatives}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Optimization of determinant-to-determinant ratio}{8}{subsection.4.1}}
+\newlabel{metropolisRatioSlater}{{49}{8}{Optimization of determinant-to-determinant ratio}{equation.4.49}{}}
 \citation{ref3}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.3}Splitting the Slater determinant}{7}}
-\newlabel{SlaterDetFactorized}{{30}{7}}
-\newlabel{TrialWFSpins}{{31}{7}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Comparison of the computational cost involved in the computation of the Slater determinant with and without optimization\relax }}{7}}
-\newlabel{tab:Optimization}{{2}{7}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.4}Optimization of gradient}{8}}
-\newlabel{gradientOfTrialWF}{{34}{8}}
-\newlabel{gradientRatioBefore}{{35}{8}}
-\newlabel{gradientRatioAfter}{{36}{8}}
-\newlabel{slaterGradient}{{2}{8}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}Computation of the Slater gradient ratio for particle i. The spin-up matrix only contains the single-particle wave functions as functions of the first half of the particles. The spin-down matrix is a function of the second half. One of them is thus zero for a given particle $i$.}{8}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.5}Optimization of the Laplacian}{9}}
-\newlabel{kineticEnergy}{{37}{9}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.6}Optimization of the correlation-to-correlation ratio}{9}}
-\newlabel{pade-jastrow}{{41}{9}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.7}Optimization of the $\nabla \Psi _C / \Psi _C$ ratio}{9}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.8}Optimization of the $\nabla ^2 \Psi _C / \Psi _C$ ratio}{10}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Steepest descent method}{10}}
-\newlabel{localenergyalpha}{{53}{10}}
-\newlabel{steepestdescent}{{3}{11}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}The Steepest Descent method}{11}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Blocking}{12}}
-\newlabel{samplevariance}{{66}{12}}
-\newlabel{samplecovariance}{{68}{13}}
-\newlabel{trueSampleError}{{71}{13}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Implementation}{13}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Results and discussion}{14}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Some text}{14}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}More than two particles}{14}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Performance analysis}{14}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Optimal $\alpha $ and $\beta $ values for given $\omega $'s with jastrow factor.\relax }}{14}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Optimal $\alpha $ values for given $\omega $'s without jastrow factor.\relax }}{14}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Optimal $\alpha $ and $\beta $ values for given $\omega $'s with jastrow factor and Slater determinant.\relax }}{14}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Optimal $\alpha $ values for given $\omega $'s with Slater determinant and without jastrow factor\relax }}{15}}
-\newlabel{fig:NAVN1}{{2a}{16}}
-\newlabel{sub@fig:NAVN1}{{a}{16}}
-\newlabel{fig:NAVN2}{{2b}{16}}
-\newlabel{sub@fig:NAVN2}{{b}{16}}
-\newlabel{fig:NAVN3}{{2c}{16}}
-\newlabel{sub@fig:NAVN3}{{c}{16}}
-\newlabel{fig:NAVN4}{{2d}{16}}
-\newlabel{sub@fig:NAVN4}{{d}{16}}
-\newlabel{fig:NAVN5}{{2e}{16}}
-\newlabel{sub@fig:NAVN5}{{e}{16}}
-\newlabel{WithoutSlater}{{\caption@xref {WithoutSlater}{ on input line 1347}}{16}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces blablabla\relax }}{16}}
-\newlabel{fig:NAVN1}{{3a}{17}}
-\newlabel{sub@fig:NAVN1}{{a}{17}}
-\newlabel{fig:NAVN2}{{3b}{17}}
-\newlabel{sub@fig:NAVN2}{{b}{17}}
-\newlabel{fig:NAVN3}{{3c}{17}}
-\newlabel{sub@fig:NAVN3}{{c}{17}}
-\newlabel{fig:NAVN4}{{3d}{17}}
-\newlabel{sub@fig:NAVN4}{{d}{17}}
-\newlabel{WithoutSlater}{{\caption@xref {WithoutSlater}{ on input line 1386}}{17}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces blablabla\relax }}{17}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusions}{17}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Appendix}{17}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Analytic energy for two-body quantum dot}{17}}
-\newlabel{analyticLocalEnergy}{{97}{18}}
+\newlabel{slaterRatio}{{54}{9}{Optimization of determinant-to-determinant ratio}{equation.4.54}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Optimization of inverse Slater matrix}{9}{subsection.4.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Splitting the Slater determinant}{9}{subsection.4.3}}
+\newlabel{SlaterDetFactorized}{{57}{10}{Splitting the Slater determinant}{equation.4.57}{}}
+\newlabel{TrialWFSpins}{{58}{10}{Splitting the Slater determinant}{equation.4.58}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Comparison of the computational cost involved in the computation of the Slater determinant with and without optimization\relax }}{10}{table.caption.4}}
+\newlabel{tab:optimization}{{2}{10}{Comparison of the computational cost involved in the computation of the Slater determinant with and without optimization\relax }{table.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Optimization of gradient}{10}{subsection.4.4}}
+\newlabel{gradientOfTrialWF}{{61}{10}{Optimization of gradient}{equation.4.61}{}}
+\newlabel{gradientRatioBefore}{{62}{10}{Optimization of gradient}{equation.4.62}{}}
+\newlabel{gradientRatioAfter}{{63}{10}{Optimization of gradient}{equation.4.63}{}}
+\newlabel{slaterGradient}{{1}{11}{Computation of the Slater gradient ratio for particle i. The spin-up matrix only contains the single-particle wave functions as functions of the first half of the particles. The spin-down matrix is a function of the second half. One of them is thus zero for a given particle $i$}{lstlisting.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Computation of the Slater gradient ratio for particle i. The spin-up matrix only contains the single-particle wave functions as functions of the first half of the particles. The spin-down matrix is a function of the second half. One of them is thus zero for a given particle $i$.}{11}{lstlisting.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Optimization of the Laplacian}{11}{subsection.4.5}}
+\newlabel{kineticEnergy}{{64}{11}{Optimization of the Laplacian}{equation.4.64}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Optimization of the correlation-to-correlation ratio}{11}{subsection.4.6}}
+\newlabel{pade-jastrow}{{68}{11}{Optimization of the correlation-to-correlation ratio}{equation.4.68}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Optimization of the $\nabla \Psi _C / \Psi _C$ ratio}{12}{subsection.4.7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Optimization of the $\nabla ^2 \Psi _C / \Psi _C$ ratio}{12}{subsection.4.8}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Implementation}{12}{section.5}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Results and discussion}{13}{section.6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Some text}{13}{subsection.6.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}More than two particles}{13}{subsection.6.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Performance analysis}{13}{subsection.6.3}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Optimal $\alpha $ and $\beta $ values for given $\omega $'s with jastrow factor.\relax }}{13}{table.caption.5}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Optimal $\alpha $ values for given $\omega $'s without jastrow factor.\relax }}{13}{table.caption.6}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Optimal $\alpha $ and $\beta $ values for given $\omega $'s with jastrow factor and Slater determinant.\relax }}{14}{table.caption.7}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Optimal $\alpha $ values for given $\omega $'s with Slater determinant and without jastrow factor\relax }}{14}{table.caption.8}}
+\newlabel{fig:NAVN1}{{2a}{15}{$\omega = 1$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{sub@fig:NAVN1}{{a}{15}{$\omega = 1$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{fig:NAVN2}{{2b}{15}{$\omega = 0.5$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{sub@fig:NAVN2}{{b}{15}{$\omega = 0.5$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{fig:NAVN3}{{2c}{15}{$\omega = 0.1$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{sub@fig:NAVN3}{{c}{15}{$\omega = 0.1$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{fig:NAVN4}{{2d}{15}{$\omega = 0.05$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{sub@fig:NAVN4}{{d}{15}{$\omega = 0.05$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{fig:NAVN5}{{2e}{15}{$\omega = 0.01$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{sub@fig:NAVN5}{{e}{15}{$\omega = 0.01$ and $N = 2$ without Slater determinant.\relax }{figure.caption.9}{}}
+\newlabel{WithoutSlater}{{\caption@xref {WithoutSlater}{ on input line 1183}}{15}{Performance analysis}{figure.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces blablabla\relax }}{15}{figure.caption.9}}
+\newlabel{fig:NAVN1}{{3a}{16}{$\omega = 1$ and $N = 6$ with Slater determinant.\relax }{figure.caption.10}{}}
+\newlabel{sub@fig:NAVN1}{{a}{16}{$\omega = 1$ and $N = 6$ with Slater determinant.\relax }{figure.caption.10}{}}
+\newlabel{fig:NAVN2}{{3b}{16}{$\omega = 0.5$ and $N = 6$ with Slater determinant.\relax }{figure.caption.10}{}}
+\newlabel{sub@fig:NAVN2}{{b}{16}{$\omega = 0.5$ and $N = 6$ with Slater determinant.\relax }{figure.caption.10}{}}
+\newlabel{fig:NAVN3}{{3c}{16}{$\omega = 0.1$ and $N = 6$ with Slater determinant.\relax }{figure.caption.10}{}}
+\newlabel{sub@fig:NAVN3}{{c}{16}{$\omega = 0.1$ and $N = 6$ with Slater determinant.\relax }{figure.caption.10}{}}
+\newlabel{fig:NAVN4}{{3d}{16}{$\omega = 0.05$ and $N = 6$ with Slater determinant.\relax }{figure.caption.10}{}}
+\newlabel{sub@fig:NAVN4}{{d}{16}{$\omega = 0.05$ and $N = 6$ with Slater determinant.\relax }{figure.caption.10}{}}
+\newlabel{WithoutSlater}{{\caption@xref {WithoutSlater}{ on input line 1222}}{16}{Performance analysis}{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces blablabla\relax }}{16}{figure.caption.10}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusions}{16}{section.7}}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Appendix}{17}{appendix.A}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Analytic local energy for two-body quantum dot}{17}{subsection.A.1}}
+\newlabel{app:appendixA1}{{A.1}{17}{Analytic local energy for two-body quantum dot}{subsection.A.1}{}}
+\newlabel{analyticLocalEnergy}{{98}{18}{Analytic local energy for two-body quantum dot}{equation.A.98}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Single-particle wave functions and their derivatives}{18}{subsection.A.2}}
+\newlabel{app:appendixA2}{{A.2}{18}{Single-particle wave functions and their derivatives}{subsection.A.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Hermite polynomials and their derivatives}{19}{subsection.A.3}}
+\newlabel{app:appendixA3}{{A.3}{19}{Hermite polynomials and their derivatives}{subsection.A.3}{}}
+\newlabel{eq:hermite}{{106}{19}{Hermite polynomials and their derivatives}{equation.A.106}{}}
+\newlabel{hermite}{{107}{19}{Hermite polynomials and their derivatives}{equation.A.107}{}}
 \bibcite{ref1}{1}
 \bibcite{ref2}{2}
 \bibcite{ref3}{3}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Hermite polynomials and their derivatives}{19}}
