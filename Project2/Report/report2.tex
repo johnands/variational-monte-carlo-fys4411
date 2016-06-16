@@ -246,7 +246,6 @@ We now have the full machinery of the Monte Carlo approach to obtain the ground 
 \end{itemize}
 When the Monte Carlo sampling is finished, we calculate the mean local energy, which is our approximation
 of the ground state energy of the system.
-The Metropolis algorithm is implemented as follows:
 
 
 \subsection{Importance sampling}
@@ -272,8 +271,8 @@ parameter which yields stable values of the ground state energy for values $\Del
 \eqref{LangevinSolution} is similar to the brute force Metropolis equation for updating positions except for the
 term  containing $F(x)$. This is the function that pushes the particles towards regions of configuration space
 where the wavefunction is large, in contrast to the brute force method where all regions are equally probable. 
-In three dimension $F(x)$ is called the \textit{drift vector} ${\bf F}({\bf x})$.
-The drift vector can be found from the
+In three dimension $F(x)$ is called the \textit{quantum force} ${\bf F}({\bf x})$.
+The quantum force can be found from the
 Fokker-Planck equation
 \begin{equation}
  \frac{\partial P}{\partial t} = \sum_i D \frac{\partial}{\partial {\bf x}_i}
@@ -287,13 +286,12 @@ The resulting equation is only satisfied if all terms of the sum are equal to ze
  + {\bf F}_i \frac{\partial}{\partial {\bf x}_i} P
  \label{stationaryFokker}
 \end{equation}
-The drift vector should have the form ${\bf F} = g({\bf x}) \frac{\partial P}{\partial {\bf x}}$. Inserting this in
+The quantum force should have the form ${\bf F} = g({\bf x}) \frac{\partial P}{\partial {\bf x}}$. Inserting this in
 \eqref{stationaryFokker} yields 
 \begin{equation}
  {\bf F} = 2 \frac{1}{\Psi_T} \nabla \Psi_T
  \label{quantumForce}
 \end{equation}
-which is known as the \textit{quantum force}. \\
 
 \noindent The Monte Carlo method with the Metropolis algorithm can be seen as isotropic diffusion process 
 by a time-dependent 
@@ -314,8 +312,6 @@ The Metropolis Hastings algorithm is the same as the brute force method, now wit
 replaced by 
 \eqref{metropolisHastings} and trial positions
 calculated according to \eqref{LangevinSolution}.
-
-
 
 
 \subsection{Steepest descent method}
@@ -425,8 +421,6 @@ The above steps are repeated until the above stopping condition is fulfilled, be
 Metropolis steps are run, this time with many cycles ($10^6$-$10^8$). We then obtain our approximation
 for the ground state energy of the system.\\
 
-\noindent The Steepest descent method is implemented as follows:
-
 
 \subsection{Blocking}
 
@@ -529,7 +523,7 @@ electron in an oscillator potential in two dimensions is
  (\sqrt{\alpha\omega}y)\exp\left(-\frac{\alpha\omega(x^2+y^2)}{2}\right).
  \label{singleParticleWF}
 \end{equation}
-The functions $H_{n_x}(\sqrt{\alpha\omega}x)$ are Hermite polynomials \eqref{hermite}
+The functions $H_{n_x}(\sqrt{\alpha\omega}x)$ are Hermite polynomials (given in appendix \ref{app:appendixA3})
 while $A$ is a normalization constant. 
 For the lowest lying state, $n_x = n_y = 0$, the energy is given by
 $\epsilon_{n_x,n_y} = \omega(n_x+n_y+1) = \omega$. Now, due the Pauli exclusion principle we can not 
@@ -644,28 +638,45 @@ where $\phi_j({\bf r}_i)$ are the single-particle wave functions \eqref{singlePa
 i.e. eigenfunctions of the unperturbed
 Hamiltonian \eqref{HOHamiltonian}. The rows correspond to the position of a given particle, 
 while the columns stand for the various quantum numbers.
+The local energy \eqref{localEnergy}
+for the perturbed Hamiltonian \eqref{fullHamiltonian} is
+\begin{equation}
+ E_L = \frac{1}{\Psi_T}H\Psi_T = \sum_{i=1}^N \left( -\frac{1}{2}\frac{\nabla^2\Psi_T}{\Psi_T} + 
+ \frac{1}{2}\omega^2r_i^2 \right) + \sum_{i<j}\frac{1}{r_{ij}}
+\end{equation}
 
-\subsubsection{Two-electron perturbed system}
+\subsubsection{Perturbed system for $N=2$}
 For $N=2$ the trial wave function reduces to
-\begin{equation*}
+\begin{equation}
  \Psi_T({\bf r}_1,{\bf r}_2) = C\exp(-\alpha \omega (r_1^2+r_2^2)/2)\exp\left(\frac{ar_{12}}{1+\beta r_{12}}\right).
  \label{trialWF2}
-\end{equation*}
+\end{equation}
 In this case we have analytical expressions for the ground state energy for selected oscillator
-frequencies which we will use as a way to validate the program. In appendix \ref{app:appendixA1} we show
+frequencies which we will use as a way to validate the program. 
+In appendix \ref{app:appendixA1} we show
 that the local energy in this case is given by
+\begin{align}
+\begin{split}
+ E_L = \frac{1}{\Psi_T}H\Psi_T = \,\,  &2\alpha^2 \omega^2(r_1^2 + r_2^2) - 4\alpha \omega
+ - \frac{2a\alpha \omega r_{12}}{(1+\beta r_{12})^2} + \\
+ &\frac{2a}{(1+\beta r_{12})^2}\biggr[ \frac{a}{(1+\beta r_{12})^2} + 
+              \frac{1}{r_{12}} - \frac{2\beta}{1 + \beta r_{12}} \biggr] + \\
+ &\frac{1}{2}\omega^2(r_1^2 + r_2^2) + \frac{1}{r_{12}}
+\end{split}
+\end{align}
+We also need the quantum force when we use importance sampling, derived in appendix \ref{app:appendixA1}:
 \begin{equation}
- E_L = 
-\end{equation}
-We also need the quantum force when we use importance sampling,
-\begin{equation}
- F =
+ F =-2\alpha\omega {\bf r}_1 + \frac{2a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{12}
+ -2\alpha\omega {\bf r}_2 + \frac{2a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{21}
 \end{equation}
 
-\subsubsection{6-,12- and 20-electron perturbed system}
+\subsubsection{Perturbed system for $N>2$}
+For $N > 2$ we need to use the full Slater determinant wave function \eqref{trialWF}. This wave function 
+and its derivatives are challenging to compute. In the following section \ref{sec:slater} we will
+outline the strategies for evaluating these quantities.
 
-\section{Optimization of trial wave function and its deriviatives}
-\label{sec:optimization}
+\section{Slater machinery}
+\label{sec:slater}
 
 The trial wave function \eqref{trialWF} plays a central role in our VMC simulation.
 It is needed in the Metropolis algorithm and in the evaluation of the quantum force \eqref{quantumForce}.
@@ -1261,11 +1272,15 @@ Gradient of first term:
 \end{equation}
 so that
 \begin{equation}
- \nabla K_1 = -\alpha\omega K_1 {\bf r}
+ \nabla_1 K_1 = -\alpha\omega K_1 {\bf r}_1
+\end{equation}
+and 
+\begin{equation}
+ \nabla_2 K_1 = -\alpha\omega K_1 {\bf r}_2
 \end{equation}
 where
 \begin{equation}
- {\bf r} = (x_1, y_1, x_2, y_2)
+ {\bf r}_i = (x_i,\, y_i)
 \end{equation}
 Gradient of second term:
 \begin{equation}
@@ -1273,18 +1288,26 @@ Gradient of second term:
 \end{equation}
 so that
 \begin{equation}
- \nabla K_2 = 
+ \nabla_1 K_2 = 
  K_2 \frac{a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{12}
+\end{equation}
+and
+\begin{equation}
+ \nabla_2 K_2 = 
+ K_2 \frac{a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{21}
 \end{equation}
 where
 \begin{equation}
- {\bf r}_{12} = (x_1 - x_2, y_1 - y_2, x_2 - x_1, y_2 - y_1) 
+ {\bf r}_{ij} = (x_i - x_j, \,y_i - y_j)
 \end{equation}
 The quantum force used in importance sampling is thus
 \begin{align}
- F = 2\frac{\nabla \Psi_T}{\Psi_T} = 2\frac{\nabla(K_1K_2)}{K_1K_2} = 
- 2\frac{1}{K_1K_2}(K_2 \nabla K_1 + K_1 \nabla K_2) = 
- -2\alpha\omega {\bf r} + \frac{2a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{12}
+\begin{split}
+ F = &2\frac{\nabla \Psi_T}{\Psi_T} = 2\frac{\nabla(K_1K_2)}{K_1K_2} = 
+ 2\frac{1}{K_1K_2}(K_2 \nabla K_1 + K_1 \nabla K_2) = \\
+ &-2\alpha\omega {\bf r}_1 + \frac{2a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{12}
+ -2\alpha\omega {\bf r}_2 + \frac{2a}{r_{12}(1 + \beta r_{12})^2} {\bf r}_{21}
+\end{split}
 \end{align}
 Laplacian of first term:
 \begin{equation}
@@ -1338,18 +1361,23 @@ and
 The analytic expression for the Laplacian ratio is thus
 \begin{align}
 \begin{split}
- \frac{\nabla^2\Psi_T}{\Psi_T} &= 2\alpha^2 \omega^2(r_1^2 + r_2^2) - 4\alpha \omega
- - \frac{2a\alpha \omega r_{12}}{(1+\beta r_{12})^2} \\
- &+ \frac{2a}{(1+\beta r_{12})^2}\Biggr[ \frac{a}{(1+\beta r_{12})^2} + 
-              \frac{1}{r_{12}} - \frac{2\beta}{1 + \beta r_{12}} \Biggr]
+ \frac{\nabla^2\Psi_T}{\Psi_T} =  \,\, &2\alpha^2 \omega^2(r_1^2 + r_2^2) - 4\alpha \omega
+ - \frac{2a\alpha \omega r_{12}}{(1+\beta r_{12})^2} + \\
+ &\frac{2a}{(1+\beta r_{12})^2}\biggr[ \frac{a}{(1+\beta r_{12})^2} + 
+              \frac{1}{r_{12}} - \frac{2\beta}{1 + \beta r_{12}} \biggr]
               \label{analyticLocalEnergy}
 \end{split}
 \end{align}
 and we get for the local energy in the Hamiltonian \eqref{fullHamiltonian}
-\begin{equation}
- E_L = \frac{1}{\Psi_T}H\Psi_T = -\frac{1}{2}\frac{\nabla^2\Psi_T}{\Psi_T} + 
- \frac{1}{2}\omega^2(r_1^2 + r_2^2) + \frac{1}{r_{12}}
-\end{equation}
+\begin{align}
+\begin{split}
+ E_L = \frac{1}{\Psi_T}H\Psi_T = \,\,  &2\alpha^2 \omega^2(r_1^2 + r_2^2) - 4\alpha \omega
+ - \frac{2a\alpha \omega r_{12}}{(1+\beta r_{12})^2} + \\
+ &\frac{2a}{(1+\beta r_{12})^2}\biggr[ \frac{a}{(1+\beta r_{12})^2} + 
+              \frac{1}{r_{12}} - \frac{2\beta}{1 + \beta r_{12}} \biggr] + \\
+ &\frac{1}{2}\omega^2(r_1^2 + r_2^2) + \frac{1}{r_{12}}
+\end{split}
+\end{align}
 
 
 \subsection{Single-particle wave functions and their derivatives} \label{app:appendixA2}
@@ -1482,6 +1510,11 @@ and
  \textit{A new look at correlations in atomic and molecular systems. 
          I. Application of fermion monte carlo variational method.}
  Int. J. Quantum Chem. {\bf 20} 1107 (1981)
+ 
+ \bibitem{ref4}
+ Høgberget, Jørgen,
+ \textit{Quantum Monte-Carlo Studies of Generalized Many-Body Systems}
+ Thesis for the degree of Master of Science, University of Oslo (2013)
 
 \end{thebibliography}
 

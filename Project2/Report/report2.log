@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.6.9)  16 JUN 2016 18:03
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.6.9)  16 JUN 2016 20:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1179,221 +1179,233 @@ Underfull \hbox (badness 10000) in paragraph at lines 183--186
  []
 
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 254--257
+Underfull \hbox (badness 10000) in paragraph at lines 253--256
 
  []
 
 [3]
-Underfull \hbox (badness 10000) in paragraph at lines 295--297
-
- []
-
-
-Overfull \hbox (16.69345pt too wide) in paragraph at lines 306--309
+Overfull \hbox (16.69345pt too wide) in paragraph at lines 304--307
 \T1/cmr/m/n/10 which in turn means that our brute force Metropo-lis ac-cep-t/re
 -ject ra-tio [] is re-placed by the so-called []
  []
 
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 424--427
+Underfull \hbox (badness 10000) in paragraph at lines 420--423
 
  []
 
 [5]
-Underfull \hbox (badness 10000) in paragraph at lines 482--484
+Underfull \hbox (badness 10000) in paragraph at lines 476--478
 
  []
 
 [6] [7]
-Underfull \hbox (badness 10000) in paragraph at lines 670--679
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 648.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 648.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 673.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 673.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 681--690
 
  []
 
 [8]
-Underfull \hbox (badness 10000) in paragraph at lines 721--726
+Underfull \hbox (badness 10000) in paragraph at lines 732--737
 
  []
 
-[9]
+[9] [10]
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 871.
+nput line 882.
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 871--871
+Overfull \hbox (6.0pt too wide) in paragraph at lines 882--882
 [][][][][][][] 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 871--871
+Overfull \hbox (6.0pt too wide) in paragraph at lines 882--882
 [][][][][][][] 
  []
 
-[10] [11]
+[11]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 954.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\nabla' on input line 954.
+(hyperref)                removing `math shift' on input line 965.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\Psi' on input line 954.
+(hyperref)                removing `\nabla' on input line 965.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 954.
+(hyperref)                removing `\Psi' on input line 965.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\Psi' on input line 954.
+(hyperref)                removing `subscript' on input line 965.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 954.
+(hyperref)                removing `\Psi' on input line 965.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 954.
+(hyperref)                removing `subscript' on input line 965.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 973.
+(hyperref)                removing `math shift' on input line 965.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\nabla' on input line 973.
+(hyperref)                removing `math shift' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `superscript' on input line 973.
+(hyperref)                removing `\nabla' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\Psi' on input line 973.
+(hyperref)                removing `superscript' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 973.
+(hyperref)                removing `\Psi' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\Psi' on input line 973.
+(hyperref)                removing `subscript' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 973.
+(hyperref)                removing `\Psi' on input line 984.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 973.
+(hyperref)                removing `subscript' on input line 984.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 984.
 
 [12]
-Underfull \hbox (badness 10000) in paragraph at lines 1031--1032
+Underfull \hbox (badness 10000) in paragraph at lines 1042--1043
 
  []
 
-[13] <OBD_w=1_N=2_WithoutSlater.png, id=417, 1386.1386pt x 1031.2929pt>
+[13] <OBD_w=1_N=2_WithoutSlater.png, id=423, 1386.1386pt x 1031.2929pt>
 File: OBD_w=1_N=2_WithoutSlater.png Graphic file (type png)
 
 <use OBD_w=1_N=2_WithoutSlater.png>
-Package pdftex.def Info: OBD_w=1_N=2_WithoutSlater.png used on input line 1153.
+Package pdftex.def Info: OBD_w=1_N=2_WithoutSlater.png used on input line 1164.
 
 (pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1153--1154
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1164--1165
  [][] 
  []
 
-<OBD_w=05_N=2_WithoutSlater.png, id=419, 586.8324pt x 442.2924pt>
+<OBD_w=05_N=2_WithoutSlater.png, id=425, 586.8324pt x 442.2924pt>
 File: OBD_w=05_N=2_WithoutSlater.png Graphic file (type png)
 
 <use OBD_w=05_N=2_WithoutSlater.png>
-Package pdftex.def Info: OBD_w=05_N=2_WithoutSlater.png used on input line 1159
+Package pdftex.def Info: OBD_w=05_N=2_WithoutSlater.png used on input line 1170
 .
 (pdftex.def)             Requested size: 225.34363pt x 169.84105pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1159--1160
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1170--1171
  [][] 
  []
 
-<OBD_w=01_N=2_WithoutSlater.png, id=420, 586.8324pt x 442.2924pt>
+<OBD_w=01_N=2_WithoutSlater.png, id=426, 586.8324pt x 442.2924pt>
 File: OBD_w=01_N=2_WithoutSlater.png Graphic file (type png)
 
 <use OBD_w=01_N=2_WithoutSlater.png>
-Package pdftex.def Info: OBD_w=01_N=2_WithoutSlater.png used on input line 1166
+Package pdftex.def Info: OBD_w=01_N=2_WithoutSlater.png used on input line 1177
 .
 (pdftex.def)             Requested size: 225.34363pt x 169.84105pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1166--1167
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1177--1178
  [][] 
  []
 
-<OBD_w=005_N=2_WithoutSlater.png, id=421, 586.8324pt x 442.2924pt>
+<OBD_w=005_N=2_WithoutSlater.png, id=427, 586.8324pt x 442.2924pt>
 File: OBD_w=005_N=2_WithoutSlater.png Graphic file (type png)
 
 <use OBD_w=005_N=2_WithoutSlater.png>
-Package pdftex.def Info: OBD_w=005_N=2_WithoutSlater.png used on input line 117
-2.
+Package pdftex.def Info: OBD_w=005_N=2_WithoutSlater.png used on input line 118
+3.
 (pdftex.def)             Requested size: 225.34363pt x 169.84105pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1172--1173
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1183--1184
  [][] 
  []
 
-<OBD_w=001_N=2_WithoutSlater.png, id=422, 586.8324pt x 442.2924pt>
+<OBD_w=001_N=2_WithoutSlater.png, id=428, 586.8324pt x 442.2924pt>
 File: OBD_w=001_N=2_WithoutSlater.png Graphic file (type png)
 
 <use OBD_w=001_N=2_WithoutSlater.png>
-Package pdftex.def Info: OBD_w=001_N=2_WithoutSlater.png used on input line 117
-9.
+Package pdftex.def Info: OBD_w=001_N=2_WithoutSlater.png used on input line 119
+0.
 (pdftex.def)             Requested size: 225.34363pt x 169.84105pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1179--1180
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1190--1191
  [][] 
  []
 
-[14] <OBD_N=6_w=1_Slater.png, id=429, 1386.1386pt x 1031.2929pt>
+[14] <OBD_N=6_w=1_Slater.png, id=435, 1386.1386pt x 1031.2929pt>
 File: OBD_N=6_w=1_Slater.png Graphic file (type png)
 
 <use OBD_N=6_w=1_Slater.png>
-Package pdftex.def Info: OBD_N=6_w=1_Slater.png used on input line 1192.
+Package pdftex.def Info: OBD_N=6_w=1_Slater.png used on input line 1203.
 (pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1192--1193
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1203--1204
  [][] 
  []
 
-<OBD_N=6_w=05_Slater.png, id=430, 1386.1386pt x 1031.2929pt>
+<OBD_N=6_w=05_Slater.png, id=436, 1386.1386pt x 1031.2929pt>
 File: OBD_N=6_w=05_Slater.png Graphic file (type png)
 
 <use OBD_N=6_w=05_Slater.png>
-Package pdftex.def Info: OBD_N=6_w=05_Slater.png used on input line 1198.
+Package pdftex.def Info: OBD_N=6_w=05_Slater.png used on input line 1209.
 (pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1198--1199
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1209--1210
  [][] 
  []
 
-<OBD_N=6_w=01_Slater.png, id=431, 1386.1386pt x 1031.2929pt>
+<OBD_N=6_w=01_Slater.png, id=437, 1386.1386pt x 1031.2929pt>
 File: OBD_N=6_w=01_Slater.png Graphic file (type png)
 
 <use OBD_N=6_w=01_Slater.png>
-Package pdftex.def Info: OBD_N=6_w=01_Slater.png used on input line 1205.
+Package pdftex.def Info: OBD_N=6_w=01_Slater.png used on input line 1216.
 (pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1205--1206
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1216--1217
  [][] 
  []
 
-<OBD_N=6_w=005_Slater.png, id=432, 1386.1386pt x 1031.2929pt>
+<OBD_N=6_w=005_Slater.png, id=438, 1386.1386pt x 1031.2929pt>
 File: OBD_N=6_w=005_Slater.png Graphic file (type png)
 
 <use OBD_N=6_w=005_Slater.png>
-Package pdftex.def Info: OBD_N=6_w=005_Slater.png used on input line 1211.
+Package pdftex.def Info: OBD_N=6_w=005_Slater.png used on input line 1222.
 (pdftex.def)             Requested size: 225.34363pt x 167.65392pt.
 
-Overfull \hbox (20.48691pt too wide) in paragraph at lines 1211--1212
+Overfull \hbox (20.48691pt too wide) in paragraph at lines 1222--1223
  [][] 
  []
 
@@ -1401,30 +1413,30 @@ Overfull \hbox (20.48691pt too wide) in paragraph at lines 1211--1212
 _w=01_N=2_WithoutSlater.png> <./OBD_w=005_N=2_WithoutSlater.png> <./OBD_w=001_N
 =2_WithoutSlater.png>] [16 <./OBD_N=6_w=1_Slater.png> <./OBD_N=6_w=05_Slater.pn
 g> <./OBD_N=6_w=01_Slater.png> <./OBD_N=6_w=005_Slater.png>] [17] [18] [19]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1488.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1521.
 
 [20]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1488.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1521.
  (./report2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1488.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1488.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1521.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1521.
 
 Package rerunfilecheck Info: File `report2.out' has not changed.
-(rerunfilecheck)             Checksum: C5E0AF72D9753B4DD7AD5F49AC64BF33;2262.
+(rerunfilecheck)             Checksum: C78C4A36765DBD65F783663D4F08EA61;2202.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1488.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1521.
  ) 
 Here is how much of TeX's memory you used:
- 19062 strings out of 495028
- 319092 string characters out of 6181498
- 493491 words of memory out of 5000000
+ 19067 strings out of 495028
+ 319140 string characters out of 6181498
+ 496409 words of memory out of 5000000
  21675 multiletter control sequences out of 15000+600000
  27139 words of font info for 75 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 56i,18n,55p,429b,1783s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,18n,55p,429b,1024s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk> </home/
 fenics/.texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> </home/fenics/.te
 xmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> </home/fenics/.texmf-var/fo
@@ -1454,10 +1466,10 @@ nts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on report2.pdf (21 pages, 781830 bytes).
+Output written on report2.pdf (21 pages, 781888 bytes).
 PDF statistics:
- 1005 PDF objects out of 1200 (max. 8388607)
- 581 compressed objects within 6 object streams
- 204 named destinations out of 1000 (max. 500000)
+ 1010 PDF objects out of 1200 (max. 8388607)
+ 592 compressed objects within 6 object streams
+ 209 named destinations out of 1000 (max. 500000)
  306 words of extra memory for PDF output out of 10000 (max. 10000000)
 

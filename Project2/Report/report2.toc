@@ -9,18 +9,18 @@
 \contentsline {section}{\numberline {3}Systems}{7}{section.3}
 \contentsline {subsection}{\numberline {3.1}Unperturbed system}{7}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Perturbed system}{8}{subsection.3.2}
-\contentsline {subsubsection}{\numberline {3.2.1}Two-electron perturbed system}{8}{subsubsection.3.2.1}
-\contentsline {subsubsection}{\numberline {3.2.2}6-,12- and 20-electron perturbed system}{8}{subsubsection.3.2.2}
-\contentsline {section}{\numberline {4}Optimization of trial wave function and its deriviatives}{8}{section.4}
-\contentsline {subsection}{\numberline {4.1}Optimization of determinant-to-determinant ratio}{8}{subsection.4.1}
+\contentsline {subsubsection}{\numberline {3.2.1}Perturbed system for $N=2$}{8}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}Perturbed system for $N>2$}{8}{subsubsection.3.2.2}
+\contentsline {section}{\numberline {4}Slater machinery}{8}{section.4}
+\contentsline {subsection}{\numberline {4.1}Optimization of determinant-to-determinant ratio}{9}{subsection.4.1}
 \contentsline {subsection}{\numberline {4.2}Optimization of inverse Slater matrix}{9}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}Splitting the Slater determinant}{9}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.3}Splitting the Slater determinant}{10}{subsection.4.3}
 \contentsline {subsection}{\numberline {4.4}Optimization of gradient}{10}{subsection.4.4}
 \contentsline {subsection}{\numberline {4.5}Optimization of the Laplacian}{11}{subsection.4.5}
-\contentsline {subsection}{\numberline {4.6}Optimization of the correlation-to-correlation ratio}{11}{subsection.4.6}
+\contentsline {subsection}{\numberline {4.6}Optimization of the correlation-to-correlation ratio}{12}{subsection.4.6}
 \contentsline {subsection}{\numberline {4.7}Optimization of the $\nabla \Psi _C / \Psi _C$ ratio}{12}{subsection.4.7}
 \contentsline {subsection}{\numberline {4.8}Optimization of the $\nabla ^2 \Psi _C / \Psi _C$ ratio}{12}{subsection.4.8}
-\contentsline {section}{\numberline {5}Implementation}{12}{section.5}
+\contentsline {section}{\numberline {5}Implementation}{13}{section.5}
 \contentsline {section}{\numberline {6}Results and discussion}{13}{section.6}
 \contentsline {subsection}{\numberline {6.1}Some text}{13}{subsection.6.1}
 \contentsline {subsection}{\numberline {6.2}More than two particles}{13}{subsection.6.2}
