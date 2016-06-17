@@ -4,29 +4,30 @@
 \contentsline {subsection}{\numberline {2.1}Monte Carlo integration}{2}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Metropolis algorithm}{2}{subsection.2.2}
 \contentsline {subsection}{\numberline {2.3}Importance sampling}{3}{subsection.2.3}
-\contentsline {subsection}{\numberline {2.4}Steepest descent method}{4}{subsection.2.4}
-\contentsline {subsection}{\numberline {2.5}Blocking}{6}{subsection.2.5}
-\contentsline {section}{\numberline {3}Systems}{7}{section.3}
-\contentsline {subsection}{\numberline {3.1}Unperturbed system}{7}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}Perturbed system}{8}{subsection.3.2}
-\contentsline {subsubsection}{\numberline {3.2.1}Perturbed system for $N=2$}{8}{subsubsection.3.2.1}
-\contentsline {subsubsection}{\numberline {3.2.2}Perturbed system for $N>2$}{8}{subsubsection.3.2.2}
-\contentsline {section}{\numberline {4}Slater machinery}{8}{section.4}
-\contentsline {subsection}{\numberline {4.1}Optimization of determinant-to-determinant ratio}{9}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Optimization of inverse Slater matrix}{9}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}Splitting the Slater determinant}{10}{subsection.4.3}
-\contentsline {subsection}{\numberline {4.4}Optimization of gradient}{10}{subsection.4.4}
-\contentsline {subsection}{\numberline {4.5}Optimization of the Laplacian}{11}{subsection.4.5}
-\contentsline {subsection}{\numberline {4.6}Optimization of the correlation-to-correlation ratio}{12}{subsection.4.6}
-\contentsline {subsection}{\numberline {4.7}Optimization of the $\nabla \Psi _C / \Psi _C$ ratio}{12}{subsection.4.7}
-\contentsline {subsection}{\numberline {4.8}Optimization of the $\nabla ^2 \Psi _C / \Psi _C$ ratio}{12}{subsection.4.8}
+\contentsline {subsection}{\numberline {2.4}Steepest descent}{4}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Blocking}{5}{subsection.2.5}
+\contentsline {section}{\numberline {3}Systems}{6}{section.3}
+\contentsline {subsection}{\numberline {3.1}Unperturbed system}{6}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Perturbed system}{7}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Perturbed system for $N=2$}{7}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}Perturbed system for $N>2$}{7}{subsubsection.3.2.2}
+\contentsline {section}{\numberline {4}Slater machinery}{7}{section.4}
+\contentsline {subsection}{\numberline {4.1}Optimization of determinant-determinant ratio}{8}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Optimization of inverse Slater matrix}{8}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Slater determinant and spins}{9}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Optimization of the $\nabla |D| / |D|$ ratio}{9}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}Optimization of the $\nabla ^2 |D| / |D|$ ratio}{10}{subsection.4.5}
+\contentsline {subsection}{\numberline {4.6}Optimization of the correlation-to-correlation ratio}{11}{subsection.4.6}
+\contentsline {subsection}{\numberline {4.7}Optimization of the $\nabla \Psi _C / \Psi _C$ ratio}{11}{subsection.4.7}
+\contentsline {subsection}{\numberline {4.8}Optimization of the $\nabla ^2 \Psi _C / \Psi _C$ ratio}{11}{subsection.4.8}
+\contentsline {subsection}{\numberline {4.9}Steepest descent with Slater wave function}{12}{subsection.4.9}
 \contentsline {section}{\numberline {5}Implementation}{13}{section.5}
-\contentsline {section}{\numberline {6}Results and discussion}{13}{section.6}
-\contentsline {subsection}{\numberline {6.1}Some text}{13}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}More than two particles}{13}{subsection.6.2}
-\contentsline {subsection}{\numberline {6.3}Performance analysis}{13}{subsection.6.3}
-\contentsline {section}{\numberline {7}Conclusions}{16}{section.7}
-\contentsline {section}{\numberline {A}Appendix}{17}{appendix.A}
-\contentsline {subsection}{\numberline {A.1}Analytic local energy for two-body quantum dot}{17}{subsection.A.1}
-\contentsline {subsection}{\numberline {A.2}Single-particle wave functions and their derivatives}{18}{subsection.A.2}
-\contentsline {subsection}{\numberline {A.3}Hermite polynomials and their derivatives}{19}{subsection.A.3}
+\contentsline {section}{\numberline {6}Results and discussion}{14}{section.6}
+\contentsline {subsection}{\numberline {6.1}Some text}{14}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}More than two particles}{14}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Performance analysis}{14}{subsection.6.3}
+\contentsline {section}{\numberline {7}Conclusions}{17}{section.7}
+\contentsline {section}{\numberline {A}Appendix}{18}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}Analytic local energy for two-body quantum dot}{18}{subsection.A.1}
+\contentsline {subsection}{\numberline {A.2}Single-particle wave functions and their derivatives}{19}{subsection.A.2}
+\contentsline {subsection}{\numberline {A.3}Hermite polynomials and their derivatives}{20}{subsection.A.3}

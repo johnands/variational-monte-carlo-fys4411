@@ -17,6 +17,7 @@
 \usepackage{braket} 
 \usepackage{multicol}
 \usepackage{tikz}
+\usepackage{bm}
 \usepackage[bookmarks]{hyperref}
 %\usepackage[]{mcode}
 
@@ -87,9 +88,13 @@
 The aim of this project is to use the Variational Monte Carlo (VMC) method to evaluate the
 ground state energy, onebody densities, expectation values of the kinetic and potential energies
 and single-particle energies of quantum dots with $N=2$, $N=6$, $N=12$ and $N=20$ electrons,
-i.e. closed-shell systems. A performance analysis of the code is also made.
+i.e. closed-shell systems. A performance analysis of the code is also made. \\
 
-***Main findings*** 
+\noindent
+We found that the computed ground state energies and one-body densities were in good agreement 
+with theoretical results
+and earlier studies. Parallelizing the code resulted in a significant speed-up, enabling us to 
+get better results and error estimates. 
 
 
 \end{abstract}
@@ -105,19 +110,21 @@ can be tuned by applying external fields, and are thus of interest in many resea
 transistors, solar cells, LEDs etc. Studies of quantum dots containing several electrons require
 reliable many-body methods that also incorporate uncertainty quantifications.\\
 
-\noindent In this project we compute the ground state energy for
+\noindent In this project we compute the ground state energy and kinetic and potential energies for
 $N=2$, $N=6$, $N=12$ and $N=20$ electrons
 confined in a two-dimensional harmonic oscillator trap with different oscillator frequencies $\omega$.
 These values of $N$ are magic numbers for the system.
 For the two-body case we find the energy both with and without the use of Slater determinants for 
-benchmarking purposes. The one-body density is computed for all $N$, both with and without correlations
+benchmarking purposes. The one-body density is computed for all $N$ and $\omega$, both with and without correlations
 in the trial wave function. 
-For $N=2$ we also compute the mean distance between the electrons and the expectation values of the potential
-and kinetic energies. We also perform a timing analysis by comparing a serial and parallel code both with 
-and without vectorization.\\
+For $N=2$ we compute the mean distance between the electrons. We also perform a timing analysis by comparing a serial 
+and parallel version of the code. \\
 
-\noindent ***structure of report***
-
+\noindent The report begins with a presentation of the methods and algorithms we have used in this project. 
+We then present the different systems we want to study, including a detailed description on how to 
+evalute the trial wave function and its derivatives. Next, we give an overview of the code structure and 
+different ways to validate the implementation. Finally, we present the results of the simulation, and our conclusions
+with prospects for future work. 
 
 
 \section{Methods}
@@ -314,8 +321,42 @@ replaced by
 calculated according to \eqref{LangevinSolution}.
 
 
-\subsection{Steepest descent method}
+\subsection{Steepest descent} \label{Steepest Descent chapter}
+We seek to minimize expectation value of the local energy with respect to the variational parameters 
+${\bm \alpha} = \{\alpha_1,...,\alpha_n \}$ numerically.
+That is to say we want to find ${\bm \alpha}$ such that,
+\begin{equation}
+ \nabla_{{\bm \alpha}} \langle E_L({\bf R}; {\bm \alpha}) \rangle = 0.
+\end{equation}
+One way to this is by the method of steepest descent. The rationale behind this approach is the well known fact that if
+a function $F({\bm \alpha})$ is differentiable in a neighborhood of ${\bm \alpha}$, then $F({\bm \alpha})$ 
+decreases fastest if one goes in
+the direction of $-\nabla_{{\bm \alpha}}F({\bm \alpha})$. Hence we can generate a new set of parameters 
+${\bm \alpha}_{k+1}$ by the iterative scheme,
+\begin{equation}
+ {\bm \alpha}_{k+1} = {\bm \alpha}_{k} - \gamma_i \nabla_{{\bm \alpha}_{k}}F({\bm \alpha}_k).
+\end{equation}
+If $\gamma_i$ is sufficiently small 
+\footnote{\href{https://en.wikipedia.org/wiki/Gradient_descent}{https://en.wikipedia.org/wiki/Gradient\_descent}} 
+we have $F({\bm \alpha}_k) \geq F({\bm \alpha}_{k+1})$  for 
+all $k$ and hopefully the sequence $\{{\bm \alpha}_k \}_{k=0}^N$
+converges to the desired minimum. The subtraction of $- \gamma_i \nabla_{{\bm \alpha}_{k}}F({\bm \alpha}_k)$ is due
+to the fact that we want to move against the gradient towards a local minimum.\\
 
+\noindent In its crudest form $\gamma_i$ is a constant step size, while it is also possible to adapt $\gamma_i$ 
+for each iteration to improve upon
+convergence. We use a very simple adaption scheme for $\gamma_i$ where we halve the stepsize if
+$|\nabla_{{\bm \alpha}_{k}}F({\bm \alpha}_{k+1})| \geq |\nabla_{{\bm \alpha}_{k}}F({\bm \alpha}_k)|$ 
+and keeps the previous suggestion of ${\bm \alpha}$. Note also that we have to supply an initial 
+guess ${\bm \alpha}_0$ and naturally the better the initial 
+guess the more we can hope for convergence.\\
+
+\noindent
+We will deal with two variational parameters $\alpha$ and $\beta$ in this project. 
+The details of the optimization for our electronic system will be given in section \ref{sec:slaterOptimization}.
+
+
+\begin{comment}
 We turn now to the problem of finding the variational parameters that minimizes the expectation value
 of the local energy $\langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$. This project considers a trial wavefunction
 with two variational parameters $\alpha$ and  $\beta$. 
@@ -420,7 +461,7 @@ The corresponding expression for the correlation function is
 The above steps are repeated until the above stopping condition is fulfilled, before a new round of
 Metropolis steps are run, this time with many cycles ($10^6$-$10^8$). We then obtain our approximation
 for the ground state energy of the system.\\
-
+\end{comment}
 
 \subsection{Blocking}
 
@@ -510,7 +551,7 @@ and a repulsive interaction between two electrons, given by
  H_1 = \sum_{i < j} \frac{1}{r_{ij}}
  \label{repulsiveHamiltonian}
 \end{equation}
-where $r_{ij} = |{\bf r}_1 - {\bf r}_2|$ is the distance between the electrons. 
+where $r_{ij} = |{\bf r}_i - {\bf r}_j|$ is the distance between the electrons. 
 The modulus of the positions of the electrons is defined as $r_i = \sqrt{r_{i_x}^2 + r_{i_y}^2}$.
 
 
@@ -621,6 +662,7 @@ Slater determinant $\Psi_{SD} = |D|$ and a linear Padé-Jastrow correlation term
  \Psi_C = \exp{\left(\frac{a r_{ij}}{1+\beta r_{ij}}\right)}
  \label{correlationFunction}
 \end{equation}
+which accounts for the interaction between the electrons. 
 The full wave function for $N$ electrons can be written
 \begin{equation}
    \psi_{T}({\bf r}_1,{\bf r}_2,\dots, {\bf r}_N, \alpha, \beta) = \Psi_{SD}\Psi_C = 
@@ -628,7 +670,9 @@ The full wave function for $N$ electrons can be written
    \prod_{i<j}^{N}\exp{\left(\frac{a r_{ij}}{1+\beta r_{ij}}\right)}, 
    \label{trialWF}
 \end{equation}
-where $\alpha$ and $\beta$ are the variational parameters.
+where $a$ is equal to one when the two electrons $i$ and $j$ have anti-parallel spins and 1/3 when the
+spins are parallel. ${\bf r}_i$ is the Euclidian position of particle $i$, while
+$\alpha$ and $\beta$ are the variational parameters.
 The Slater matrix $D$ is defined as
 \begin{equation}
  D_{ij} = \phi_j({\bf r}_i)
@@ -643,6 +687,7 @@ for the perturbed Hamiltonian \eqref{fullHamiltonian} is
 \begin{equation}
  E_L = \frac{1}{\Psi_T}H\Psi_T = \sum_{i=1}^N \left( -\frac{1}{2}\frac{\nabla^2\Psi_T}{\Psi_T} + 
  \frac{1}{2}\omega^2r_i^2 \right) + \sum_{i<j}\frac{1}{r_{ij}}
+ \label{localEnergy2}
 \end{equation}
 
 \subsubsection{Perturbed system for $N=2$}
@@ -688,16 +733,22 @@ evaluate $Nd$ Slater determinants for the gradient (quantum force and kinetic en
 the Laplacian (kinetic energy). Therefore, it is imperative to find alternative ways of computing
 the quantities related to the trial wave function to improve performance. \\
 
-\subsection{Optimization of determinant-to-determinant ratio}
+\subsection{Optimization of determinant-determinant ratio}
 The ratio \eqref{metropolisRatio} used in the Metropolis algorithm is the following 
 for our trial wave function (not squared):
 \begin{equation}
- R = \frac{|D|^{\textrm{new}}}{|D|^{\textrm{old}}}
- \frac{\Psi_C^{\textrm{new}}}{\Psi_C^{\textrm{old}}}
+ R = \frac{\Psi_T^{\textrm{new}}}{\Psi_T^{\textrm{old}}} = 
+ R_{SD}R_C
  \label{metropolisRatioSlater}
 \end{equation}
-where we label the Slater determinant-to-determinant ratio as $R_{SD}$ and the correlation-to-correlation
-ratio $R_C$.
+where the Slater determinant-to-determinant ratio is
+\begin{equation}
+ R_{SD} = \frac{|D|^{\textrm{new}}}{|D|^{\textrm{old}}}
+\end{equation}
+and the correlation-to-correlation is 
+\begin{equation}
+ R_C = \frac{\Psi_C^{\textrm{new}}}{\Psi_C^{\textrm{old}}}
+\end{equation}
 It turns out that we can compute $R_{SD}$ using an algorithm that requires to keep track of the \textit{inverse}
 of the Slater matrix \eqref{slaterMatrix}. The inverse of $D$ can be expressed in terms of its cofactors 
 $C_{ij}$ and its determinant $|D|$,
@@ -733,7 +784,8 @@ By definition, the denominator of this expression is unity, thus we obtain for t
 where the last equality follows from the definition of the Slater matrix \eqref{slaterMatrix}. 
 This operation is simply a dot product of a vector of single-particle wave functions evaluated
 at the new position with the $i$-th column of the inverse matrix $D^{-1}$ evaluated at the original position,
-and has a time scaling of $\mathcal{O}(N)$.\\
+and has a time scaling of $\mathcal{O}(N)$. The corresponding expression for $R_C$ is
+derived in section \ref{sec:correlationRatio}
 
 \noindent 
 
@@ -759,7 +811,7 @@ This means that we only need to invert the Slater matrix with conventional metho
 Gaussian elimination or LU-decomposition once, after we have initialized them. For the subesequent steps,
 we use the above algorithm to obtain the inverse matrix. 
 
-\subsection{Splitting the Slater determinant}
+\subsection{Slater determinant and spins}
 
 It can be shown, see for example Moskowitz and Kalos \cite{ref3} that we can approximate the Slater
 determinant $|D|$ as a product of two smaller ones, where each can be identified with
@@ -815,7 +867,11 @@ and the updating of the inverse Slater matrix seperately for $|D|_\uparrow$ and 
 We see from \eqref{SlaterDetFactorized} that one of the two determinants is unaffected
 when we move only one particle at a time, it will therefore cancel from the ratio. This means
 that we only need to update one determinant of size $N/2$ when we compute $R_{SD}$
-and update $|D|^{-1}$. The efficiency enhancements due to optimization are summed up in Table \ref{tab:optimization}.
+and update $|D|^{-1}$. In our program we therefore operate with two seperate matrices
+$D_\uparrow^{-1}$ and $D_\downarrow^{-1}$. There is no need to store $D_\uparrow$ and $D_\downarrow$
+after they have been inverted once because they are explicitly given by the single-particle wave
+functions $\phi$. 
+The efficiency enhancements due to optimization are summed up in Table \ref{tab:optimization}.
 \begin{table}[H] 
   \begin{center}
     \begin{tabular*}{14cm}{@{\extracolsep{\fill}} lll}
@@ -829,19 +885,21 @@ and update $|D|^{-1}$. The efficiency enhancements due to optimization are summe
       \bottomrule
       \end{tabular*} 
     \end{center}
+    \captionsetup{width=14cm}
       \caption {Comparison of the computational cost involved in the computation of the
                 Slater determinant with and without optimization} 
   \label{tab:optimization} 
 \end{table}
 
-\subsection{Optimization of gradient}
 
-We need the ratio $\frac{\nabla \Psi_T}{\Psi_T}$ to compute the quantum force \eqref{quantumForce}
+\subsection{Optimization of the $\nabla |D| / |D|$ ratio}
+
+We need the ratio $\nabla \Psi_T/\Psi_T$ to compute the quantum force \eqref{quantumForce}
 used in importance sampling. This ratio can be written as
 \begin{equation}
  \frac{\nabla \Psi_T}{\Psi_T} = \frac{\nabla (\Psi_{SD}\Psi_C)}{\Psi_{SD}\Psi_C} = 
  \frac{\Psi_{C}\nabla\Psi_{SD} + \Psi_{SD}\nabla\Psi_C}{\Psi_{SD}\Psi_C} = 
- \frac{\nabla \Psi_D}{\Psi_D} + \frac{\nabla \Psi_C}{\Psi_C}
+ \frac{\nabla \Psi_{SD}}{\Psi_{SD}} + \frac{\nabla \Psi_C}{\Psi_C}
 \end{equation}
 Inserting $\Psi_{SD} = |D|_\uparrow|D|_\downarrow$ yields
 \begin{equation}
@@ -852,17 +910,19 @@ Inserting $\Psi_{SD} = |D|_\uparrow|D|_\downarrow$ yields
 The process to obtain the gradient-determinant ratio needed in this expression is analogous to
 the one used in deriving \eqref{slaterRatio}. The result is
 \begin{equation}
- \frac{\nabla_i |D|}{|D|} = \sum_{j=1}^{N/2} \nabla_i D_{ij}({\bf R}^{\textrm{old}}) D_{ji}^{-1}
+ \frac{\nabla_i |D|_{\uparrow}}{|D|{\uparrow}} = \sum_{j=1}^{N/2} \nabla_i D_{\uparrow ij}
+ ({\bf R}^{\textrm{old}}) D_{\uparrow ji}^{-1}
  ({\bf R}^{\textrm{old}})
-        = \sum_{j=1}^{N/2}\nabla_i \phi_j({\bf R}_i^{\textrm{old}}) D_{ji}^{-1}({\bf R}^{\textrm{old}})
+        = \sum_{j=1}^{N/2}\nabla_i \phi_j({\bf R}_i^{\textrm{old}}) D_{\uparrow ji}^{-1}({\bf R}^{\textrm{old}})
         \label{gradientRatioBefore}
 \end{equation}
-where the sum runs up to $N/2$ for both $|D|_\uparrow$ and $|D|_\downarrow$. 
+which is also valid for $|D|_\downarrow$. 
 This expression is used to calculate the quantum force before the ratio \eqref{metropolisRatio} is computed. 
 After the position of one particle is altered, the expression is modified to
 \begin{equation}
- \frac{\nabla_i |D|}{|D|}
-        = \frac{1}{R_{SD}} \sum_{j=1}^{N/2} \nabla_i \phi_j({\bf R}_i^{\textrm{new}}) D_{ji}^{-1}({\bf R}^{\textrm{old}})
+ \frac{\nabla_i |D|_{\uparrow}}{|D|_{\uparrow}}
+        = \frac{1}{R_{SD}} \sum_{j=1}^{N/2} \nabla_i \phi_j({\bf R}_i^{\textrm{new}}) 
+        D_{\uparrow ji}^{-1}({\bf R}^{\textrm{old}})
         \label{gradientRatioAfter}
 \end{equation}
 Note that the old inverse Slater matrix is used in both cases because this is not updated until after 
@@ -908,9 +968,9 @@ zero for a given particle $i$.]
         }
     }
 \end{lstlisting}
+The ratio $\nabla \Psi_C / \Psi_C$ is derived in section \ref{sec:correlationGradient}.
 
-
-\subsection{Optimization of the Laplacian}
+\subsection{Optimization of the $\nabla^2 |D| / |D|$ ratio}
 We need the Laplacian of the trial wave function to compute the expectation value of the kinetic
 energy $K$. For electron $i$ this is
 \begin{equation}
@@ -926,14 +986,16 @@ It can be shown that the Laplacian of the trial wave function can be written
 \end{equation}
 where the Laplace-determinant-to-determinant ratio is given by
 \begin{equation}
- \frac{\nabla_i^2|D|}{|D|} = \sum_{j=1}^{N/2}\nabla_i^2D_{ij}({\bf R}^{\textrm{new}})D_{ji}^{-1}({\bf R}^{\textrm{new}})
- = \sum_{j=1}^{N/2}\nabla_i^2\phi_j({\bf R}_i^{\textrm{new}})D_{ji}^{-1}({\bf R}^{\textrm{new}})
+ \frac{\nabla_i^2|D|_{\uparrow}}{|D|_{\uparrow}} = \sum_{j=1}^{N/2}\nabla_i^2D_{\uparrow ij}({\bf R}^{\textrm{new}})
+ D_{\uparrow ji}^{-1}({\bf R}^{\textrm{new}})
+ = \sum_{j=1}^{N/2}\nabla_i^2\phi_j({\bf R}_i^{\textrm{new}})D_{\uparrow ji}^{-1}({\bf R}^{\textrm{new}})
 \end{equation}
+Again, this also applies to $|D|_\downarrow$. 
 This expression must be computed for all electrons to obtain the total Laplacian for the whole system, which is needed
-in the local energy \eqref{localEnergy}. To save computation time, we only recalculate $E_L$ when
-a step is accepted. 
+to obtain local energy \eqref{localEnergy2}. To save computation time, we only recalculate $E_L$ when
+a step is accepted. The ratio $\nabla^2 \Psi_C / \Psi_C$ is derived in section \ref{sec:correlationLaplacian}.
 
-\subsection{Optimization of the correlation-to-correlation ratio}
+\subsection{Optimization of the correlation-to-correlation ratio} \label{sec:correlationRatio}
 The correlation function $\Psi_C$ \eqref{correlationFunction} can be written
 \begin{equation}
  \Psi_C = \prod_{i<j}^N\exp{(f_{ij})} = \exp(U)
@@ -962,7 +1024,7 @@ where
  \Delta U = \sum_{i\neq k}^N (f_{ki}^{\textrm{new}} - f_{ki}^{\textrm{old}})
 \end{equation}
 
-\subsection{Optimization of the $\nabla \Psi_C / \Psi_C$ ratio}
+\subsection{Optimization of the $\nabla \Psi_C / \Psi_C$ ratio} \label{sec:correlationGradient}
 The expression to be derived in the following is of interest when computing the quantum force \eqref{quantumForce}
 and the kinetic energy \eqref{kineticEnergy}. From the discussion in the last section, only $N-1$ terms survive
 when we differentiate w.r.t. particle $k$. 
@@ -981,7 +1043,7 @@ where
 \end{equation}
 with similar expressions for $y_k$. 
 
-\subsection{Optimization of the $\nabla^2 \Psi_C / \Psi_C$ ratio}
+\subsection{Optimization of the $\nabla^2 \Psi_C / \Psi_C$ ratio} \label{sec:correlationLaplacian}
 The following ratio is needed to compute the Laplacian $\nabla^2 \Psi_T / \Psi_T$. 
 For particle $k$ in one dimension this is
 \begin{align}
@@ -1008,6 +1070,93 @@ and
 \end{equation}
 We must sum over all particles $k$ and both dimensions to obtain the full Laplacian for the system.
 
+\subsection{Steepest descent with Slater wave function} \label{sec:slaterOptimization}
+To find the optimal variational parameters with the steepest descent method, we need to calculate the 
+quantity $\nabla_{\boldsymbol{\alpha}} \langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$. 
+We know that
+$\langle E_L({\bf R}, \boldsymbol{\alpha}) \rangle$ is 
+a multidimensional integral 
+\eqref{localEnergyExp}, 
+and the gradient w.r.t. $\boldsymbol{\alpha}$
+is not easily computed.
+Let us define
+\begin{equation}
+ \bar{E}_{c_n} = \frac{\partial \langle E_L(\boldsymbol{\alpha}) \rangle}{\partial c_n}
+\end{equation}
+where $c_n$ is a variational parameter.
+Using the chain rule and the hermicity of the Hamiltonian,
+it can be shown that
+\begin{equation}
+ \bar{E}_{c_n} = 2 \left( \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial c_n} E_L 
+ \Bigr\rangle 
+ - \Bigr\langle \frac{\partial \ln{\Psi_T}}{\partial c_n}\Bigr\rangle \langle E_L \rangle   \right)
+ \label{localEnergyParameters}
+\end{equation}
+thus we need the expectation values of
+\begin{equation}
+ \frac{\partial \ln{\Psi_T}}{\partial c_n} E_L
+ \label{sampleOptimize1}
+\end{equation}
+and 
+\begin{equation}
+\frac{\partial \ln{\Psi_T}}{\partial c_n}
+\label{sampleOptimize2}
+\end{equation}
+For our trial wave function \eqref{trialWF}, we have
+\begin{equation}
+ \frac{\partial\ln{\Psi_T}}{\partial c_n} = \frac{\partial\ln{|D|_\uparrow}}{\partial c_n} + 
+ \frac{\partial\ln{|D|_\downarrow}}{\partial c_n} + \frac{\partial\ln{\Psi_C}}{\partial c_n}
+\end{equation}
+Inserting our variational parameters $\alpha$ and $\beta$, we observe that
+\begin{equation}
+ \frac{\partial\ln{\Psi_C}}{\partial \alpha} = 0
+\end{equation}
+and 
+\begin{equation}
+ \frac{\partial\ln{|D|_\uparrow}}{\partial \beta} = \frac{\partial\ln{|D|_\downarrow}}{\partial \beta} = 0
+\end{equation}
+so we end up with
+\begin{equation}
+ \frac{\partial\ln{\Psi_T}}{\partial \alpha} = \frac{\partial\ln{|D|_\uparrow}}{\partial \alpha} + 
+ \frac{\partial\ln{|D|_\downarrow}}{\partial \alpha}
+\end{equation}
+and 
+\begin{equation}
+\frac{\partial\ln{\Psi_T}}{\partial \beta} = \frac{\partial\ln{\Psi_C}}{\partial \beta}
+\end{equation}
+We can calculate the above derivatives with the help of the following linear algebra identity:
+If $A$ is an invertible matrix which depends on a real parameter $t$, and if $dA/dt$ exists, then
+\begin{equation}
+ \frac{d}{dt}|A| = |A|\textrm{tr}\left(A^{-1}\frac{dA}{dt}\right)
+\end{equation}
+thus we have
+\begin{equation}
+ \frac{d}{dt}\ln{|A|(t)} = \textrm{tr}\left(A^{-1}\frac{dA}{dt}\right) = 
+ \sum_{i=1}^N\sum_{j=1}^N\frac{dA_{ij}}{dt}A_{ji}^{-1}
+\end{equation}
+For the Slater determinants, this expression is analogous to the gradient-ratio \eqref{gradientRatioBefore},
+only now we differentiate the single-particle wave functions w.r.t. $\alpha$:
+\begin{equation}
+ \frac{\partial\ln{|D|}}{\partial \alpha} = 
+ \sum_{i=1}^{N/2} \sum_{j=1}^{N/2} \frac{\partial \phi_j({\bf R}_i)}{\partial \alpha} D_{ji}^{-1}({\bf R}_i)
+\end{equation}
+The corresponding expression for the correlation function is
+\begin{equation}
+ \frac{\partial\ln{\Psi_C}}{\partial \beta} = 
+ \sum_{i<j}^N \frac{\partial}{\partial\beta}
+ \left(\frac{a_{ij}r_{ij}}{1 + \beta r_{ij}}\right) = 
+ -\sum_{i<j}^N \frac{a_{ij}r_{ij}^2}{(1 + \beta r_{ij})^2}
+\end{equation}
+\noindent The complete VMC method then amounts to the following:
+\begin{itemize}
+ \item Make initial guess $\boldsymbol{\alpha}_0$
+ \item Run $10^4$-$10^6$ Metropolis steps, sample \eqref{sampleOptimize1} and \eqref{sampleOptimize2}
+ \item Compute \eqref{localEnergyParameters} 
+ \item Calculate new $\boldsymbol{\alpha}$ using the Steepest descent method
+\end{itemize}
+The above steps are repeated until the stopping condition is fulfilled, before a new round of
+Metropolis steps are run, this time with many cycles ($10^6$-$10^8$). We then obtain our approximation
+for the ground state energy of the system.
 
 
 \section{Implementation}
